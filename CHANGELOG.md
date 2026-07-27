@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Role Intelligence refinements (feature/build-structure f06bd3a)
+
+- Fixed Framework 01 §32 worked example: renamed heading from "Critical Requirements" to "Top Requirements" and labeled the score-88 item "High" (§17.2 threshold 75–89) rather than implying "Critical" (90–100).
+- Split ChatGPT Knowledge bundle 02 (`02-role-resume-stage-and-fit.md`, 1,894 lines, four frameworks) into two focused bundles: `02-role-intelligence.md` (Framework 01 only) and `03-resume-stage-and-fit.md` (Frameworks 02–04). Renumbered bundles 03–09 → 04–10, producing ten total. Updated both build scripts (Bash + PowerShell), both packager scripts (Bash + PowerShell), and all four `chatgpt/` documentation files.
+- Added formula-drift validation to `tests/validate-repository.sh`: verifies all seven priority-scoring component names and their weights in both `frameworks/01-role-intelligence-framework.md` and `claude/skill/references/role-and-resume-intelligence.md`; verifies all four threshold boundaries (90, 75, 50, 25) in both files; verifies exactly ten Knowledge bundles exist, the stale bundle name is absent, and bundle-content integrity (02 embeds Framework 01, 03 embeds Framework 02).
+
+### Initial build (feature/build-structure 24a42cd)
+
 - Initialized the Interview Journey repository: project structure, working rules, and high-level scope, reusing the architectural pattern of Career Targeting Intelligence (canonical methodology → platform-independent core → platform adapters) without copying its domain content.
 - Added the platform-independent core (`core/`): product definition, terminology, scope and non-goals, workflow (operating modes and interview mode boundaries), orchestration policy (adapting the master orchestrator), evidence policy, accuracy policy, context priority, quality gates, output contracts, and state management.
 - Added the fifteen canonical frameworks (`frameworks/01`–`15`) transcribed from the provided reference specifications, each with a canonical-source header and a cross-linked "Related documents" footer. Framework 15 (Interview Journey Intelligence) is the master orchestrator.
