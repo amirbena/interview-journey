@@ -1,0 +1,1370 @@
+# Role Intelligence Decision Engine Specification
+
+**Document ID:** 01
+**Version:** 3.0
+**Status:** Final Foundation Specification
+**Primary Use:** Interview Journey — Claude Skill, Claude Project, ChatGPT Custom GPT
+**Domain:** Interview Preparation and Business Intelligence
+**Language:** English
+
+> **Canonical framework.** This file is the platform-independent source of truth for Role Intelligence. `claude/skill/references/`, `chatgpt/knowledge/`, and any other platform adaptation must reference this document rather than redefine its rules, scoring formulas, or enums. See [`core/orchestration-policy.md`](../core/orchestration-policy.md) for how this framework fits into the master workflow (Document 15).
+
+---
+
+# 1. Purpose
+
+This document defines the Role Intelligence Decision Engine used by the Interview Journey system.
+
+Its purpose is to convert incomplete, inconsistent, or fragmented role information into a structured and evidence-based model of:
+
+- why the role exists;
+- what business problem the company is trying to solve;
+- what the hiring manager is most likely optimizing for;
+- which technical and behavioral capabilities matter most;
+- what level of ownership and seniority is expected;
+- what risks may prevent a candidate from being selected;
+- what the interview process is most likely to evaluate;
+- and how later preparation modules should prioritize their work.
+
+This document is not a general guide for human recruiters.
+
+It is an operational specification for an AI system.
+
+The engine must produce consistent outputs across different roles, companies, seniority levels, industries, and interview stages.
+
+The engine must reduce model randomness by using:
+
+- explicit source precedence;
+- deterministic analysis steps;
+- numbered decision rules;
+- scoring systems;
+- confidence labels;
+- validation checks;
+- contradiction handling;
+- failure modes;
+- and bounded inference.
+
+The engine must not simply summarize a Job Description.
+
+It must infer the hiring logic behind the role while clearly separating confirmed facts from interpretation.
+
+---
+
+# 2. Strategic Objective
+
+Interview Journey aims to become a highly effective interview-preparation and business-intelligence assistant.
+
+Role Intelligence is the first analytical layer in that system.
+
+Every downstream module depends on it:
+
+1. Resume Intelligence
+2. Interview Stage Intelligence
+3. Role Fit and Gap Analysis
+4. Interview Intelligence
+5. Preparation Strategy
+6. Interview Hypothesis
+7. Question Prediction
+8. Coding Preparation
+9. System Design Preparation
+10. Behavioral Preparation
+11. Mock Interviews
+12. Answer Coaching
+13. Post-Interview Debrief
+14. Interview Journey Intelligence (master orchestrator, Document 15)
+
+If Role Intelligence is vague, downstream outputs become generic.
+
+If Role Intelligence is precise, downstream outputs become targeted.
+
+Therefore, this document must optimize for:
+
+- clarity;
+- repeatability;
+- evidence quality;
+- controlled inference;
+- prioritization;
+- and practical downstream usefulness.
+
+---
+
+# 3. Scope
+
+The engine may analyze:
+
+- a Role Intelligence artifact;
+- a Job Description;
+- recruiter messages;
+- hiring-manager messages;
+- interview invitations;
+- company information;
+- team information;
+- recruiter comments about upcoming stages;
+- previous interview questions;
+- previous interview feedback;
+- take-home assignments;
+- technical assessments;
+- public company material;
+- candidate observations;
+- and interview-stage context.
+
+The engine must not perform full candidate matching by itself.
+
+That belongs to the Role Fit and Gap Analysis Framework (Document 04).
+
+The engine may identify likely candidate risks only when necessary to describe the hiring bar.
+
+It must not produce resume rewrites, answer drafts, mock interviews, or study plans unless a downstream framework explicitly requests them.
+
+---
+
+# 4. Definitions
+
+## 4.1 Role Intelligence
+
+A structured interpretation of the business need, hiring intent, technical expectations, behavioral expectations, ownership level, risk profile, and likely interview focus associated with a role.
+
+## 4.2 Hiring Hypothesis
+
+An evidence-based explanation of why the company is hiring and what problem the selected candidate is expected to solve.
+
+## 4.3 Requirement
+
+Any explicit or inferred capability, responsibility, experience, behavior, outcome, or domain knowledge associated with the role.
+
+## 4.4 Hiring Signal
+
+A word, phrase, repeated theme, source statement, task, or organizational clue that indicates what the company values.
+
+## 4.5 Role Archetype
+
+The dominant professional pattern represented by the role, such as Product Backend, Platform Engineering, SRE, AI Engineering, or Full Stack Product Engineering.
+
+## 4.6 Primary Archetype
+
+The archetype that best explains the role's central value creation.
+
+## 4.7 Secondary Archetype
+
+A supporting archetype that materially influences the role but does not define its primary purpose.
+
+## 4.8 Seniority Signal
+
+Evidence indicating expected scope, autonomy, complexity, influence, decision-making, or leadership.
+
+## 4.9 Evidence Item
+
+A discrete statement or observation derived from a source.
+
+## 4.10 Confirmed Fact
+
+A statement directly supported by a reliable source.
+
+## 4.11 Inference
+
+A conclusion derived from one or more evidence items.
+
+## 4.12 Assumption
+
+A plausible but weakly supported interpretation.
+
+Assumptions must never be presented as facts.
+
+## 4.13 Confidence Level
+
+The strength of support behind a conclusion.
+
+Allowed values:
+
+- High
+- Medium
+- Low
+- Unknown
+
+## 4.14 Priority Level
+
+The relative importance of a requirement.
+
+Allowed values:
+
+- Critical
+- High
+- Medium
+- Low
+- Exclude
+
+## 4.15 Interview Focus
+
+A subject area likely to be evaluated during the hiring process.
+
+## 4.16 Business Context
+
+The commercial, product, customer, operational, regulatory, and organizational environment in which the role operates.
+
+---
+
+# 5. Required Inputs
+
+The engine should operate with the strongest available input set.
+
+## 5.1 Preferred Input Set
+
+1. Role Intelligence artifact
+2. Job Description
+3. Current interview stage
+4. Recruiter or interviewer intelligence
+5. Company and team information
+
+## 5.2 Minimum Input Set
+
+At least one of:
+
+- Role Intelligence artifact
+- Job Description
+- substantial recruiter description
+
+The engine may produce a limited analysis with incomplete input.
+
+When inputs are weak, confidence must be reduced.
+
+## 5.3 Input Completeness Classification
+
+### Complete
+The engine has:
+
+- Role Intelligence or detailed JD;
+- team or product context;
+- current stage;
+- and at least one additional source.
+
+### Partial
+The engine has a detailed JD but limited company or team context.
+
+### Minimal
+The engine has only a title, short recruiter message, or incomplete role summary.
+
+### Insufficient
+The available information does not allow responsible analysis.
+
+---
+
+# 6. Source Precedence
+
+When sources conflict, apply the following order by default:
+
+1. Direct statement from hiring manager about the specific role
+2. Role Intelligence artifact generated from verified sources
+3. Current recruiter statement about the specific role
+4. Current Job Description
+5. Current technical assignment or interview brief
+6. Current company careers page
+7. Current team or product page
+8. Reliable public company information
+9. Employee-generated information
+10. General industry patterns
+
+## RI-001 — Source Specificity Rule
+
+A role-specific source must outrank a generic company source.
+
+## RI-002 — Recency Rule
+
+A newer source should outrank an older source when both refer to the same fact.
+
+## RI-003 — Directness Rule
+
+A direct statement should outrank an inferred interpretation.
+
+## RI-004 — Behavioral Evidence Rule
+
+What the company asks candidates to do may be more informative than what the JD says.
+
+Example:
+
+If the JD is generic but the take-home assignment centers on data consistency and retries, reliability must be elevated.
+
+## RI-005 — Conflict Preservation Rule
+
+If credible sources conflict and the conflict cannot be resolved, preserve the contradiction explicitly.
+
+Do not silently choose one version.
+
+## RI-006 — Public Information Limitation Rule
+
+Public company information may provide context but must not override direct role-specific information.
+
+---
+
+# 7. Required Output Schema
+
+Every complete Role Intelligence analysis must produce the following sections:
+
+1. Role Snapshot
+2. Source Quality Assessment
+3. Business Context
+4. Hiring Hypothesis
+5. Primary and Secondary Archetypes
+6. Seniority Assessment
+7. Core Outcomes
+8. Technical Expectations
+9. Behavioral Expectations
+10. Ownership Model
+11. Complexity Profile
+12. Requirement Priority Table
+13. Hiring Signals
+14. Likely Interview Focus
+15. Candidate Risk Categories
+16. Preparation Implications
+17. Confidence and Open Questions
+
+The output may be concise or detailed depending on the user-selected report length.
+
+The logic must remain the same at every length.
+
+See [`schemas/role-intelligence.schema.md`](../schemas/role-intelligence.schema.md) for the structured record this output maps to, and [`outputs/role-intelligence-template.md`](../outputs/role-intelligence-template.md) for the Markdown presentation template.
+
+---
+
+# 8. Mandatory Analysis Sequence
+
+The engine must follow this order:
+
+1. Parse sources
+2. Extract evidence items
+3. Tag evidence by type
+4. Detect contradictions
+5. Identify business context
+6. Generate hiring hypothesis
+7. Classify archetype
+8. Assess seniority
+9. Extract expected outcomes
+10. Extract technical expectations
+11. Extract behavioral expectations
+12. Assess ownership
+13. Assess complexity
+14. Score requirements
+15. Predict interview focus
+16. Identify role-level risks
+17. Generate preparation implications
+18. Validate output
+19. Assign confidence
+20. Present result
+
+## RI-007 — No Premature Preparation Rule
+
+Do not generate preparation recommendations before the role has been analyzed.
+
+## RI-008 — No Requirement Scoring Before Context Rule
+
+Do not score requirements before identifying business context and hiring purpose.
+
+## RI-009 — No Archetype-Only Analysis Rule
+
+Archetypes guide interpretation but must never replace direct evidence.
+
+---
+
+# 9. Evidence Extraction
+
+Each meaningful statement should be converted into an evidence item.
+
+Recommended internal structure:
+
+- Source
+- Exact or paraphrased statement
+- Evidence type
+- Directness
+- Recency
+- Specificity
+- Reliability
+- Related competency
+- Related outcome
+- Possible implication
+- Confidence
+
+## Evidence Types
+
+- Business
+- Product
+- Customer
+- Technical
+- Operational
+- Behavioral
+- Leadership
+- Scope
+- Seniority
+- Interview
+- Organizational
+- Regulatory
+- Domain
+- Risk
+- Scale
+- Ambiguity
+
+## RI-010 — One Evidence Item, One Meaning Rule
+
+A single evidence item should represent one meaningful claim.
+
+## RI-011 — Evidence Traceability Rule
+
+Every important conclusion must be traceable to one or more evidence items.
+
+## RI-012 — Unsupported Conclusion Rule
+
+If a conclusion cannot be traced to evidence, label it as low-confidence inference or omit it.
+
+---
+
+# 10. Business Context Engine
+
+The engine must identify the environment in which the role creates value.
+
+## 10.1 Product Context
+
+Classify the product as one or more of:
+
+- B2B SaaS
+- B2C
+- Marketplace
+- FinTech
+- HealthTech
+- Cybersecurity
+- Infrastructure platform
+- Developer tooling
+- Internal platform
+- Data platform
+- AI product
+- Enterprise software
+- Consumer application
+- Embedded or hardware-integrated system
+- Regulated system
+- Mission-critical operational system
+
+## 10.2 Customer Context
+
+Identify:
+
+- end users;
+- internal users;
+- enterprise customers;
+- developers;
+- operations teams;
+- finance teams;
+- regulated institutions;
+- consumers;
+- partners;
+- or unknown.
+
+## 10.3 Business Model Context
+
+Identify when supported:
+
+- subscription;
+- usage-based pricing;
+- transaction fees;
+- advertising;
+- licensing;
+- marketplace commission;
+- services;
+- internal cost reduction;
+- or unknown.
+
+## 10.4 Team Context
+
+Identify:
+
+- greenfield versus mature;
+- platform versus product;
+- small team versus large organization;
+- centralized versus embedded team;
+- high autonomy versus process-heavy;
+- startup versus enterprise;
+- internal customer versus external customer.
+
+## 10.5 Business Risk Context
+
+Identify whether the system affects:
+
+- revenue;
+- customer trust;
+- financial correctness;
+- compliance;
+- availability;
+- security;
+- operational efficiency;
+- time to market;
+- cost;
+- internal productivity.
+
+## RI-013 — Revenue Proximity Rule
+
+Capabilities directly connected to revenue generation, billing, payments, conversion, or retention must receive higher priority.
+
+## RI-014 — Trust-Critical Rule
+
+In systems handling money, identity, healthcare, security, or compliance, correctness and auditability must be elevated.
+
+## RI-015 — Internal Platform Rule
+
+For internal platform roles, developer experience, adoption, reliability, and standardization are core business outcomes.
+
+## RI-016 — Startup Ambiguity Rule
+
+In early-stage environments, breadth, speed, and ownership should receive more weight.
+
+## RI-017 — Enterprise Coordination Rule
+
+In large organizations, cross-team communication, governance, integration, and operational discipline should receive more weight.
+
+---
+
+# 11. Hiring Hypothesis Engine
+
+The hiring hypothesis must explain:
+
+1. why the role exists;
+2. what the company needs the person to own;
+3. what outcome the company expects;
+4. what risk the company is trying to reduce;
+5. what gap currently exists.
+
+A strong hiring hypothesis follows this structure:
+
+> The company is hiring a [role archetype and seniority] because [business or operational need]. The selected candidate is expected to [core ownership] so that [business or technical outcome]. The likely hiring risk is [what failure would look like].
+
+## RI-018 — Business-First Hypothesis Rule
+
+The hiring hypothesis must begin with business or organizational need, not a list of technologies.
+
+## RI-019 — Outcome Requirement Rule
+
+Every hiring hypothesis must include at least one expected outcome.
+
+## RI-020 — Ownership Requirement Rule
+
+Every hiring hypothesis must identify what the candidate is expected to own.
+
+## RI-021 — Gap Inference Rule
+
+Do not claim an internal team gap unless supported by evidence.
+
+Use language such as "likely" or "appears to" when inference is required.
+
+## RI-022 — Generic JD Rule
+
+When the JD is generic, infer cautiously from:
+
+- role title;
+- team name;
+- product context;
+- repeated responsibilities;
+- recruiter wording;
+- and interview stage.
+
+---
+
+# 12. Role Archetype Classification
+
+The engine must identify one primary archetype and up to two secondary archetypes.
+
+## 12.1 Product Backend
+
+Primary value: delivering product functionality through backend services.
+
+Common signals: REST or GraphQL APIs; business logic; data models; customer-facing features; microservices; product collaboration.
+
+Typical interview focus: coding; API design; databases; system design; business logic; reliability.
+
+## 12.2 Platform Engineering
+
+Primary value: enabling other engineers or systems through shared infrastructure and abstractions.
+
+Signals: internal platform; reusable components; paved roads; developer productivity; standardization; shared services; self-service.
+
+Typical interview focus: system design; API contracts; scalability; adoption; reliability; trade-offs.
+
+## 12.3 Infrastructure Engineering
+
+Primary value: compute, networking, deployment, storage, or foundational runtime systems.
+
+Signals: Kubernetes; cloud infrastructure; networking; storage; deployment; provisioning; orchestration.
+
+Typical interview focus: Linux; networking; distributed systems; automation; failure handling; observability.
+
+## 12.4 Site Reliability Engineering
+
+Primary value: maintaining reliability, availability, operability, and production health.
+
+Signals: SLOs; error budgets; on-call; incidents; observability; capacity; automation.
+
+Typical interview focus: debugging; reliability; incident response; system design; automation; production trade-offs.
+
+## 12.5 Full Stack Product Engineering
+
+Primary value: owning customer-facing experiences across frontend and backend.
+
+Signals: React or similar frontend stack; backend APIs; product ownership; end-to-end features.
+
+Typical interview focus: frontend fundamentals; backend fundamentals; product thinking; API design; code quality.
+
+## 12.6 AI Engineering
+
+Primary value: building AI-enabled products or systems.
+
+Signals: LLMs; RAG; agents; embeddings; model serving; evaluation; prompt systems; AI infrastructure.
+
+Typical interview focus: AI system design; evaluation; retrieval; data; reliability; cost; model limitations.
+
+## 12.7 Data Engineering
+
+Primary value: reliable movement, modeling, and processing of data.
+
+Signals: pipelines; ETL or ELT; warehouses; streaming; Spark; data quality; orchestration.
+
+Typical interview focus: SQL; data modeling; distributed processing; consistency; pipeline reliability.
+
+## 12.8 Security Engineering
+
+Primary value: reducing security risk through systems, tooling, controls, or architecture.
+
+Signals: authentication; authorization; threat detection; security tooling; IAM; compliance; cryptography.
+
+Typical interview focus: threat modeling; security architecture; least privilege; incident handling; secure coding.
+
+## 12.9 Mobile Engineering
+
+Primary value: delivering mobile applications or SDKs.
+
+Signals: iOS; Android; React Native; mobile performance; offline behavior; app lifecycle.
+
+## 12.10 Developer Productivity
+
+Primary value: improving engineering speed, quality, and consistency.
+
+Signals: CI/CD; build systems; internal tooling; testing infrastructure; templates; code generation.
+
+## 12.11 FinTech Backend
+
+Primary value: reliable financial workflows and transaction correctness.
+
+Signals: payments; billing; ledgers; reconciliation; fraud; compliance; transaction processing.
+
+Typical interview focus: idempotency; consistency; transactions; auditability; retries; concurrency.
+
+## 12.12 Enterprise Integration
+
+Primary value: integrating internal and external systems reliably.
+
+Signals: partners; APIs; mapping; adapters; enterprise clients; legacy systems; integration contracts.
+
+Typical interview focus: API contracts; compatibility; fault isolation; data mapping; observability; change management.
+
+## RI-023 — Primary Value Rule
+
+Choose the primary archetype based on the role's central value creation, not the longest technology list.
+
+## RI-024 — Maximum Archetype Rule
+
+Do not assign more than one primary and two secondary archetypes.
+
+## RI-025 — Mixed Role Rule
+
+When a role is genuinely mixed, assign confidence and describe the split.
+
+## RI-026 — Title Mismatch Rule
+
+Do not trust the title when responsibilities clearly indicate another archetype.
+
+---
+
+# 13. Seniority Assessment Engine
+
+Seniority must be assessed across dimensions, not inferred from years alone.
+
+## 13.1 Dimensions
+
+Score each dimension from 0 to 4.
+
+### A. Technical Scope
+
+0 — narrow tasks; 1 — feature-level work; 2 — service-level ownership; 3 — multi-service or domain ownership; 4 — organization-wide technical scope.
+
+### B. Autonomy
+
+0 — close guidance; 1 — guided implementation; 2 — independent execution; 3 — ambiguous problem ownership; 4 — defines direction under ambiguity.
+
+### C. Architecture
+
+0 — no design expectation; 1 — contributes to design; 2 — designs components; 3 — designs systems; 4 — defines architecture across teams.
+
+### D. Business Impact
+
+0 — local task output; 1 — feature impact; 2 — product or service outcome; 3 — business-critical outcome; 4 — strategic company impact.
+
+### E. Cross-Team Influence
+
+0 — individual contributor only; 1 — within team; 2 — collaborates across teams; 3 — influences multiple teams; 4 — sets organizational direction.
+
+### F. Leadership
+
+0 — none; 1 — helps peers; 2 — mentors or leads initiatives; 3 — technical leadership; 4 — organizational leadership.
+
+### G. Operational Ownership
+
+0 — no production responsibility; 1 — limited support; 2 — owns production behavior; 3 — owns reliability and incident response; 4 — defines operational standards.
+
+### H. Ambiguity
+
+0 — clearly defined tasks; 1 — moderate ambiguity; 2 — open-ended feature work; 3 — unclear business and technical problem; 4 — creates structure from strategic ambiguity.
+
+## 13.2 Suggested Interpretation
+
+0–7: Junior
+8–14: Mid-Level
+15–21: Senior
+22–27: Senior Plus / Lead
+28–32: Staff or Principal
+
+The score is a guide, not an absolute label.
+
+## RI-027 — Years Are Supporting Evidence Rule
+
+Years of experience may support seniority classification but must not determine it.
+
+## RI-028 — Ownership Overrides Title Rule
+
+If ownership and scope indicate a higher or lower level than the title, report the mismatch.
+
+## RI-029 — Staff Signal Rule
+
+Staff-level classification requires meaningful cross-team influence, architecture scope, or organizational leverage.
+
+## RI-030 — Lead Title Rule
+
+A "Lead" title does not automatically imply people management.
+
+Distinguish technical leadership from management.
+
+## RI-031 — Seniority Confidence Rule
+
+Seniority confidence should be reduced when only years and title are available.
+
+---
+
+# 14. Ownership Model
+
+Ownership should be classified across five layers.
+
+1. Task ownership
+2. Feature ownership
+3. Service ownership
+4. Domain ownership
+5. Organizational ownership
+
+The engine should also determine whether ownership is:
+
+- execution ownership;
+- technical decision ownership;
+- operational ownership;
+- stakeholder ownership;
+- roadmap ownership;
+- quality ownership;
+- or mentoring ownership.
+
+## RI-032 — End-to-End Rule
+
+"End-to-end ownership" must not be treated as a generic phrase.
+
+Translate it into specific ownership categories.
+
+## RI-033 — Production Ownership Rule
+
+If the role includes on-call, observability, reliability, or incident handling, operational ownership is mandatory.
+
+## RI-034 — Cross-Functional Ownership Rule
+
+If the role collaborates with Product, Finance, Sales, Security, or Operations, stakeholder ownership should be elevated.
+
+---
+
+# 15. Complexity Assessment
+
+Assess four independent complexity dimensions.
+
+## 15.1 Technical Complexity
+
+Signals: distributed systems; concurrency; high throughput; low latency; consistency; large datasets; complex integrations; security; multiple failure modes.
+
+## 15.2 Product Complexity
+
+Signals: complex workflows; multiple user types; regulated decisions; financial correctness; personalization; experimentation; many edge cases.
+
+## 15.3 Operational Complexity
+
+Signals: 24/7 availability; on-call; strict SLAs; high incident cost; multi-region systems; real-time behavior; legacy dependencies.
+
+## 15.4 Organizational Complexity
+
+Signals: many stakeholders; cross-team dependencies; enterprise customers; compliance; external partners; distributed teams; governance.
+
+Each dimension should be classified: Low, Moderate, High, Very High.
+
+## RI-035 — Complexity Separation Rule
+
+Do not collapse all complexity into a single label.
+
+## RI-036 — Interview Depth Rule
+
+Higher complexity should increase expected interview depth in relevant areas.
+
+## RI-037 — Regulated Complexity Rule
+
+Regulation increases product and organizational complexity even when the technology stack appears ordinary.
+
+---
+
+# 16. Requirement Classification
+
+Every requirement should be tagged by category.
+
+Allowed categories: Core outcome, Technical capability, Domain knowledge, Operational capability, Behavioral capability, Leadership capability, Collaboration capability, Tool familiarity, Constraint, Nice-to-have, Disqualifier, Interview-specific signal.
+
+## RI-038 — Outcome Before Tool Rule
+
+A business or technical outcome must outrank the tool used to achieve it.
+
+Example: "Build reliable event-driven services" is more important than "Kafka."
+
+## RI-039 — Tool Substitutability Rule
+
+If a tool is likely substitutable, score the underlying capability higher than exact tool match.
+
+## RI-040 — Explicit Mandatory Rule
+
+A requirement labeled "must," "required," or "mandatory" should receive a priority increase, but not automatic Critical status.
+
+## RI-041 — Disqualifier Rule
+
+Only classify a requirement as a disqualifier when the source explicitly indicates it or when the role cannot realistically be performed without it.
+
+---
+
+# 17. Requirement Priority Scoring
+
+Each requirement receives a weighted score from 0 to 100.
+
+## 17.1 Formula
+
+Priority Score =
+
+- Business Impact: 0–25
+- Core Responsibility Alignment: 0–20
+- Ownership Relevance: 0–15
+- Evidence Strength: 0–15
+- Repetition or Emphasis: 0–10
+- Interview Relevance: 0–10
+- Non-Substitutability: 0–5
+
+Total: 100
+
+## 17.2 Interpretation
+
+90–100: Critical
+75–89: High
+50–74: Medium
+25–49: Low
+0–24: Exclude or background
+
+## 17.3 Business Impact
+
+0 — negligible; 5 — useful; 10 — team productivity; 15 — product outcome; 20 — business-critical; 25 — revenue, trust, compliance, or existential impact.
+
+## 17.4 Core Responsibility Alignment
+
+0 — unrelated; 5 — peripheral; 10 — supporting; 15 — frequent responsibility; 20 — central to the role.
+
+## 17.5 Ownership Relevance
+
+0 — incidental; 5 — contributes; 10 — owns execution; 15 — owns outcome.
+
+## 17.6 Evidence Strength
+
+0 — speculative; 5 — weak inference; 10 — explicit in one source; 15 — explicit across multiple strong sources.
+
+## 17.7 Repetition
+
+0 — absent; 3 — mentioned once; 6 — repeated; 8 — heavily emphasized; 10 — reinforced across sources.
+
+## 17.8 Interview Relevance
+
+0 — unlikely to be tested; 3 — possible; 6 — likely; 10 — explicitly tied to an interview stage.
+
+## 17.9 Non-Substitutability
+
+0 — easily transferable; 2 — partially substitutable; 5 — exact capability is essential.
+
+## RI-042 — Scoring Consistency Rule
+
+Use the same scoring model for all requirements.
+
+## RI-043 — Critical Threshold Rule
+
+A requirement should not be Critical solely because it appears under "Requirements."
+
+## RI-044 — Transferable Skill Rule
+
+When exact tools differ but the capability transfers, reduce non-substitutability rather than overall relevance.
+
+## RI-045 — Stage Adjustment Rule
+
+Interview relevance may increase when the current stage specifically targets that skill.
+
+## RI-046 — Score Explanation Rule
+
+For Critical and High requirements, briefly explain the score.
+
+---
+
+# 18. Hiring Signal Catalog
+
+## 18.1 Ownership Signals
+
+own, drive, lead, architect, define, shape, end-to-end, accountable, take initiative.
+
+Implication: Higher autonomy and decision-making expectations.
+
+## 18.2 Scale Signals
+
+millions, high throughput, low latency, global, real time, high scale, distributed, multi-region.
+
+Implication: Higher probability of system design, performance, reliability, and concurrency evaluation.
+
+## 18.3 Reliability Signals
+
+mission critical, resilient, fault tolerant, high availability, on-call, incident response, SLO, SLA.
+
+Implication: Higher operational ownership and failure-handling expectations.
+
+## 18.4 Leadership Signals
+
+mentor, influence, technical direction, set standards, guide, advise, lead projects.
+
+Implication: Behavioral and architecture evaluation likely.
+
+## 18.5 Collaboration Signals
+
+cross-functional, partner with, stakeholder, product, finance, sales, customers, external teams.
+
+Implication: Communication and stakeholder management matter.
+
+## 18.6 Greenfield Signals
+
+build from scratch, new team, zero to one, establish foundations, define architecture.
+
+Implication: Ambiguity tolerance and architecture depth matter.
+
+## 18.7 Mature-System Signals
+
+optimize, modernize, migrate, improve reliability, scale existing systems, legacy.
+
+Implication: Incremental change, migration strategy, and risk management matter.
+
+## 18.8 Product Signals
+
+user experience, customer impact, experimentation, product decisions, metrics, conversion.
+
+Implication: Product thinking and trade-off awareness matter.
+
+## 18.9 Security and Compliance Signals
+
+regulated, audit, privacy, authentication, authorization, compliance, sensitive data.
+
+Implication: Security, correctness, traceability, and risk management matter.
+
+## RI-047 — Repetition Signal Rule
+
+Repeated themes across sections should receive more weight than repeated wording within one boilerplate paragraph.
+
+## RI-048 — Verb Signal Rule
+
+Action verbs reveal ownership expectations more reliably than broad adjectives.
+
+## RI-049 — Adjective Caution Rule
+
+Words such as "passionate," "dynamic," and "excellent" are weak signals unless connected to concrete expectations.
+
+---
+
+# 19. Technical Expectations Engine
+
+Technical requirements should be grouped into capability clusters: Coding and Language, Backend Systems, Distributed Systems, Data, Cloud and Infrastructure, Reliability and Observability, Security, AI Systems.
+
+## RI-050 — Capability Cluster Rule
+
+Do not list technologies without explaining the capability they represent.
+
+## RI-051 — Depth Inference Rule
+
+Repeated ownership language around a technology indicates expected depth.
+
+## RI-052 — Exposure Versus Mastery Rule
+
+Distinguish between exposure, working proficiency, ownership, and expert-level expectation.
+
+## RI-053 — Production Signal Rule
+
+"Production" raises expectations for reliability, observability, testing, and failure handling.
+
+---
+
+# 20. Behavioral Expectations Engine
+
+The engine must identify behavioral expectations that are role-relevant: Ownership, Communication, Collaboration, Leadership, Product Thinking, Learning and Adaptability.
+
+## RI-054 — Generic Value Rule
+
+Do not elevate generic company values unless tied to specific role behavior.
+
+## RI-055 — Behavioral Evidence Rule
+
+Behavioral expectations should be connected to actual responsibilities.
+
+## RI-056 — Senior Behavioral Rule
+
+Senior roles should be assessed for decision quality, influence, and ownership—not just teamwork.
+
+---
+
+# 21. Interview Focus Prediction
+
+## 21.1 Focus Categories
+
+Recruiter screening, Hiring-manager discussion, Coding algorithms, Practical coding, Backend fundamentals, System design, Distributed systems, Databases, Cloud and infrastructure, Debugging, Security, AI systems, Behavioral, Leadership, Product sense, Domain knowledge, Take-home assessment.
+
+## 21.2 Prediction Inputs
+
+role archetype; seniority; complexity; required outcomes; technical requirements; current interview stage; recruiter comments; known company process; assignment content; previous questions.
+
+## 21.3 Probability Labels
+
+Very Likely, Likely, Possible, Unlikely, Unknown.
+
+## RI-057 — Stage Dominance Rule
+
+Known stage information must override generic company-pattern assumptions.
+
+## RI-058 — Assignment Signal Rule
+
+A take-home assignment strongly predicts follow-up discussion topics.
+
+## RI-059 — Seniority Depth Rule
+
+Higher seniority increases the probability of architecture, trade-offs, leadership, and ambiguity evaluation.
+
+## RI-060 — Archetype Focus Rule
+
+Archetype should influence, but not determine, the predicted focus.
+
+## RI-061 — No False Precision Rule
+
+Do not invent numerical probabilities without enough evidence.
+
+---
+
+# 22. Candidate Risk Categories
+
+Role Intelligence may identify role-level hiring risks: Technical depth risk, Exact stack risk, Scale risk, Production ownership risk, Architecture risk, Domain risk, Leadership risk, Communication risk, Product thinking risk, Security risk, Operational risk, Seniority mismatch risk.
+
+This section must describe what the company may worry about in a candidate.
+
+It must not yet evaluate the actual user.
+
+## RI-062 — Role-Level Risk Rule
+
+Phrase risks as hiring concerns implied by the role.
+
+## RI-063 — No Candidate Judgment Rule
+
+Do not claim the user has a gap before the Resume Intelligence and Fit frameworks are applied.
+
+## RI-064 — Risk-Outcome Link Rule
+
+Each risk must be connected to a role outcome.
+
+---
+
+# 23. Preparation Implications
+
+This section translates Role Intelligence into downstream priorities: what preparation modules matter most, what topics should receive more weight, what types of examples will likely be useful, what interview stages may require deeper preparation.
+
+## RI-065 — Objective Control Rule
+
+Role Intelligence influences preparation priorities, but the user's requested objective controls the output.
+
+## RI-066 — No Generic Plan Rule
+
+Preparation implications must be role-specific.
+
+## RI-067 — Exclusion Rule
+
+Explicitly identify low-value topics when useful.
+
+---
+
+# 24. Confidence Framework
+
+Every major conclusion should receive a confidence level: High, Medium, Low, Unknown (see Section 4.13 for definitions).
+
+## RI-068 — Confidence Is Evidence Quality Rule
+
+Confidence measures support, not importance.
+
+## RI-069 — Separate Priority and Confidence Rule
+
+A requirement can be Critical but low confidence.
+
+## RI-070 — Explicit Uncertainty Rule
+
+When confidence is low, explain why.
+
+---
+
+# 25. Contradiction Handling
+
+Common contradictions: title versus responsibilities; JD versus recruiter statement; required versus nice-to-have sections; seniority label versus ownership; company branding versus actual assignment; technology list versus business need.
+
+## Contradiction Resolution Process
+
+1. Identify the conflicting claims.
+2. Compare source precedence.
+3. Compare recency.
+4. Compare specificity.
+5. Compare behavioral evidence.
+6. Resolve when justified.
+7. Otherwise preserve the conflict.
+8. Reduce confidence.
+
+## RI-071 — No Silent Resolution Rule
+
+Never hide a meaningful contradiction.
+
+## RI-072 — Behavioral Override Rule
+
+Actual interview tasks may override generic written claims.
+
+## RI-073 — Title Conflict Rule
+
+If the title says Senior but the role scope is Mid-level, report the mismatch.
+
+---
+
+# 26. Missing Information Handling
+
+When information is missing:
+
+1. Complete the analysis with available evidence.
+2. Mark unknown fields.
+3. Reduce confidence.
+4. List the most valuable missing questions.
+5. Do not block unless analysis is impossible.
+
+## RI-074 — Bounded Clarification Rule
+
+Ask only questions that materially improve preparation.
+
+## RI-075 — No Repeated Questions Rule
+
+Do not ask for information already provided.
+
+## RI-076 — Progress Despite Gaps Rule
+
+Proceed with a partial analysis when possible.
+
+---
+
+# 27. Anti-Patterns
+
+The engine must not:
+
+1. Copy the JD into a summary.
+2. Treat all requirements equally.
+3. Assume exact tool mismatch is always a major gap.
+4. Infer seniority only from years.
+5. Invent company interview processes.
+6. Present assumptions as facts.
+7. Ignore business context.
+8. Ignore ownership language.
+9. Overvalue generic company values.
+10. Overfit to role titles.
+11. List technologies without capability interpretation.
+12. Produce generic preparation advice.
+13. Score requirements before understanding the role.
+14. Use public company information to override direct role evidence.
+15. Produce false precision.
+16. Confuse archetype with exact job scope.
+17. Assume every repeated keyword is meaningful.
+18. Infer candidate gaps without resume analysis.
+19. Bury uncertainty.
+20. Generate a long answer when the user requested concise output.
+
+---
+
+# 28. Failure Modes
+
+## Failure Mode A — Generic JD
+
+Response: use role title, team, product, and responsibilities; infer cautiously; mark low-confidence conclusions; request only the most valuable missing information.
+
+## Failure Mode B — Contradictory Sources
+
+Response: preserve contradiction; use precedence rules; reduce confidence; explain impact.
+
+## Failure Mode C — Technology-Heavy JD
+
+Response: cluster technologies into capabilities; identify business outcomes; avoid tool-list analysis.
+
+## Failure Mode D — Overly Broad Role
+
+Response: identify primary and secondary archetypes; identify the dominant value stream; highlight scope ambiguity.
+
+## Failure Mode E — Minimal Recruiter Message
+
+Response: provide provisional Role Snapshot; label analysis as limited; avoid detailed scoring unsupported by evidence.
+
+## Failure Mode F — Unknown Interview Stage
+
+Response: complete role analysis; state that interview prediction is less reliable; ask for the stage only when preparation depends on it.
+
+## Failure Mode G — Inflated Title
+
+Response: classify seniority by scope; report title-scope mismatch.
+
+## Failure Mode H — Hidden Business Need
+
+Response: infer from product, team, and responsibilities; preserve uncertainty; avoid invented internal problems.
+
+---
+
+# 29. Output Templates
+
+## 29.1 Concise Output (Quick mode)
+
+Role Snapshot (2–4 sentences), Hiring Hypothesis (1 paragraph), Top Priorities (3–5 items), Likely Interview Focus (3–5 items), Key Uncertainties (up to 3 items).
+
+## 29.2 Standard Output
+
+Role Snapshot, Business Context, Hiring Hypothesis, Archetype and Seniority, Core Technical Expectations, Core Behavioral Expectations, Interview Focus, Preparation Priorities, Confidence and Open Questions.
+
+## 29.3 Professional Deep Dive
+
+Use the complete required output schema (Section 7) with scoring tables, confidence labels, contradictions, and preparation implications.
+
+These three depths correspond to the Quick / Standard / Professional output modes defined in [`core/output-contracts.md`](../core/output-contracts.md).
+
+---
+
+# 30. Validation Checklist
+
+Before finalizing, verify:
+
+**Evidence** — Are important conclusions traceable? Are facts separated from inference? Are weak assumptions labeled?
+
+**Business** — Is the business need identified? Is the core outcome clear? Is the risk of failure understood?
+
+**Role** — Is the primary archetype identified? Is seniority assessed by scope? Is ownership explicit? Is complexity separated by dimension?
+
+**Requirements** — Are requirements grouped by capability? Are priorities scored consistently? Are tools separated from outcomes? Are Critical requirements justified?
+
+**Interview** — Is current stage considered? Are predictions evidence-based? Is false precision avoided?
+
+**Output** — Is the answer aligned with requested length? Is uncertainty visible? Are preparation implications actionable? Is generic content removed?
+
+If any answer is "No," revise before final output.
+
+---
+
+# 31. Deterministic Decision Summary
+
+1. Trust specific and recent role evidence.
+2. Identify the business need before technologies.
+3. Infer the hiring hypothesis from outcomes and ownership.
+4. Classify the role by primary value creation.
+5. Assess seniority by scope, autonomy, architecture, and influence.
+6. Group requirements into capabilities.
+7. Score requirements using the same weighted model.
+8. Predict interviews using stage, archetype, seniority, and evidence.
+9. Preserve contradictions and uncertainty.
+10. Translate findings into role-specific preparation priorities.
+11. Validate every major conclusion.
+12. Match the user's requested output length.
+
+---
+
+# 32. Worked Example
+
+## Input Signals
+
+Senior Backend Engineer; Payments platform; Microservices; Kafka; PostgreSQL; High scale; Own services end-to-end; Work with Product and Finance; Improve reliability; Participate in on-call.
+
+## Business Context
+
+FinTech; Revenue-critical; Correctness-sensitive; Operationally complex; Cross-functional.
+
+## Hiring Hypothesis
+
+The company is hiring a senior backend engineer to own revenue-critical payment services and improve their reliability as transaction volume grows. The selected candidate is expected to design, operate, and evolve distributed services while coordinating with Product and Finance. The major hiring risk is selecting someone who can build features but lacks production ownership and correctness discipline.
+
+## Archetypes
+
+Primary: FinTech Backend. Secondary: Product Backend. Secondary: SRE-oriented Backend.
+
+## Seniority
+
+Technical Scope 3, Autonomy 3, Architecture 3, Business Impact 3, Cross-Team Influence 2, Leadership 2, Operational Ownership 3, Ambiguity 2. Total: 21. Interpretation: Senior.
+
+## Top Requirements
+
+Distributed reliability — Critical — Score 94 — Central to payment correctness and explicitly reinforced by scale, Kafka, reliability, and on-call.
+
+End-to-end service ownership — Critical — Score 91 — Explicit ownership language and direct production impact.
+
+Data consistency and transactions — High — Score 88 — Strongly implied by payments and PostgreSQL, even if not repeated.
+
+## Likely Interview Focus
+
+System Design — Very Likely. Distributed Systems — Very Likely. Database Transactions — Likely. Behavioral Ownership — Likely. Coding — Likely. Frontend — Unlikely.
+
+## Preparation Implications
+
+1. Payment workflow design
+2. Idempotency and retry handling
+3. Transaction boundaries
+4. Event delivery semantics
+5. Incident ownership
+6. Cross-functional communication examples
+
+This example demonstrates the required reasoning style.
+
+---
+
+# 33. Final Operating Principle
+
+The Role Intelligence Decision Engine must convert role information into a prioritized, evidence-based model of the company's hiring intent.
+
+It must behave like an analyst, not a summarizer.
+
+It must be structured enough to reduce randomness, cautious enough to avoid fabrication, practical enough to guide preparation, and flexible enough to work across roles and industries.
+
+The final test is simple:
+
+> Does this analysis make the next interview-preparation step more specific, more relevant, and more effective?
+
+If the answer is not clearly yes, the Role Intelligence analysis is incomplete.
+
+## Related documents
+
+- [`core/orchestration-policy.md`](../core/orchestration-policy.md)
+- [`schemas/role-intelligence.schema.md`](../schemas/role-intelligence.schema.md)
+- [`workflows/analyze-role.md`](../workflows/analyze-role.md)
+- [`outputs/role-intelligence-template.md`](../outputs/role-intelligence-template.md)
+- [`02-resume-intelligence-framework.md`](02-resume-intelligence-framework.md)

@@ -1,0 +1,46 @@
+# Evidence Policy
+
+This document defines how Interview Journey treats every material claim about the candidate, the role, the interview process, and the interviewers. It applies equally to the Claude and ChatGPT product surfaces and underlies every framework in [`frameworks/`](../frameworks/), especially [Resume Intelligence (02)](../frameworks/02-resume-intelligence-framework.md), [Role Intelligence (01)](../frameworks/01-role-intelligence-framework.md), and [Post-Interview Debrief (14)](../frameworks/14-post-interview-debrief-framework.md).
+
+## The product must never invent
+
+- Candidate experience, projects, ownership, metrics, or achievements.
+- Recruiter statements.
+- Interview feedback.
+- Previous interview questions.
+- Interview process details.
+- Interviewer information.
+- Company information.
+- Technical assessment requirements.
+
+## Evidence classification
+
+Every material statement should be classified internally as one of:
+
+- **Confirmed** — directly supported by a source the candidate provided (resume, recruiter message, prior feedback, a pasted Job Description) or a direct statement in the current conversation.
+- **Reasonable inference** — a conclusion drawn from confirmed evidence, but not itself directly stated.
+- **General interview guidance** — advice not tied to specific evidence about this role, resume, or process; drawn from the canonical frameworks' general patterns.
+- **Unknown** — insufficient evidence exists.
+
+The user-facing response does not need to mechanically label every sentence, but uncertainty must be visible wherever it is material to the candidate's decision-making.
+
+## Rules
+
+1. Never invent candidate experience, projects, ownership, metrics, achievements, recruiter statements, interview feedback, previous questions, process details, interviewer information, company information, or assessment requirements.
+2. Treat every resume or recruiter claim as evidence, not fact — see [Resume Intelligence Rule RIE-002](../frameworks/02-resume-intelligence-framework.md#core-rules).
+3. Unknown is better than guessing — see [Resume Intelligence Rule RIE-005](../frameworks/02-resume-intelligence-framework.md#core-rules).
+4. When a source framework document is unavailable or incomplete, preserve a clearly documented placeholder or dependency boundary rather than fabricating its contents.
+5. Ask one focused question only when the answer would materially change preparation — see [`context-priority.md`](context-priority.md).
+6. Do not ask for information that already exists in the active Interview Journey State.
+7. Never assume interview rejection reasons without evidence — see [Post-Interview Debrief Rule PD-005](../frameworks/14-post-interview-debrief-framework.md#core-rules).
+8. Behavioral answers must be based on real candidate experience only — see [Behavioral Framework Rule BI-002](../frameworks/11-behavioral-interview-framework.md#core-rules).
+9. Coaching feedback must target the real error class, not an invented one — see [Coding Framework CI-009](../frameworks/09-coding-interview-decision-engine.md#3-core-operating-principles).
+10. Every hypothesis, prediction, or gap must be evidence-backed — see [Interview Hypothesis IH-001](../frameworks/08-interview-hypothesis-framework.md#core-rules) and [Question Prediction QP-001](../frameworks/07-question-prediction-framework.md#rules).
+
+## Related documents
+
+- [`accuracy-policy.md`](accuracy-policy.md)
+- [`context-priority.md`](context-priority.md)
+- [`quality-gates.md`](quality-gates.md)
+- [`../frameworks/01-role-intelligence-framework.md`](../frameworks/01-role-intelligence-framework.md)
+- [`../frameworks/02-resume-intelligence-framework.md`](../frameworks/02-resume-intelligence-framework.md)
