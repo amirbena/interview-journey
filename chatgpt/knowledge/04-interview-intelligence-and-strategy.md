@@ -32,6 +32,7 @@ Continuously enrich preparation using new interview information.
 - Feedback
 - Take-home assignments
 - User observations
+- Public company, team, role, interviewer, hiring-manager, or interview-process research (see [`workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md) and [`schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md))
 
 ---
 
@@ -52,12 +53,33 @@ Convert every new insight into preparation actions.
 ## II-005
 Keep historical context; don't overwrite it.
 
+## II-006
+Public research evidence requires source provenance and retrieval metadata. Every public research finding must include a source identifier, `retrieved_at` timestamp, and reliability classification before it enters the evidence model. A finding without these fields must not be merged.
+
+## II-007
+Chronology must be represented by timestamps, not only by narrative order. "The recruiter said…" is not sufficient — the approximate date of the recruiter conversation, where available, determines its position relative to other evidence.
+
+## II-008
+Public research must be classified as `public_research_unverified` or `corroborated_public_research` per [`core/evidence-policy.md`](../core/evidence-policy.md). It must never be treated as Confirmed.
+
+## II-009
+User-reported direct interview evidence outranks conflicting unverified public research. When a conflict exists, preserve both sides explicitly rather than silently discarding the lower-priority finding.
+
+## II-010
+Official current role-specific material (a current JD, current careers page, current team page) may corroborate public research findings, elevating their classification from unverified to corroborated.
+
+## II-011
+Missing retrieval dates reduce confidence. Public research evidence with no `retrieved_at` must be treated as unknown freshness and classified accordingly.
+
+## II-012
+Stale employment or role claims must not be presented as current. A public LinkedIn profile title retrieved today does not confirm the person still holds that role if the profile appears outdated or unverified.
+
 ---
 
 # Workflow
 
-1. Capture new evidence.
-2. Classify it.
+1. Capture new evidence (including public research if supplied).
+2. Classify it — assign evidence class, source provenance, and freshness per `core/evidence-policy.md`.
 3. Update interview hypotheses.
 4. Update question predictions.
 5. Update preparation priorities.
@@ -86,6 +108,9 @@ Every interview should make the next interview preparation smarter.
 - [`08-interview-hypothesis-framework.md`](08-interview-hypothesis-framework.md)
 - [`07-question-prediction-framework.md`](07-question-prediction-framework.md)
 - [`14-post-interview-debrief-framework.md`](14-post-interview-debrief-framework.md)
+- [`../schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md)
+- [`../workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md)
+- [`../core/evidence-policy.md`](../core/evidence-policy.md)
 
 
 ---
@@ -170,4 +195,504 @@ Prepare only what meaningfully increases the probability of passing the next int
 - [`04-role-fit-gap-analysis-framework.md`](04-role-fit-gap-analysis-framework.md)
 - [`07-question-prediction-framework.md`](07-question-prediction-framework.md)
 - [`08-interview-hypothesis-framework.md`](08-interview-hypothesis-framework.md)
+
+
+---
+
+## Source: `schemas/public-research-evidence.schema.md`
+
+# Public Research Evidence Schema
+
+**Schema ID:** public-research-evidence
+**Version:** 1.0
+**Used by:** [`workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md), Framework 05, Framework 01
+
+> This schema defines the structured evidence package produced by the bounded research workflow. It is consumed by Framework 05 (Interview Intelligence merge), Framework 01 (Role Intelligence source precedence), and Frameworks 07–08 (question prediction and hypotheses). It is not an output format — it is an internal evidence handoff contract between the research workflow and the preparation frameworks.
+
+---
+
+## Required Fields
+
+```yaml
+research_objective: >
+  # One-sentence statement of what was researched and why it matters for
+  # the current preparation objective.
+
+subject: >
+  # The specific company, role, team, person, or interview process researched.
+
+subject_type:
+  # One of:
+  - company
+  - role
+  - team
+  - recruiter
+  - interviewer
+  - hiring_manager
+  - interview_process
+  - technical_assignment
+
+retrieved_at: >
+  # ISO 8601 timestamp of when this research package was assembled.
+  # Required — a package without retrieved_at must not enter the evidence model.
+
+research_status:
+  # One of:
+  - complete       # reliable findings were retrieved for all stated objectives
+  - partial        # some objectives yielded findings; others did not
+  - no_reliable_findings  # research ran but no findings met the reliability threshold
+```
+
+---
+
+## Findings
+
+```yaml
+findings:
+  - claim: >
+      # The specific factual claim supported by this source.
+      # Must be a single, falsifiable statement.
+      # Do not bundle multiple claims into one finding.
+
+    source_title: >
+      # A short human-readable description of the source
+      # (e.g., "Official company careers page", "Interviewer LinkedIn profile").
+
+    source_reference: >
+      # URL or description sufficient to locate the source.
+      # If the source was inaccessible or only a snippet, state that explicitly.
+
+    source_type:
+      # One of (in decreasing reliability order):
+      # official_website | careers_page | official_linkedin | person_linkedin |
+      # person_public_post | engineering_blog | job_board |
+      # candidate_interview_report | search_snippet | unknown
+
+    published_at: >
+      # Date the source was published or last updated, when visible.
+      # Use null when not available — missing published_at reduces confidence.
+
+    observed_at: >
+      # Date the relevant content was observed on the source (e.g., date a post
+      # was seen, distinct from its publish date). Use when published_at is
+      # unavailable but the observation date is known.
+
+    retrieved_at: >
+      # Date this specific finding was retrieved. Required per finding.
+      # A finding without retrieved_at must not enter the evidence package.
+
+    specificity:
+      # One of (most specific first):
+      - role_specific     # directly about the target role
+      - team_specific     # about the team hosting the role
+      - company_specific  # about the company generally
+      - industry_general  # general industry or domain knowledge
+
+    reliability:
+      # One of, derived from source_type:
+      - high      # official website, careers page, engineering blog
+      - medium    # LinkedIn profile, public post, job board
+      - low       # candidate interview report, search snippet
+      - unknown   # source inaccessible, private, or not assessed
+
+    freshness:
+      # One of, derived from published_at / observed_at / retrieved_at
+      # relative to claim_type freshness expectations:
+      - current   # retrieved recently; claim type is current or slow-changing
+      - recent    # retrieved within a period appropriate to the claim type
+      - aging     # older than preferred but not stale for this claim type
+      - stale     # older than acceptable for the claim's freshness requirement
+      - unknown   # no date information available
+
+    evidence_status:
+      # One of:
+      - public_research_unverified
+          # Retrieved from a public source; not corroborated by user-supplied evidence.
+      - corroborated_public_research
+          # Corroborated by: a current recruiter statement, a hiring-manager
+          # statement, the current JD, an official current company/team source,
+          # or multiple independent reliable sources.
+
+    relevance_to_current_stage: >
+      # Short statement of why this finding matters for the user's current
+      # interview stage and preparation objective.
+      # Required. Do not leave as generic — tie to the actual stage.
+
+    confidence:
+      # One of, reflecting source quality, specificity, reliability, and
+      # freshness together:
+      - high      # specific, reliable, current, corroborated
+      - medium    # reasonably specific, medium reliability, recent
+      - low       # low reliability, stale, general, or unverified
+      - unknown   # insufficient information to assess
+```
+
+---
+
+## Contradictions
+
+```yaml
+contradictions:
+  - claim_a: >       # First conflicting claim (with its source)
+    claim_b: >       # Conflicting claim (with its source)
+    resolution: >    # How the conflict was resolved, or "preserved — cannot be resolved"
+    impact_on_preparation: >  # What this means for the preparation output
+```
+
+---
+
+## Open Questions
+
+```yaml
+open_questions:
+  - question: >     # A specific information gap that research could not close
+    impact: >       # Why this gap matters for preparation
+    recommended_action: >  # How the candidate or Interview Journey should handle it
+```
+
+---
+
+## Schema Rules
+
+1. `research_objective`, `subject`, `subject_type`, `retrieved_at`, and
+   `research_status` are required. A package missing any of these must not be
+   merged into the Interview Intelligence evidence model.
+
+2. Each finding requires: `claim`, a source identifier, `retrieved_at`,
+   `reliability`, `freshness`, `evidence_status`, and `confidence`.
+
+3. `preparation_implications` are not produced by this schema. Final
+   preparation implications belong to Interview Journey's preparation
+   frameworks (Frameworks 06–12), not to the research evidence layer.
+
+4. Unsupported or source-free claims must not appear as findings. If a claim
+   cannot be sourced, record it under `open_questions`.
+
+5. Duplicate findings must be merged by claim and primary source. Do not
+   produce multiple findings for the same claim from the same source.
+
+6. When a newer role-specific finding conflicts with an older general finding,
+   the newer role-specific finding takes precedence — but the older finding
+   must remain traceable under `contradictions`.
+
+7. `evidence_status` must not be set to `corroborated_public_research` unless
+   at least one corroborating source outside public research exists (user-
+   supplied recruiter statement, JD, hiring-manager statement, or multiple
+   independent reliable public sources).
+
+8. A `research_status` of `no_reliable_findings` does not block preparation.
+   Interview Journey must proceed using confirmed user-supplied intelligence
+   and general interview guidance. The absence of findings must be surfaced to
+   the user when it materially affects preparation quality.
+
+---
+
+## Evidence Classification Mapping
+
+This schema maps to `core/evidence-policy.md` as follows:
+
+| evidence_status | core/evidence-policy.md class |
+|---|---|
+| `public_research_unverified` | Public research — unverified |
+| `corroborated_public_research` | Public research — corroborated |
+
+Public research evidence never maps to `Confirmed` in `core/evidence-policy.md`
+regardless of how specific or reliable the source appears.
+
+---
+
+## Related Documents
+
+- [`workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md)
+- [`core/evidence-policy.md`](../core/evidence-policy.md)
+- [`core/context-priority.md`](../core/context-priority.md)
+- [`frameworks/05-interview-intelligence-framework.md`](../frameworks/05-interview-intelligence-framework.md)
+- [`frameworks/01-role-intelligence-framework.md`](../frameworks/01-role-intelligence-framework.md)
+
+
+---
+
+## Source: `workflows/research-current-interview-intelligence.md`
+
+# Research Current Interview Intelligence
+
+**Workflow ID:** WF-RCII-01
+**Depends on:** Framework 01, Framework 05, Framework 07, Framework 08
+**Schema:** [`schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md)
+
+> This workflow extends Interview Journey with bounded current-research capability. It does not replace interview preparation with a research operation. Interview Journey remains the primary orchestrator and produces the final preparation output.
+
+---
+
+## When to Run This Workflow
+
+### Research Required
+
+Run this workflow when the request depends on present-day facts that the candidate has not already supplied, such as:
+
+- The current Job Description (no JD provided by the user).
+- A current interviewer or hiring-manager role and professional context.
+- A current interview process at the target company.
+- Recent company engineering developments affecting technical focus areas.
+- Recent company or team changes affecting the hiring context.
+- Recently reported interview topics at the target company.
+- A current technical assignment brief not yet supplied.
+- Current product or organizational priorities relevant to the role.
+- Any request containing the words "current," "latest," "recent," or "today"
+  about the company, team, interviewer, or interview process.
+
+### Research Optional
+
+Consider running this workflow when it would materially change the preparation:
+
+- Role or company context is incomplete and public signals might fill the gap.
+- Public company signals could improve question prediction confidence.
+- The interviewer's public technical background could improve targeting for a
+  mock interview.
+- Recent engineering material may significantly alter the preparation focus.
+
+Run it only when the research would change the answer in a material way. Do
+not run it speculatively.
+
+### Research Not Required
+
+Do not run this workflow for:
+
+- Coding drills and algorithm practice.
+- Answer review and coaching.
+- Behavioral-story discovery and STAR refinement.
+- Post-interview debriefs based entirely on user-provided evidence.
+- Generic system-design practice not tied to a specific company or team.
+- Resume walkthrough practice.
+- Preparation fully determined by confirmed recruiter or role information the
+  candidate has already supplied.
+
+---
+
+## Scope Constraint
+
+This workflow researches only:
+
+- The target company, team, or role.
+- The identified interviewer or hiring manager (public professional context only).
+- The target company's interview process as publicly described.
+- Technical areas publicly associated with the company's engineering work.
+
+This workflow must never become:
+
+- Recruiter discovery or outreach research.
+- Job-opportunity prospecting.
+- Ranking or prioritizing companies or contacts.
+- Monitoring or tracking of any person or organization.
+
+---
+
+## Workflow Steps
+
+### Step 1 — Identify the exact research objective
+
+State the research objective in one sentence before proceeding.
+
+Example: "Identify the current interview process at Company X for a senior
+backend engineering role."
+
+Reject vague objectives like "find out more about the company." Narrow to a
+specific preparation-relevant question.
+
+### Step 2 — Restrict the subject
+
+Confirm the subject falls within allowed scope:
+
+- company
+- role
+- team
+- interviewer (public professional context only)
+- hiring manager (public professional context only)
+- interview process
+
+If the research subject is outside this list, stop and explain why the
+research falls outside Interview Journey scope.
+
+### Step 3 — Use available current-research tools directly
+
+Use any research tool available in the active environment to find current
+public information.
+
+Prefer direct and official sources (see adapted source hierarchy below).
+Record the source title, source type, and retrieval timestamp for every
+finding.
+
+If no current-research tools are available, proceed with general knowledge
+and explicitly label all findings as based on training data with an unknown
+retrieval date.
+
+### Step 4 — Record sources and dates
+
+For every finding, capture:
+
+- The source title or description.
+- The source type (official website, careers page, public profile, public
+  post, reputable job board, business database, secondary source, search
+  snippet, or unknown).
+- The date the source was published or observed (`published_at`), when
+  visible.
+- The date the source was retrieved (`retrieved_at`).
+
+Do not proceed to normalization for any finding without a `retrieved_at`
+timestamp.
+
+### Step 5 — Normalize findings into the public-research evidence schema
+
+Produce a structured evidence package using the fields defined in
+[`schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md).
+
+Assign each finding:
+
+- `specificity` — how closely the finding is scoped to the role, team, company,
+  or industry.
+- `reliability` — derived from source type (see Adapted Source Hierarchy below).
+- `freshness` — derived from `retrieved_at` and `published_at` relative to the
+  claim type (see Claim-Type Freshness below).
+- `evidence_status` — `public_research_unverified` unless corroborated by a
+  current recruiter statement, hiring-manager statement, the current JD, or
+  multiple independent reliable sources.
+- `confidence` — a single label reflecting source quality, specificity,
+  reliability, and freshness together.
+
+### Step 6 — Reject unsupported claims
+
+Do not include a finding in the evidence package if it lacks:
+
+- A source (even a general one).
+- A `retrieved_at` timestamp.
+- A reliability assessment.
+
+Do not present inferred conclusions as directly sourced facts. If the claim
+is a supported inference, label it as such.
+
+### Step 7 — Merge evidence through Framework 05
+
+Pass the evidence package to the Framework 05 merge workflow
+([`workflows/merge-interview-intelligence.md`](merge-interview-intelligence.md)).
+
+Apply Framework 05 rules:
+
+- User-supplied direct interview evidence outranks conflicting unverified
+  public research.
+- Chronological order must be preserved using timestamps.
+- Contradictions between user-supplied and research evidence must be preserved
+  explicitly.
+
+### Step 8 — Apply Framework 01 source precedence
+
+When public research evidence is used in role analysis, apply Framework 01
+source precedence. Public research evidence occupies tier 8 ("Reliable public
+company information") by default.
+
+Role-specific findings (e.g., a job post for the exact role) may occupy tier
+6 ("Current company careers page") or tier 7 ("Current team or product page")
+when the source directly describes the target role or team.
+
+### Step 9 — Apply Frameworks 07 and 08 after confidence and freshness assessment
+
+Pass normalized evidence to question prediction (Framework 07) and interview
+hypothesis generation (Framework 08) only after the evidence package has been
+assessed for confidence and freshness.
+
+Apply the constraints defined in those frameworks:
+
+- Label predictions as role-pattern based when current company evidence is
+  absent.
+- Reduce prediction confidence when research is stale or unverified.
+- Never present public interview reports as guaranteed future questions.
+
+### Step 10 — Return control to the user's objective
+
+Research is complete when the normalized evidence package is ready.
+
+Return to the user's original Interview Journey objective (question
+prediction, mock interview, preparation strategy, etc.) using the enriched
+evidence.
+
+Do not present the research results as the final response. The final response
+belongs to Interview Journey's preparation output.
+
+---
+
+## Adapted Source Hierarchy
+
+Derived from the shared methodology, adapted for interview preparation context:
+
+| Tier | Source Type | Reliability | Interview Use |
+|---|---|---|---|
+| 1 | Official company website | high | Company identity, product description |
+| 2 | Official company careers page | high | Current role, team, hiring signal |
+| 3 | Official company LinkedIn page | medium–high | Company identity, size signal |
+| 4 | Public LinkedIn profile of interviewer or hiring manager | medium | Current title, employer, public background |
+| 5 | Public post by the interviewer or hiring manager | medium | Authored interests, role mentions |
+| 6 | Official engineering blog, public talk, open-source repo | medium–high | Technical domain, team priorities |
+| 7 | Reputable job board | medium | Role availability signal |
+| 8 | Candidate interview reports (Glassdoor, Blind, Levels.fyi) | low | Possibility signals only — not proof of future questions |
+| 9 | Search-result snippet only | low | Starting point only — must be corroborated |
+| 10 | Inaccessible or private content | none | Must not be used |
+
+---
+
+## Claim-Type Freshness
+
+| Claim Type | Freshness Expectation |
+|---|---|
+| Current employment or open role | Current evidence required; stale if no `retrieved_at` or `published_at` within a recent period |
+| Current interview process | Fast-changing; corroborate across multiple sources |
+| Team ownership or structure | Moderately changing; prefer recent team-specific sources |
+| Company product domain or technical area | Slow-changing; older sources still useful with a staleness label |
+| General interview methodology | Stable; general interview guidance class applies |
+| Interviewer public writing or talks | Prefer recent; older material still useful for topic signals with lower confidence |
+
+For time-sensitive claims (current employment, open role, current process),
+missing `published_at` lowers reliability from medium to unknown. Missing
+`retrieved_at` excludes the finding from the evidence package.
+
+---
+
+## Privacy Constraints
+
+Allowed public research subjects:
+
+- Current professional role and employer (public profile).
+- Company biography and product description.
+- Public technical writing and engineering blog posts.
+- Public conference talks and recordings.
+- Official engineering material published by the company or its teams.
+- Publicly stated hiring responsibility.
+- Public interview-process descriptions from the company or candidates.
+
+Prohibited research:
+
+- Private contact information.
+- Personal family information.
+- Sensitive personal attributes.
+- Private or restricted social accounts.
+- Psychological profiling or personality analysis.
+- Manipulation strategies targeting the interviewer.
+- Any form of hidden monitoring or persistent tracking.
+- The candidate's own private resume, interview history, or personal data sent
+  into public research tools.
+
+Research findings are session evidence only. They must not be stored as
+persistent candidate records or written into shared Skill files, templates,
+or repository documentation.
+
+---
+
+## Related Documents
+
+- [`schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md)
+- [`core/evidence-policy.md`](../core/evidence-policy.md)
+- [`core/context-priority.md`](../core/context-priority.md)
+- [`frameworks/05-interview-intelligence-framework.md`](../frameworks/05-interview-intelligence-framework.md)
+- [`frameworks/01-role-intelligence-framework.md`](../frameworks/01-role-intelligence-framework.md)
+- [`frameworks/07-question-prediction-framework.md`](../frameworks/07-question-prediction-framework.md)
+- [`frameworks/08-interview-hypothesis-framework.md`](../frameworks/08-interview-hypothesis-framework.md)
+- [`workflows/merge-interview-intelligence.md`](merge-interview-intelligence.md)
 

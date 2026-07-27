@@ -159,6 +159,155 @@ if [ -d "${KNOWLEDGE_DIR}" ]; then
   fi
 fi
 
+# 13. Skill routing: trigger policy must define in-scope ownership, outside-scope boundary,
+#     and independent operation. Must not name external Skills as required components.
+TRIGGER_POLICY="claude/skill-trigger-policy.md"
+if [ -f "${TRIGGER_POLICY}" ]; then
+  check "Trigger policy defines in-scope interview-preparation ownership" \
+    "grep -qi 'In-Scope\|in-scope\|interview preparation' '${TRIGGER_POLICY}'"
+  check "Trigger policy covers recruiter and interviewer as inputs, not ownership signals" \
+    "grep -qi 'recruiter' '${TRIGGER_POLICY}'"
+  check "Trigger policy defines outside-scope boundary" \
+    "grep -qi 'Outside Scope\|outside scope' '${TRIGGER_POLICY}'"
+  check "Trigger policy declares Interview Journey independent operation" \
+    "grep -qi 'Independent\|does not depend on other Skills\|does not require another' '${TRIGGER_POLICY}'"
+  check "Trigger policy does not name an external Skill as a required routing target" \
+    "! grep -qiE 'job-hunt|job-search|career-targeting|recruiter-interview-research' '${TRIGGER_POLICY}'"
+fi
+
+# 14. Project and Skill files must not claim external Skill dependencies or invocation.
+for ij_file in claude/project-instructions.md claude/project-instructions.compact.md claude/skill/SKILL.md; do
+  if [ -f "${ij_file}" ]; then
+    check "${ij_file} does not claim explicit external Skill invocation" \
+      "! grep -qiE 'delegate to another|enabled Skills.*contribute|Skills.*activated automatically|invoke.*another.*[Ss]kill|call.*another.*[Ss]kill' '${ij_file}'"
+    check "${ij_file} does not name job-hunt as a dependency" \
+      "! grep -qi 'job-hunt' '${ij_file}'"
+    check "${ij_file} does not name career-targeting as a dependency" \
+      "! grep -qi 'career-targeting' '${ij_file}'"
+  fi
+done
+
+# 15. Public research evidence schema exists with required fields.
+PR_SCHEMA="schemas/public-research-evidence.schema.md"
+check "public-research-evidence.schema.md exists" "[ -f '${PR_SCHEMA}' ]"
+if [ -f "${PR_SCHEMA}" ]; then
+  check "Schema contains research_objective field" "grep -q 'research_objective' '${PR_SCHEMA}'"
+  check "Schema contains retrieved_at field" "grep -q 'retrieved_at' '${PR_SCHEMA}'"
+  check "Schema contains reliability field" "grep -q 'reliability' '${PR_SCHEMA}'"
+  check "Schema contains freshness field" "grep -q 'freshness' '${PR_SCHEMA}'"
+  check "Schema contains evidence_status field" "grep -q 'evidence_status' '${PR_SCHEMA}'"
+  check "Schema contains confidence field" "grep -q 'confidence' '${PR_SCHEMA}'"
+  check "Schema states preparation_implications not produced by research layer" \
+    "grep -q 'preparation_implications' '${PR_SCHEMA}'"
+fi
+
+# 16. Bounded research workflow exists.
+RCII="workflows/research-current-interview-intelligence.md"
+check "research-current-interview-intelligence.md exists" "[ -f '${RCII}' ]"
+if [ -f "${RCII}" ]; then
+  check "Research workflow defines Research Required" "grep -q 'Research Required' '${RCII}'"
+  check "Research workflow defines Research Not Required" "grep -q 'Research Not Required' '${RCII}'"
+  check "Research workflow references public-research-evidence schema" \
+    "grep -q 'public-research-evidence.schema.md' '${RCII}'"
+  check "Research workflow does not implement outreach ranking or recruiter prospecting" \
+    "! grep -qi 'outreach.*rank\|recruiter.*rank\|prospect.*contact\|priority.*queue' '${RCII}'"
+fi
+
+# 17. Framework 05 accepts public research with provenance rules.
+F05="frameworks/05-interview-intelligence-framework.md"
+if [ -f "${F05}" ]; then
+  check "Framework 05 lists public research as a source" \
+    "grep -qi 'public.*research\|research.*public' '${F05}'"
+  check "Framework 05 has II-006 (provenance rule)" "grep -q 'II-006' '${F05}'"
+  check "Framework 05 has II-008 (evidence classification rule)" "grep -q 'II-008' '${F05}'"
+  check "Framework 05 references public-research-evidence schema" \
+    "grep -q 'public-research-evidence.schema.md' '${F05}'"
+fi
+
+# 18. Framework 07 and 08 preserve uncertainty about public research.
+F07="frameworks/07-question-prediction-framework.md"
+if [ -f "${F07}" ]; then
+  check "Framework 07 has QP-006 (no guaranteed future questions from reports)" \
+    "grep -q 'QP-006' '${F07}'"
+  check "Framework 07 has QP-008 (role-pattern label when evidence absent)" \
+    "grep -q 'QP-008' '${F07}'"
+  check "Framework 07 prohibits psychological profiling" \
+    "grep -qi 'profil' '${F07}'"
+fi
+F08="frameworks/08-interview-hypothesis-framework.md"
+if [ -f "${F08}" ]; then
+  check "Framework 08 has IH-007 (role-pattern label when evidence absent)" \
+    "grep -q 'IH-007' '${F08}'"
+  check "Framework 08 prohibits psychological profiling" \
+    "grep -qi 'profil' '${F08}'"
+fi
+
+# 19. Skill reference for research exists.
+SKILL_REF_RESEARCH="claude/skill/references/research-and-evidence.md"
+check "Skill reference research-and-evidence.md exists" "[ -f '${SKILL_REF_RESEARCH}' ]"
+if [ -f "${SKILL_REF_RESEARCH}" ]; then
+  check "Research reference defines Research Scope Constraint" \
+    "grep -qi 'scope constraint\|Scope Constraint' '${SKILL_REF_RESEARCH}'"
+  check "Research reference prohibits recruiter discovery" \
+    "grep -qi 'recruiter discovery' '${SKILL_REF_RESEARCH}'"
+fi
+
+# 20. Skill routes research-backed preparation through internal references only.
+SKILL_MD="claude/skill/SKILL.md"
+if [ -f "${SKILL_MD}" ]; then
+  check "SKILL.md routes current-research preparation to research-and-evidence reference" \
+    "grep -q 'research-and-evidence.md' '${SKILL_MD}'"
+  check "SKILL.md declares independent operation" \
+    "grep -qi 'self-contained\|does not require any other Skill\|no other Skill' '${SKILL_MD}'"
+  check "SKILL.md marks recruiter discovery as outside scope" \
+    "grep -qi 'outside.*scope\|Outside.*scope' '${SKILL_MD}'"
+fi
+
+# 21. Evidence policy contains public research evidence class.
+EP="core/evidence-policy.md"
+if [ -f "${EP}" ]; then
+  check "Evidence policy contains public_research_unverified class" \
+    "grep -q 'public_research_unverified\|public research — unverified\|Public research — unverified' '${EP}'"
+  check "Evidence policy contains corroborated_public_research class" \
+    "grep -q 'corroborated_public_research\|public research — corroborated\|Public research — corroborated' '${EP}'"
+fi
+
+# 22. Context priority policy contains extended priority levels (6-8).
+CP="core/context-priority.md"
+if [ -f "${CP}" ]; then
+  check "Context priority contains corroborated public research at priority 6" \
+    "grep -qi 'corroborated.*public research\|Corroborated current public research' '${CP}'"
+  check "Context priority contains unverified public research at priority 7" \
+    "grep -qi 'unverified.*public research\|Unverified current public research' '${CP}'"
+  check "Context priority has freshness-vs-specificity rule (rule 9)" \
+    "grep -q 'Freshness does not automatically override specificity\|freshness.*specificity' '${CP}'"
+fi
+
+# 23. Packaging scripts reference only repository-owned files.
+for pkg_script in scripts/package-claude-skill.sh scripts/package-claude-external-kit.sh scripts/package-chatgpt-gpt.sh; do
+  if [ -f "${pkg_script}" ]; then
+    check "${pkg_script} does not reference external repositories" \
+      "! grep -q 'career-target\|job-hunt\|recruiter-interview' '${pkg_script}'"
+  fi
+done
+
+# 24. Routing is fully internal: trigger policy covers ownership and out-of-scope without naming external Skills.
+check "Trigger policy covers interview-preparation as in-scope" \
+  "grep -qi 'interview preparation\|preparing for.*interview' '${TRIGGER_POLICY}'"
+check "Trigger policy covers recruiter terms as inputs, not routing triggers" \
+  "grep -qi 'recruiter\|interviewer' '${TRIGGER_POLICY}'"
+check "Trigger policy states outside-scope items without naming a required external Skill" \
+  "grep -qi 'outside.*scope\|Out-of-Scope\|Outside Scope' '${TRIGGER_POLICY}'"
+
+# 25. Framework 15 routes current research as an internal workflow step.
+F15="frameworks/15-interview-journey-intelligence-framework.md"
+if [ -f "${F15}" ]; then
+  check "Framework 15 includes internal current-research step in workflow" \
+    "grep -qi 'research-current-interview-intelligence\|current-interview-research workflow\|current.*research.*workflow' '${F15}'"
+  check "Framework 15 declares independent operation principle" \
+    "grep -qi 'self-contained\|does not route.*another Skill\|does not depend' '${F15}'"
+fi
+
 echo ""
 echo "== Summary =="
 echo "Passed: ${PASS_COUNT}"

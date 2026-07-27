@@ -35,7 +35,7 @@ BUNDLES=(
   "01-product-orchestration-and-state.md:core/product-definition.md,core/terminology.md,core/scope-and-non-goals.md,core/workflow.md,core/orchestration-policy.md,core/state-management.md,frameworks/15-interview-journey-intelligence-framework.md"
   "02-role-intelligence.md:frameworks/01-role-intelligence-framework.md"
   "03-resume-stage-and-fit.md:frameworks/02-resume-intelligence-framework.md,frameworks/03-interview-stage-framework.md,frameworks/04-role-fit-gap-analysis-framework.md"
-  "04-interview-intelligence-and-strategy.md:frameworks/05-interview-intelligence-framework.md,frameworks/06-preparation-strategy-framework.md"
+  "04-interview-intelligence-and-strategy.md:frameworks/05-interview-intelligence-framework.md,frameworks/06-preparation-strategy-framework.md,schemas/public-research-evidence.schema.md,workflows/research-current-interview-intelligence.md"
   "05-question-prediction-and-hypotheses.md:frameworks/07-question-prediction-framework.md,frameworks/08-interview-hypothesis-framework.md"
   "06-coding-interviews.md:frameworks/09-coding-interview-decision-engine.md"
   "07-system-design-interviews.md:frameworks/10-system-design-framework.md"

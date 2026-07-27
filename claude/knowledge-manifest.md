@@ -18,6 +18,8 @@ These files hold the platform-independent methodology and are safe to share acro
 - [`core/output-contracts.md`](../core/output-contracts.md)
 - [`core/state-management.md`](../core/state-management.md)
 - All fifteen files in [`frameworks/`](../frameworks/)
+- [`schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md)
+- [`workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md)
 
 ## What Project Knowledge is for
 

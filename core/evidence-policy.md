@@ -19,10 +19,20 @@ Every material statement should be classified internally as one of:
 
 - **Confirmed** — directly supported by a source the candidate provided (resume, recruiter message, prior feedback, a pasted Job Description) or a direct statement in the current conversation.
 - **Reasonable inference** — a conclusion drawn from confirmed evidence, but not itself directly stated.
+- **Public research — unverified** — information retrieved from current public sources (company website, engineering blog, public profile, interview reports, job board) that has not been corroborated by user-supplied evidence. Requires source, `retrieved_at`, and `reliability` metadata. Never automatically upgraded to Confirmed.
+- **Public research — corroborated** — public research finding that is supported by a current recruiter statement, a hiring-manager statement, the current Job Description, an official current company or team source, or multiple independent reliable public sources. May inform preparation with higher confidence than unverified public research, but still does not become Confirmed.
 - **General interview guidance** — advice not tied to specific evidence about this role, resume, or process; drawn from the canonical frameworks' general patterns.
 - **Unknown** — insufficient evidence exists.
 
 The user-facing response does not need to mechanically label every sentence, but uncertainty must be visible wherever it is material to the candidate's decision-making.
+
+### Public research rules
+
+- Public research is not automatically Confirmed regardless of source specificity.
+- Public research — unverified must not override current user-supplied interview intelligence unless the conflict is explicitly preserved and resolved through source precedence.
+- Public research — corroborated may raise confidence but remains distinct from Confirmed.
+- Official public sources (company website, engineering blog) are not automatically downgraded to "General interview guidance" — their actual reliability and specificity determine which public research class applies.
+- Confidence must reflect the actual source quality, not the apparent authority of the source name.
 
 ## Rules
 
@@ -44,3 +54,5 @@ The user-facing response does not need to mechanically label every sentence, but
 - [`quality-gates.md`](quality-gates.md)
 - [`../frameworks/01-role-intelligence-framework.md`](../frameworks/01-role-intelligence-framework.md)
 - [`../frameworks/02-resume-intelligence-framework.md`](../frameworks/02-resume-intelligence-framework.md)
+- [`../schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md)
+- [`../workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md)

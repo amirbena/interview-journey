@@ -38,6 +38,18 @@ Update hypotheses whenever new interview intelligence becomes available.
 ## IH-006
 Preserve uncertainty. Do not present hypotheses as facts.
 
+## IH-007
+Missing current company evidence requires hypotheses to be labeled as based on role patterns rather than company-specific signals. State this explicitly in the hypothesis rationale.
+
+## IH-008
+Stale or unknown-date public research reduces hypothesis confidence. When the research evidence supporting a hypothesis is stale or has unknown freshness, lower the confidence label and surface the limitation.
+
+## IH-009
+Interviewer public writing or talks may suggest areas of technical interest and inform hypothesis generation. They must not be used for psychological profiling, manipulative framing, or inferences about personal interview style beyond what the content directly supports.
+
+## IH-010
+A public interview report from another candidate is evidence of possibility, not proof of the user's upcoming questions. Weight it at low confidence unless corroborated by multiple recent independent reports for the same role type and stage.
+
 ---
 
 # Hypothesis Structure
@@ -118,6 +130,9 @@ See [`schemas/interview-hypothesis.schema.md`](../schemas/interview-hypothesis.s
 - Each hypothesis leads to a practical preparation action.
 - Uncertainty is visible.
 - No interview process was invented.
+- Hypotheses based on public research identify their evidence class (unverified or corroborated) and freshness.
+- Hypotheses based on stale or pattern-only evidence are labeled accordingly.
+- No psychological profiling or manipulative framing is present.
 
 ---
 

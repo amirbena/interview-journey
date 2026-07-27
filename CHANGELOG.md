@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Skill routing and bounded research (feature/fresh-research-routing)
+
+- Rewrote `claude/skill-trigger-policy.md` to define Interview Journey by positive ownership: added "In-Scope Ownership" section (interview preparation, company/interviewer research for preparation, mock interviews, debrief), "Context Does Not Change Ownership" section (recruiter/interviewer/company terms are evidence inputs), "Outside Scope" section (job discovery, outreach, pipeline management — marked outside scope without naming external Skills), and "Independent Operation" section declaring no dependency on other Skills.
+- Added `## Independent operation` section to `claude/skill/SKILL.md`: explicitly states the Skill is self-contained, performs all preparation including current research using available tools, and does not require any other Skill.
+- Created `workflows/research-current-interview-intelligence.md`: bounded 10-step research workflow defining when current research is required, optional, or not required; adapted source hierarchy; claim-type freshness table; scope constraints preventing recruiter discovery or outreach.
+- Created `schemas/public-research-evidence.schema.md`: structured evidence handoff contract between the research workflow and Interview Journey's preparation frameworks; defines `research_objective`, `subject_type`, `retrieved_at`, `research_status`, per-finding `reliability`/`freshness`/`evidence_status`/`confidence`; rules preventing research layer from producing preparation implications.
+- Added two new evidence classes to `core/evidence-policy.md`: "Public research — unverified" and "Public research — corroborated"; public research rules section; related document links.
+- Extended `core/context-priority.md` with priorities 6 (corroborated public research) and 7 (unverified public research), updated priority-5 label to "Verified Role Intelligence", and added public research priority rules (freshness-vs-specificity, contradiction preservation).
+- Extended `frameworks/05-interview-intelligence-framework.md`: added public research as seventh source type; added rules II-006 through II-012 covering source provenance, timestamp-based chronology, evidence classification, user-evidence priority over public research, corroboration logic, missing-date confidence reduction, and stale employment claim prohibition.
+- Extended `frameworks/01-role-intelligence-framework.md`: updated RI-002 recency rule to clarify freshness is evaluated with specificity; added new section "32b. Source Freshness and Provenance Rules" with rules RI-077 through RI-082 covering retrieval time, publication date, specificity priority, unknown-date evidence, archived sources, and claim-type freshness table.
+- Added rules QP-006 through QP-011 to `frameworks/07-question-prediction-framework.md`: public interview reports as weak evidence, no company-wide-to-interviewer inference, role-pattern labeling when evidence is absent, confidence reduction for stale research, profiling prohibition, professional preparation focus.
+- Added rules IH-007 through IH-010 to `frameworks/08-interview-hypothesis-framework.md`: pattern-label requirement when evidence is absent, stale research confidence reduction, interviewer profiling prohibition, single-report low-confidence rule; extended validation checklist.
+- Created `claude/skill/references/research-and-evidence.md`: condensed Skill reference for research gating, freshness, source reliability, evidence classification, context priority, and evidence handoff.
+- Updated `claude/skill/SKILL.md` progressive reference loading table: added three research-backed preparation rows and "Recruiter discovery or outreach → outside scope" row.
+- Updated `claude/project-instructions.md` intent-detection section (Interview Journey owns the full response, performs research natively, does not require other Skills) and added dedicated "Public research privacy boundaries" section.
+- Updated `claude/project-instructions.compact.md` "Skill ownership" section (Interview Journey owns the full response, uses available research tools directly, no other Skill required) and non-actions (no requirement for another Skill to be installed).
+- Added internal current-research orchestration step (step 3) to Framework 15 standard workflow and added IJ-000 Independent Operation Principle.
+- Updated `chatgpt/knowledge-manifest.md` bundle 04 source mapping to include `schemas/public-research-evidence.schema.md` and `workflows/research-current-interview-intelligence.md`.
+- Updated both Knowledge build scripts (`scripts/build-chatgpt-knowledge.sh`, `.ps1`) to add new sources to bundle 04.
+- Extended `tests/validate-repository.sh` from 133 checks to cover: trigger policy ownership and independence, project/Skill file external-dependency absence, schema fields, research workflow structure, Framework 05/07/08 rules, Skill reference, evidence policy classes, context priority tiers, packaging isolation, Framework 15 internal research routing, and routing scenario coverage. All checks are repository-local.
+
 ### Role Intelligence refinements (feature/build-structure f06bd3a)
 
 - Fixed Framework 01 §32 worked example: renamed heading from "Critical Requirements" to "Top Requirements" and labeled the score-88 item "High" (§17.2 threshold 75–89) rather than implying "Critical" (90–100).

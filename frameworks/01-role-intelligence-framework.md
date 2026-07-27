@@ -271,6 +271,8 @@ A role-specific source must outrank a generic company source.
 
 A newer source should outrank an older source when both refer to the same fact.
 
+Recency is evaluated together with specificity, directness, and reliability. A newer generic source does not automatically outrank an older role-specific direct source. Freshness expectations depend on how quickly the underlying fact tends to change — see claim-type freshness guidance in RI-077–RI-082.
+
 ## RI-003 — Directness Rule
 
 A direct statement should outrank an inferred interpretation.
@@ -1347,6 +1349,43 @@ This example demonstrates the required reasoning style.
 
 ---
 
+# 32b. Source Freshness and Provenance Rules
+
+These rules extend RI-002 (Recency Rule) with bounded freshness constraints for public research evidence. They do not introduce arbitrary universal expiration periods — freshness requirements are specific to how quickly the underlying fact changes.
+
+## RI-077 — Retrieval Time Rule
+
+For public research evidence, the effective age is the `retrieved_at` timestamp — the date the source was checked — not the source's original publication date. Evidence with no `retrieved_at` must be treated as unknown freshness and must not outrank time-sensitive user-supplied intelligence.
+
+## RI-078 — Source Publication Rule
+
+When `published_at` or `observed_at` is available, use it in addition to `retrieved_at` to assess whether the underlying claim reflects the current state. For fast-changing claims (current employment, open role, current interview process), a source retrieved today but published more than several months ago must be treated as potentially stale.
+
+## RI-079 — Specificity Priority Rule
+
+Specificity outranks generic recency. A current generic company article does not outrank an older role-specific recruiter statement. Apply the source precedence hierarchy (§6) before applying the recency rule.
+
+## RI-080 — Unknown-Date Evidence Rule
+
+Public research evidence without a determinable publication or retrieval date must be treated as unknown freshness. It may still be used as general interview guidance but must not be presented as current or used to override time-sensitive user-supplied evidence.
+
+## RI-081 — Archived Source Rule
+
+Archived Job Descriptions and cached careers pages must not be treated as current open roles. A Job Description sourced from a web archive or a cached copy must be labeled as archived and its currency must be treated as unknown unless the user confirms the role is still active.
+
+## RI-082 — Claim-Type Freshness Rule
+
+Apply freshness expectations by claim type, not by a single universal period:
+
+| Claim Type | Freshness Expectation |
+|---|---|
+| Current employment or open role | Fast-changing — current evidence required; stale if retrieved more than a few weeks ago without corroboration |
+| Current interview process | Fast-changing — corroborate across multiple sources |
+| Team ownership or structure | Moderately changing — prefer recent team-specific sources; older sources still useful with staleness label |
+| Company product domain or technical area | Slow-changing — older sources still useful; label if significantly dated |
+| General interview methodology for this role type | Stable — general interview guidance class applies regardless of date |
+| Interviewer public writing or talks | Prefer recent; older material still useful for topic signals at lower confidence |
+
 # 33. Final Operating Principle
 
 The Role Intelligence Decision Engine must convert role information into a prioritized, evidence-based model of the company's hiring intent.
@@ -1365,6 +1404,9 @@ If the answer is not clearly yes, the Role Intelligence analysis is incomplete.
 
 - [`core/orchestration-policy.md`](../core/orchestration-policy.md)
 - [`schemas/role-intelligence.schema.md`](../schemas/role-intelligence.schema.md)
+- [`schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md)
 - [`workflows/analyze-role.md`](../workflows/analyze-role.md)
+- [`workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md)
 - [`outputs/role-intelligence-template.md`](../outputs/role-intelligence-template.md)
 - [`02-resume-intelligence-framework.md`](02-resume-intelligence-framework.md)
+- [`core/evidence-policy.md`](../core/evidence-policy.md)

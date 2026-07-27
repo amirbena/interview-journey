@@ -20,6 +20,12 @@ Predict the most likely interview questions.
 - QP-003: Critical role requirements generate more questions.
 - QP-004: Resume projects are common discussion targets.
 - QP-005: Explain why each prediction exists.
+- QP-006: Public reports of previous interview questions must never be presented as guaranteed future questions. One candidate report is weak evidence. Multiple recent independent reports may increase confidence but do not create certainty.
+- QP-007: Company-wide engineering information must not be presented as interviewer-specific intent. An interviewer authoring a talk on distributed systems does not confirm that topic will appear in the interview.
+- QP-008: When current company evidence is absent, label predictions as role-pattern based rather than company-specific. State the basis explicitly.
+- QP-009: Stale or unknown-date research reduces confidence. When public research evidence is stale or has no `retrieved_at`, lower the prediction confidence and make the basis visible in the prediction rationale.
+- QP-010: Interviewer public writing may suggest areas of technical interest, but must not be used to psychologically profile or manipulate — it informs preparation topics, not conversation tactics.
+- QP-011: Predictions must remain professional and preparation-oriented. Do not infer personal motivations, biases, or interview styles beyond what evidence supports.
 
 ## Categories
 - Resume

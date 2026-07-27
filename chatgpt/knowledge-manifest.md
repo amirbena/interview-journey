@@ -42,6 +42,8 @@ Knowledge bundles are generated, not hand-written. Rebuild them with [`../script
 ### `04-interview-intelligence-and-strategy.md`
 - `frameworks/05-interview-intelligence-framework.md`
 - `frameworks/06-preparation-strategy-framework.md`
+- `schemas/public-research-evidence.schema.md`
+- `workflows/research-current-interview-intelligence.md`
 
 ### `05-question-prediction-and-hypotheses.md`
 - `frameworks/07-question-prediction-framework.md`
