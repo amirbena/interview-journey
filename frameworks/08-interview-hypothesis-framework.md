@@ -1,0 +1,134 @@
+# Interview Hypothesis Framework
+
+**Document ID:** 08
+**Version:** 1.0
+**Depends on:** 01–07
+
+> **Canonical framework.** See [`core/orchestration-policy.md`](../core/orchestration-policy.md).
+
+---
+
+# Purpose
+
+Convert Role Intelligence, Resume Intelligence, Interview Stage, and Interview Intelligence into a small set of testable hypotheses about what the interviewer is most likely trying to validate.
+
+This framework should not generate an exhaustive list of possibilities.
+
+It should produce the most useful hypotheses for preparation.
+
+---
+
+# Core Rules
+
+## IH-001
+Every hypothesis must be supported by evidence.
+
+## IH-002
+Prefer fewer high-value hypotheses over many weak ones.
+
+## IH-003
+The current interview stage has the highest operational weight.
+
+## IH-004
+A hypothesis must identify what the interviewer is trying to validate, not only what question may be asked.
+
+## IH-005
+Update hypotheses whenever new interview intelligence becomes available.
+
+## IH-006
+Preserve uncertainty. Do not present hypotheses as facts.
+
+---
+
+# Hypothesis Structure
+
+Each hypothesis should include: Hypothesis, Why it is likely, Supporting evidence, Confidence, What the interviewer may test, Preparation implication, Evidence that would disprove it.
+
+---
+
+# Common Hypothesis Types
+
+## Technical Depth
+The interviewer may test whether the candidate understands a technology beyond surface-level usage.
+
+## Ownership
+The interviewer may test whether the candidate truly owned decisions and outcomes.
+
+## Architecture
+The interviewer may test whether the candidate can reason about systems, trade-offs, and failure modes.
+
+## Production Readiness
+The interviewer may test reliability, observability, incidents, and operational judgment.
+
+## Seniority
+The interviewer may test autonomy, ambiguity handling, influence, and technical leadership.
+
+## Domain Fit
+The interviewer may test whether the candidate can reason within the company's business domain.
+
+## Resume Verification
+The interviewer may validate strong or unusual claims from the resume.
+
+## Risk Resolution
+The interviewer may probe an apparent gap, inconsistency, or concern.
+
+---
+
+# Hypothesis Workflow
+
+1. Load the highest-priority role requirements.
+2. Load the current interview stage.
+3. Load the candidate's strongest evidence.
+4. Load known gaps and open questions.
+5. Load recruiter and interviewer signals.
+6. Generate candidate hypotheses.
+7. Rank by relevance and evidence.
+8. Keep only the strongest hypotheses.
+9. Convert them into preparation actions.
+
+---
+
+# Confidence Levels
+
+- High: directly supported by stage-specific or interviewer-specific evidence.
+- Medium: supported by multiple role and resume signals.
+- Low: plausible but mostly based on general patterns.
+- Unknown: insufficient evidence.
+
+---
+
+# Required Output
+
+1. Top Interview Hypotheses
+2. Evidence for Each Hypothesis
+3. Confidence
+4. Likely Validation Method
+5. Preparation Implications
+6. Open Questions
+
+See [`schemas/interview-hypothesis.schema.md`](../schemas/interview-hypothesis.schema.md) and [`workflows/generate-interview-hypotheses.md`](../workflows/generate-interview-hypotheses.md).
+
+---
+
+# Validation Checklist
+
+- Every hypothesis is evidence-backed.
+- Hypotheses are stage-specific.
+- Weak duplicates were removed.
+- Each hypothesis leads to a practical preparation action.
+- Uncertainty is visible.
+- No interview process was invented.
+
+---
+
+# Final Principle
+
+Interview hypotheses should answer:
+
+**"What is the interviewer most likely trying to prove or disprove about this candidate?"**
+
+## Related documents
+
+- [`05-interview-intelligence-framework.md`](05-interview-intelligence-framework.md)
+- [`07-question-prediction-framework.md`](07-question-prediction-framework.md)
+- [`12-mock-interview-framework.md`](12-mock-interview-framework.md)

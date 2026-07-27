@@ -1,0 +1,211 @@
+# System Design Interview Framework
+
+**Document ID:** 10
+**Version:** 1.0
+**Depends on:** 01–08
+
+> **Canonical framework.** See [`core/orchestration-policy.md`](../core/orchestration-policy.md).
+
+---
+
+# Purpose
+
+Prepare the candidate to solve system-design interviews through a structured, requirement-driven process.
+
+The framework must avoid jumping directly into complex architecture.
+
+Start simple, identify pressure points, and add complexity only to solve a specific problem.
+
+---
+
+# Core Rules
+
+## SD-001
+Begin with functional and non-functional requirements.
+
+## SD-002
+State assumptions when information is missing.
+
+## SD-003
+Start with the simplest viable design.
+
+## SD-004
+Add components only when they solve a named bottleneck or requirement.
+
+## SD-005
+Explain trade-offs for major decisions.
+
+## SD-006
+Cover failure handling and operational behavior.
+
+## SD-007
+Match design depth to role seniority and interview stage.
+
+## SD-008
+Avoid unnecessary scale calculations when scale is not relevant.
+
+## SD-009
+Do not treat named technologies as architecture justification.
+
+## SD-010
+End with bottlenecks, observability, and future scaling.
+
+---
+
+# Standard Design Sequence
+
+1. Clarify the problem.
+2. Define functional requirements.
+3. Define non-functional requirements.
+4. Estimate scale where useful.
+5. Define APIs or external contracts.
+6. Define the data model.
+7. Draw the simplest high-level design.
+8. Trace the main request flow.
+9. Identify bottlenecks.
+10. Add patterns to solve specific bottlenecks.
+11. Handle failures.
+12. Address consistency and concurrency.
+13. Address scaling.
+14. Add observability.
+15. Summarize trade-offs.
+
+---
+
+# Functional Requirements
+
+Identify: core user actions; system outputs; actors; workflows; permissions; lifecycle events. Keep the first version bounded.
+
+---
+
+# Non-Functional Requirements
+
+Consider: availability; latency; throughput; durability; consistency; security; privacy; cost; compliance; scalability; operability. Prioritize only the requirements that matter for the system.
+
+---
+
+# Scale Estimation
+
+Estimate only when useful: active users; requests per second; read/write ratio; object size; storage growth; peak multiplier; retention. Use rough orders of magnitude. Do not waste time on false precision.
+
+---
+
+# API and Contract Design
+
+Define: key endpoints or events; request and response shape; identifiers; idempotency; pagination; errors; versioning.
+
+---
+
+# Data Model
+
+Identify: primary entities; relationships; access patterns; indexes; ownership boundaries; retention; consistency requirements. Choose a database based on access patterns, not popularity.
+
+---
+
+# Architecture Patterns
+
+## Load Balancer
+Use for distributing traffic and improving availability.
+
+## Cache
+Use for reducing latency and database load. Clarify: cache key; TTL; invalidation; stale-data tolerance.
+
+## Queue or Stream
+Use for asynchronous work; buffering; decoupling; retries; event distribution. Clarify: delivery semantics; ordering; duplicate handling; retry policy; DLQ.
+
+## Database Replication
+Use for availability or read scaling. Discuss replication lag and failover.
+
+## Sharding
+Use when a single database cannot handle the required scale. Define the shard key and rebalancing implications.
+
+## CDN
+Use for globally distributed static or cacheable content.
+
+## Rate Limiting
+Use for fairness, protection, quotas, or provider constraints.
+
+## Outbox Pattern
+Use when a database update and event publication must remain consistent.
+
+## Saga
+Use for long-running workflows across multiple services. Clarify compensation and partial failure.
+
+## Idempotency
+Use when operations may be retried or duplicated.
+
+---
+
+# Reliability and Failure Handling
+
+Cover: timeouts; retries; exponential backoff; circuit breakers; partial failures; duplicate events; poison messages; dead-letter queues; failover; graceful degradation; recovery. Explain what happens when each major dependency fails.
+
+---
+
+# Consistency and Concurrency
+
+Discuss when relevant: strong versus eventual consistency; transaction boundaries; optimistic locking; pessimistic locking; idempotency; deduplication; ordering; race conditions; distributed coordination.
+
+---
+
+# Security
+
+Consider: authentication; authorization; encryption; secrets; tenant isolation; abuse prevention; audit logs; privacy; compliance.
+
+---
+
+# Observability
+
+Define: key metrics; logs; traces; alerts; dashboards; SLOs; business metrics; correlation IDs. Observability should support debugging and business monitoring.
+
+---
+
+# Trade-Off Language
+
+The candidate should explain: why the decision fits the requirement; what the decision improves; what it makes worse; when the decision should be revisited.
+
+---
+
+# Interview Modes
+
+## Guided Practice
+Ask the candidate to drive the design and provide structured hints.
+
+## Interview Simulation
+Act as the interviewer. Ask questions, challenge assumptions, and reveal requirements gradually.
+
+## Design Review
+Analyze an existing design and identify strengths, risks, and missing areas.
+
+## Full Walkthrough
+Provide a complete model answer using the standard sequence.
+
+---
+
+# Validation Checklist
+
+- Requirements were clarified.
+- The design started simple.
+- Every major component has a reason.
+- APIs and data model were considered.
+- Bottlenecks were identified.
+- Failures were addressed.
+- Consistency and concurrency were addressed where relevant.
+- Scaling was evidence-based.
+- Observability was included.
+- Trade-offs were explicit.
+
+See [`schemas/candidate-answer.schema.md`](../schemas/candidate-answer.schema.md), [`outputs/system-design-preparation-template.md`](../outputs/system-design-preparation-template.md), and [`workflows/prepare-system-design-interview.md`](../workflows/prepare-system-design-interview.md).
+
+---
+
+# Final Principle
+
+A strong system-design answer is not the most complicated architecture.
+
+It is the clearest design that satisfies the requirements and explains how it evolves when pressure increases.
+
+## Related documents
+
+- [`09-coding-interview-decision-engine.md`](09-coding-interview-decision-engine.md)
+- [`12-mock-interview-framework.md`](12-mock-interview-framework.md)
