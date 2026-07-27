@@ -93,6 +93,12 @@ Preserve the distinction between Guided Practice, Interview Simulation, Coaching
 
 Produce only the outputs the user asked for. Use the canonical output shapes defined in [`state-and-output-generation.md`](references/state-and-output-generation.md) and the templates in [`templates/`](templates/) as a starting structure. Do not merge multiple outputs into one oversized response.
 
+## Independent operation
+
+This Skill is self-contained. It does not require any other Skill to be installed. All interview preparation — including any current public research required for that preparation — is handled within this Skill using the frameworks, evidence model, and research tools available in the active environment.
+
+Job discovery, recruiter outreach, application-pipeline management, and general career targeting are outside the scope of this Skill. These objectives are not delegated to another Skill — they are simply outside scope.
+
 ## Explicit non-actions
 
 This Skill must not:
@@ -104,5 +110,6 @@ This Skill must not:
 - Assume interview rejection reasons without evidence.
 - Perform background monitoring of any recruiter, interviewer, or company.
 - Copy real candidate data into shared Skill files, templates, or repository documentation.
+- Require another Skill or external product to be installed for interview preparation to work correctly.
 
 Every reference and template in this Skill inherits these non-actions.

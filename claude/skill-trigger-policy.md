@@ -47,48 +47,60 @@ The request has nothing to do with the interview-preparation methodology:
 
 Handle these as ordinary conversation. Do not load any Skill reference file, and do not frame the response as if Skill methodology applied.
 
-## Primary Objective Ownership
+## In-Scope Ownership
 
-The user's primary objective determines the owning Skill.
+Interview Journey owns the request when the user's primary objective is:
 
-When the objective is interview preparation, Interview Journey remains the
-primary Skill even when the request mentions:
-- a recruiter;
-- an interviewer;
-- a hiring manager;
-- a company;
-- recent activity;
-- public research;
-- hiring-process information;
-- or current company information.
+- Preparing for a specific interview (any stage).
+- Understanding what a recruiter or interviewer may ask.
+- Researching a company for a current active interview.
+- Researching an interviewer or hiring manager for a current active interview.
+- Predicting likely interview questions.
+- Building or running a mock interview.
+- Coaching or reviewing a submitted answer.
+- Preparing technical subjects (coding, system design, behavioral).
+- Debriefing a completed interview.
+- Planning the next interview stage.
+- Researching current company or hiring-process information needed for the
+  preparation above.
 
-These terms describe evidence required by Interview Journey. They do not
-transfer ownership to a recruiter-discovery, company-targeting, or job-search
-Skill.
+### Context does not change ownership
 
-When the objective is finding jobs, recruiters, hiring managers, outreach
-targets, or hiring opportunities, Interview Journey is not the primary Skill.
+The presence of the following terms in a request does not remove it from
+Interview Journey scope:
 
-### Negative Trigger Conditions
+- recruiter, interviewer, hiring manager
+- company, LinkedIn, recent, current, latest
+- public information, research, online search
 
-Do not surrender ownership merely because the request includes the words
-recruiter, interviewer, company research, recent activity, or LinkedIn.
+These may describe inputs, research targets, or evidence required within an
+interview-preparation request. Interview Journey handles them directly — it
+does not need another product or Skill to do so.
 
-Do not activate recruiter-discovery or outreach workflows when recruiter or
-interviewer information was supplied only as interview context.
+## Outside Scope
 
-Do not use Interview Journey as the primary Skill for recruiter discovery,
-job discovery, outreach prioritization, or general company targeting.
+Interview Journey does not apply when the primary objective is:
 
-### Co-activation resolution
+- Finding open jobs or deciding which companies to apply to.
+- Finding recruiters or hiring managers for unsolicited outreach.
+- Building a recruiter list or outreach priority queue.
+- Managing an application pipeline.
+- General job search planning unrelated to a specific active interview.
+- Tracking hiring activity across multiple companies.
+- LinkedIn monitoring or recurring hiring-signal research.
 
-When multiple Skills could match the same request, the Skill whose primary
-scope covers the user's objective owns the session and the final response.
-Other Skills may contribute supporting evidence automatically when Claude
-determines they are relevant, but they do not own the preparation output.
-Interview Journey must not depend on explicit Skill-to-Skill invocation — it
-must remain responsible for the final preparation response regardless of what
-other context becomes available.
+These objectives are outside Interview Journey scope. Interview Journey does
+not delegate them to another Skill and does not require another Skill to
+handle them.
+
+## Independent Operation
+
+Interview Journey does not depend on other Skills.
+
+It performs all interview preparation, including any current public research
+required for that preparation, using its own frameworks and the research tools
+available in the active environment. No other Skill needs to be installed for
+Interview Journey to work correctly.
 
 ## Mutual understandability
 

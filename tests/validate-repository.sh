@@ -159,24 +159,31 @@ if [ -d "${KNOWLEDGE_DIR}" ]; then
   fi
 fi
 
-# 13. Skill routing: trigger policy must contain primary-objective ownership and negative triggers.
+# 13. Skill routing: trigger policy must define in-scope ownership, outside-scope boundary,
+#     and independent operation. Must not name external Skills as required components.
 TRIGGER_POLICY="claude/skill-trigger-policy.md"
 if [ -f "${TRIGGER_POLICY}" ]; then
-  check "Trigger policy contains primary-objective ownership section" \
-    "grep -qi 'Primary Objective Ownership' '${TRIGGER_POLICY}'"
-  check "Trigger policy contains negative recruiter trigger rule" \
+  check "Trigger policy defines in-scope interview-preparation ownership" \
+    "grep -qi 'In-Scope\|in-scope\|interview preparation' '${TRIGGER_POLICY}'"
+  check "Trigger policy covers recruiter and interviewer as inputs, not ownership signals" \
     "grep -qi 'recruiter' '${TRIGGER_POLICY}'"
-  check "Trigger policy contains negative interviewer trigger rule" \
-    "grep -qi 'interviewer' '${TRIGGER_POLICY}'"
-  check "Trigger policy contains co-activation resolution rule" \
-    "grep -qi 'co-activation\|Co-activation' '${TRIGGER_POLICY}'"
+  check "Trigger policy defines outside-scope boundary" \
+    "grep -qi 'Outside Scope\|outside scope' '${TRIGGER_POLICY}'"
+  check "Trigger policy declares Interview Journey independent operation" \
+    "grep -qi 'Independent\|does not depend on other Skills\|does not require another' '${TRIGGER_POLICY}'"
+  check "Trigger policy does not name an external Skill as a required routing target" \
+    "! grep -qiE 'job-hunt|job-search|career-targeting|recruiter-interview-research' '${TRIGGER_POLICY}'"
 fi
 
-# 14. Project instructions must not claim explicit Skill-to-Skill invocation.
-for pi_file in claude/project-instructions.md claude/project-instructions.compact.md; do
-  if [ -f "${pi_file}" ]; then
-    check "${pi_file} does not claim explicit Skill invocation of career-targeting" \
-      "! grep -qi 'invoke career-targeting-intelligence\|call recruiter-interview-research\|delegate to another Skill' '${pi_file}'"
+# 14. Project and Skill files must not claim external Skill dependencies or invocation.
+for ij_file in claude/project-instructions.md claude/project-instructions.compact.md claude/skill/SKILL.md; do
+  if [ -f "${ij_file}" ]; then
+    check "${ij_file} does not claim explicit external Skill invocation" \
+      "! grep -qiE 'delegate to another|enabled Skills.*contribute|Skills.*activated automatically|invoke.*another.*[Ss]kill|call.*another.*[Ss]kill' '${ij_file}'"
+    check "${ij_file} does not name job-hunt as a dependency" \
+      "! grep -qi 'job-hunt' '${ij_file}'"
+    check "${ij_file} does not name career-targeting as a dependency" \
+      "! grep -qi 'career-targeting' '${ij_file}'"
   fi
 done
 
@@ -245,15 +252,15 @@ if [ -f "${SKILL_REF_RESEARCH}" ]; then
     "grep -qi 'recruiter discovery' '${SKILL_REF_RESEARCH}'"
 fi
 
-# 20. Skill routes research-backed preparation without Skill-to-Skill invocation.
+# 20. Skill routes research-backed preparation through internal references only.
 SKILL_MD="claude/skill/SKILL.md"
 if [ -f "${SKILL_MD}" ]; then
   check "SKILL.md routes current-research preparation to research-and-evidence reference" \
     "grep -q 'research-and-evidence.md' '${SKILL_MD}'"
-  check "SKILL.md does not claim explicit Skill-to-Skill invocation" \
-    "! grep -qi 'invoke career-targeting-intelligence\|call recruiter-interview-research\|delegate to another Skill' '${SKILL_MD}'"
+  check "SKILL.md declares independent operation" \
+    "grep -qi 'self-contained\|does not require any other Skill\|no other Skill' '${SKILL_MD}'"
   check "SKILL.md marks recruiter discovery as outside scope" \
-    "grep -qi 'outside Interview Journey scope\|Outside Interview Journey scope' '${SKILL_MD}'"
+    "grep -qi 'outside.*scope\|Outside.*scope' '${SKILL_MD}'"
 fi
 
 # 21. Evidence policy contains public research evidence class.
@@ -276,22 +283,30 @@ if [ -f "${CP}" ]; then
     "grep -q 'Freshness does not automatically override specificity\|freshness.*specificity' '${CP}'"
 fi
 
-# 23. No package includes external Skill source files.
+# 23. Packaging scripts reference only repository-owned files.
 for pkg_script in scripts/package-claude-skill.sh scripts/package-claude-external-kit.sh scripts/package-chatgpt-gpt.sh; do
   if [ -f "${pkg_script}" ]; then
-    check "${pkg_script} does not reference career-target-intellgence" \
-      "! grep -q 'career-target' '${pkg_script}'"
-    check "${pkg_script} does not reference job-hunt skill" \
-      "! grep -q 'job-hunt' '${pkg_script}'"
+    check "${pkg_script} does not reference external repositories" \
+      "! grep -q 'career-target\|job-hunt\|recruiter-interview' '${pkg_script}'"
   fi
 done
 
-# 24. Routing test matrix: 8 documented scenario assertions.
-# Verified structurally by presence of routing section in trigger policy.
-check "Trigger policy covers interview-preparation ownership scenario" \
-  "grep -qi 'interview preparation' '${TRIGGER_POLICY}'"
-check "Trigger policy covers recruiter-as-evidence (not ownership) scenario" \
-  "grep -qi 'recruiter.*evidence\|evidence.*recruiter\|interview context' '${TRIGGER_POLICY}'"
+# 24. Routing is fully internal: trigger policy covers ownership and out-of-scope without naming external Skills.
+check "Trigger policy covers interview-preparation as in-scope" \
+  "grep -qi 'interview preparation\|preparing for.*interview' '${TRIGGER_POLICY}'"
+check "Trigger policy covers recruiter terms as inputs, not routing triggers" \
+  "grep -qi 'recruiter\|interviewer' '${TRIGGER_POLICY}'"
+check "Trigger policy states outside-scope items without naming a required external Skill" \
+  "grep -qi 'outside.*scope\|Out-of-Scope\|Outside Scope' '${TRIGGER_POLICY}'"
+
+# 25. Framework 15 routes current research as an internal workflow step.
+F15="frameworks/15-interview-journey-intelligence-framework.md"
+if [ -f "${F15}" ]; then
+  check "Framework 15 includes internal current-research step in workflow" \
+    "grep -qi 'research-current-interview-intelligence\|current-interview-research workflow\|current.*research.*workflow' '${F15}'"
+  check "Framework 15 declares independent operation principle" \
+    "grep -qi 'self-contained\|does not route.*another Skill\|does not depend' '${F15}'"
+fi
 
 echo ""
 echo "== Summary =="

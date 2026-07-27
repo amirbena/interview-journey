@@ -450,6 +450,9 @@ Think of this framework as the operating system for Interview Journey.
 ## IJ-001
 Always solve the user's actual objective—not merely answer the latest prompt.
 
+## IJ-000 — Independent Operation Principle
+Interview Journey is a self-contained system. It does not route requests to another Skill, require another Skill to supply research, or depend on another product being installed. All preparation — including any current public research required for that preparation — is handled within this framework using available tools and evidence models.
+
 ## IJ-002
 Only invoke frameworks that materially improve the response.
 
@@ -473,19 +476,20 @@ Whenever possible, follow this sequence:
 
 1. Identify the user's objective.
 2. Determine available inputs.
-3. Run Role Intelligence (01) if needed.
-4. Run Resume Intelligence (02) if needed.
-5. Identify Interview Stage (03).
-6. Perform Role Fit & Gap Analysis (04).
-7. Merge Interview Intelligence (05).
-8. Build Preparation Strategy (06).
-9. Predict likely questions (07).
-10. Generate Interview Hypotheses (08).
-11. Invoke the appropriate execution framework(s): Coding (09), System Design (10), Behavioral (11), Mock Interview (12).
-12. Coach answers when requested (13).
-13. Perform Debrief after completed interviews (14).
+3. When the objective depends on current public facts not yet supplied by the user (current Job Description, current interviewer role, current interview process, recent company developments), run the current-interview-research workflow ([`workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md)) before downstream preparation. This is an internal Interview Journey step — no other Skill is required.
+4. Run Role Intelligence (01) if needed.
+5. Run Resume Intelligence (02) if needed.
+6. Identify Interview Stage (03).
+7. Perform Role Fit & Gap Analysis (04).
+8. Merge Interview Intelligence (05), including any public research findings from step 3.
+9. Build Preparation Strategy (06).
+10. Predict likely questions (07).
+11. Generate Interview Hypotheses (08).
+12. Invoke the appropriate execution framework(s): Coding (09), System Design (10), Behavioral (11), Mock Interview (12).
+13. Coach answers when requested (13).
+14. Perform Debrief after completed interviews (14).
 
-Never execute unnecessary stages.
+Never execute unnecessary stages. Step 3 is conditional — skip it when the user has already supplied sufficient current context.
 
 ---
 
