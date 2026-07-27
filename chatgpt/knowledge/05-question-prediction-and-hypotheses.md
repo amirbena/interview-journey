@@ -31,6 +31,12 @@ Predict the most likely interview questions.
 - QP-003: Critical role requirements generate more questions.
 - QP-004: Resume projects are common discussion targets.
 - QP-005: Explain why each prediction exists.
+- QP-006: Public reports of previous interview questions must never be presented as guaranteed future questions. One candidate report is weak evidence. Multiple recent independent reports may increase confidence but do not create certainty.
+- QP-007: Company-wide engineering information must not be presented as interviewer-specific intent. An interviewer authoring a talk on distributed systems does not confirm that topic will appear in the interview.
+- QP-008: When current company evidence is absent, label predictions as role-pattern based rather than company-specific. State the basis explicitly.
+- QP-009: Stale or unknown-date research reduces confidence. When public research evidence is stale or has no `retrieved_at`, lower the prediction confidence and make the basis visible in the prediction rationale.
+- QP-010: Interviewer public writing may suggest areas of technical interest, but must not be used to psychologically profile or manipulate — it informs preparation topics, not conversation tactics.
+- QP-011: Predictions must remain professional and preparation-oriented. Do not infer personal motivations, biases, or interview styles beyond what evidence supports.
 
 ## Categories
 - Resume
@@ -108,6 +114,18 @@ Update hypotheses whenever new interview intelligence becomes available.
 
 ## IH-006
 Preserve uncertainty. Do not present hypotheses as facts.
+
+## IH-007
+Missing current company evidence requires hypotheses to be labeled as based on role patterns rather than company-specific signals. State this explicitly in the hypothesis rationale.
+
+## IH-008
+Stale or unknown-date public research reduces hypothesis confidence. When the research evidence supporting a hypothesis is stale or has unknown freshness, lower the confidence label and surface the limitation.
+
+## IH-009
+Interviewer public writing or talks may suggest areas of technical interest and inform hypothesis generation. They must not be used for psychological profiling, manipulative framing, or inferences about personal interview style beyond what the content directly supports.
+
+## IH-010
+A public interview report from another candidate is evidence of possibility, not proof of the user's upcoming questions. Weight it at low confidence unless corroborated by multiple recent independent reports for the same role type and stage.
 
 ---
 
@@ -189,6 +207,9 @@ See [`schemas/interview-hypothesis.schema.md`](../schemas/interview-hypothesis.s
 - Each hypothesis leads to a practical preparation action.
 - Uncertainty is visible.
 - No interview process was invented.
+- Hypotheses based on public research identify their evidence class (unverified or corroborated) and freshness.
+- Hypotheses based on stale or pattern-only evidence are labeled accordingly.
+- No psychological profiling or manipulative framing is present.
 
 ---
 

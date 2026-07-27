@@ -159,6 +159,140 @@ if [ -d "${KNOWLEDGE_DIR}" ]; then
   fi
 fi
 
+# 13. Skill routing: trigger policy must contain primary-objective ownership and negative triggers.
+TRIGGER_POLICY="claude/skill-trigger-policy.md"
+if [ -f "${TRIGGER_POLICY}" ]; then
+  check "Trigger policy contains primary-objective ownership section" \
+    "grep -qi 'Primary Objective Ownership' '${TRIGGER_POLICY}'"
+  check "Trigger policy contains negative recruiter trigger rule" \
+    "grep -qi 'recruiter' '${TRIGGER_POLICY}'"
+  check "Trigger policy contains negative interviewer trigger rule" \
+    "grep -qi 'interviewer' '${TRIGGER_POLICY}'"
+  check "Trigger policy contains co-activation resolution rule" \
+    "grep -qi 'co-activation\|Co-activation' '${TRIGGER_POLICY}'"
+fi
+
+# 14. Project instructions must not claim explicit Skill-to-Skill invocation.
+for pi_file in claude/project-instructions.md claude/project-instructions.compact.md; do
+  if [ -f "${pi_file}" ]; then
+    check "${pi_file} does not claim explicit Skill invocation of career-targeting" \
+      "! grep -qi 'invoke career-targeting-intelligence\|call recruiter-interview-research\|delegate to another Skill' '${pi_file}'"
+  fi
+done
+
+# 15. Public research evidence schema exists with required fields.
+PR_SCHEMA="schemas/public-research-evidence.schema.md"
+check "public-research-evidence.schema.md exists" "[ -f '${PR_SCHEMA}' ]"
+if [ -f "${PR_SCHEMA}" ]; then
+  check "Schema contains research_objective field" "grep -q 'research_objective' '${PR_SCHEMA}'"
+  check "Schema contains retrieved_at field" "grep -q 'retrieved_at' '${PR_SCHEMA}'"
+  check "Schema contains reliability field" "grep -q 'reliability' '${PR_SCHEMA}'"
+  check "Schema contains freshness field" "grep -q 'freshness' '${PR_SCHEMA}'"
+  check "Schema contains evidence_status field" "grep -q 'evidence_status' '${PR_SCHEMA}'"
+  check "Schema contains confidence field" "grep -q 'confidence' '${PR_SCHEMA}'"
+  check "Schema states preparation_implications not produced by research layer" \
+    "grep -q 'preparation_implications' '${PR_SCHEMA}'"
+fi
+
+# 16. Bounded research workflow exists.
+RCII="workflows/research-current-interview-intelligence.md"
+check "research-current-interview-intelligence.md exists" "[ -f '${RCII}' ]"
+if [ -f "${RCII}" ]; then
+  check "Research workflow defines Research Required" "grep -q 'Research Required' '${RCII}'"
+  check "Research workflow defines Research Not Required" "grep -q 'Research Not Required' '${RCII}'"
+  check "Research workflow references public-research-evidence schema" \
+    "grep -q 'public-research-evidence.schema.md' '${RCII}'"
+  check "Research workflow does not implement outreach ranking or recruiter prospecting" \
+    "! grep -qi 'outreach.*rank\|recruiter.*rank\|prospect.*contact\|priority.*queue' '${RCII}'"
+fi
+
+# 17. Framework 05 accepts public research with provenance rules.
+F05="frameworks/05-interview-intelligence-framework.md"
+if [ -f "${F05}" ]; then
+  check "Framework 05 lists public research as a source" \
+    "grep -qi 'public.*research\|research.*public' '${F05}'"
+  check "Framework 05 has II-006 (provenance rule)" "grep -q 'II-006' '${F05}'"
+  check "Framework 05 has II-008 (evidence classification rule)" "grep -q 'II-008' '${F05}'"
+  check "Framework 05 references public-research-evidence schema" \
+    "grep -q 'public-research-evidence.schema.md' '${F05}'"
+fi
+
+# 18. Framework 07 and 08 preserve uncertainty about public research.
+F07="frameworks/07-question-prediction-framework.md"
+if [ -f "${F07}" ]; then
+  check "Framework 07 has QP-006 (no guaranteed future questions from reports)" \
+    "grep -q 'QP-006' '${F07}'"
+  check "Framework 07 has QP-008 (role-pattern label when evidence absent)" \
+    "grep -q 'QP-008' '${F07}'"
+  check "Framework 07 prohibits psychological profiling" \
+    "grep -qi 'profil' '${F07}'"
+fi
+F08="frameworks/08-interview-hypothesis-framework.md"
+if [ -f "${F08}" ]; then
+  check "Framework 08 has IH-007 (role-pattern label when evidence absent)" \
+    "grep -q 'IH-007' '${F08}'"
+  check "Framework 08 prohibits psychological profiling" \
+    "grep -qi 'profil' '${F08}'"
+fi
+
+# 19. Skill reference for research exists.
+SKILL_REF_RESEARCH="claude/skill/references/research-and-evidence.md"
+check "Skill reference research-and-evidence.md exists" "[ -f '${SKILL_REF_RESEARCH}' ]"
+if [ -f "${SKILL_REF_RESEARCH}" ]; then
+  check "Research reference defines Research Scope Constraint" \
+    "grep -qi 'scope constraint\|Scope Constraint' '${SKILL_REF_RESEARCH}'"
+  check "Research reference prohibits recruiter discovery" \
+    "grep -qi 'recruiter discovery' '${SKILL_REF_RESEARCH}'"
+fi
+
+# 20. Skill routes research-backed preparation without Skill-to-Skill invocation.
+SKILL_MD="claude/skill/SKILL.md"
+if [ -f "${SKILL_MD}" ]; then
+  check "SKILL.md routes current-research preparation to research-and-evidence reference" \
+    "grep -q 'research-and-evidence.md' '${SKILL_MD}'"
+  check "SKILL.md does not claim explicit Skill-to-Skill invocation" \
+    "! grep -qi 'invoke career-targeting-intelligence\|call recruiter-interview-research\|delegate to another Skill' '${SKILL_MD}'"
+  check "SKILL.md marks recruiter discovery as outside scope" \
+    "grep -qi 'outside Interview Journey scope\|Outside Interview Journey scope' '${SKILL_MD}'"
+fi
+
+# 21. Evidence policy contains public research evidence class.
+EP="core/evidence-policy.md"
+if [ -f "${EP}" ]; then
+  check "Evidence policy contains public_research_unverified class" \
+    "grep -q 'public_research_unverified\|public research — unverified\|Public research — unverified' '${EP}'"
+  check "Evidence policy contains corroborated_public_research class" \
+    "grep -q 'corroborated_public_research\|public research — corroborated\|Public research — corroborated' '${EP}'"
+fi
+
+# 22. Context priority policy contains extended priority levels (6-8).
+CP="core/context-priority.md"
+if [ -f "${CP}" ]; then
+  check "Context priority contains corroborated public research at priority 6" \
+    "grep -qi 'corroborated.*public research\|Corroborated current public research' '${CP}'"
+  check "Context priority contains unverified public research at priority 7" \
+    "grep -qi 'unverified.*public research\|Unverified current public research' '${CP}'"
+  check "Context priority has freshness-vs-specificity rule (rule 9)" \
+    "grep -q 'Freshness does not automatically override specificity\|freshness.*specificity' '${CP}'"
+fi
+
+# 23. No package includes external Skill source files.
+for pkg_script in scripts/package-claude-skill.sh scripts/package-claude-external-kit.sh scripts/package-chatgpt-gpt.sh; do
+  if [ -f "${pkg_script}" ]; then
+    check "${pkg_script} does not reference career-target-intellgence" \
+      "! grep -q 'career-target' '${pkg_script}'"
+    check "${pkg_script} does not reference job-hunt skill" \
+      "! grep -q 'job-hunt' '${pkg_script}'"
+  fi
+done
+
+# 24. Routing test matrix: 8 documented scenario assertions.
+# Verified structurally by presence of routing section in trigger policy.
+check "Trigger policy covers interview-preparation ownership scenario" \
+  "grep -qi 'interview preparation' '${TRIGGER_POLICY}'"
+check "Trigger policy covers recruiter-as-evidence (not ownership) scenario" \
+  "grep -qi 'recruiter.*evidence\|evidence.*recruiter\|interview context' '${TRIGGER_POLICY}'"
+
 echo ""
 echo "== Summary =="
 echo "Passed: ${PASS_COUNT}"

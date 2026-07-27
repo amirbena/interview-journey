@@ -68,6 +68,10 @@ Do not load every reference file for every request. Load only the reference file
 | Answer coaching | [`answer-coaching.md`](references/answer-coaching.md) |
 | Post-interview debrief | [`post-interview-debrief.md`](references/post-interview-debrief.md) |
 | Producing/resuming state or a canonical output | [`state-and-output-generation.md`](references/state-and-output-generation.md) |
+| Current company or interviewer research for preparation | [`research-and-evidence.md`](references/research-and-evidence.md), [`stage-fit-and-interview-intelligence.md`](references/stage-fit-and-interview-intelligence.md) |
+| Recent interview-question research | [`research-and-evidence.md`](references/research-and-evidence.md), [`stage-fit-and-interview-intelligence.md`](references/stage-fit-and-interview-intelligence.md), [`question-prediction-and-hypotheses.md`](references/question-prediction-and-hypotheses.md) |
+| Interviewer-informed mock interview | [`research-and-evidence.md`](references/research-and-evidence.md), [`stage-fit-and-interview-intelligence.md`](references/stage-fit-and-interview-intelligence.md), [`question-prediction-and-hypotheses.md`](references/question-prediction-and-hypotheses.md), [`mock-interviews.md`](references/mock-interviews.md) |
+| Recruiter discovery or outreach | Outside Interview Journey scope — do not route here |
 | Run full journey | Load references progressively, one per stage, as the journey reaches that stage |
 | Explain an existing output | Load only the single methodology reference relevant to the claim being explained |
 

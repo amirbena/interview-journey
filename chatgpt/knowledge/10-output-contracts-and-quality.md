@@ -30,10 +30,20 @@ Every material statement should be classified internally as one of:
 
 - **Confirmed** — directly supported by a source the candidate provided (resume, recruiter message, prior feedback, a pasted Job Description) or a direct statement in the current conversation.
 - **Reasonable inference** — a conclusion drawn from confirmed evidence, but not itself directly stated.
+- **Public research — unverified** — information retrieved from current public sources (company website, engineering blog, public profile, interview reports, job board) that has not been corroborated by user-supplied evidence. Requires source, `retrieved_at`, and `reliability` metadata. Never automatically upgraded to Confirmed.
+- **Public research — corroborated** — public research finding that is supported by a current recruiter statement, a hiring-manager statement, the current Job Description, an official current company or team source, or multiple independent reliable public sources. May inform preparation with higher confidence than unverified public research, but still does not become Confirmed.
 - **General interview guidance** — advice not tied to specific evidence about this role, resume, or process; drawn from the canonical frameworks' general patterns.
 - **Unknown** — insufficient evidence exists.
 
 The user-facing response does not need to mechanically label every sentence, but uncertainty must be visible wherever it is material to the candidate's decision-making.
+
+### Public research rules
+
+- Public research is not automatically Confirmed regardless of source specificity.
+- Public research — unverified must not override current user-supplied interview intelligence unless the conflict is explicitly preserved and resolved through source precedence.
+- Public research — corroborated may raise confidence but remains distinct from Confirmed.
+- Official public sources (company website, engineering blog) are not automatically downgraded to "General interview guidance" — their actual reliability and specificity determine which public research class applies.
+- Confidence must reflect the actual source quality, not the apparent authority of the source name.
 
 ## Rules
 
@@ -55,6 +65,8 @@ The user-facing response does not need to mechanically label every sentence, but
 - [`quality-gates.md`](quality-gates.md)
 - [`../frameworks/01-role-intelligence-framework.md`](../frameworks/01-role-intelligence-framework.md)
 - [`../frameworks/02-resume-intelligence-framework.md`](../frameworks/02-resume-intelligence-framework.md)
+- [`../schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md)
+- [`../workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md)
 
 
 ---
@@ -110,9 +122,11 @@ This document defines the platform-independent input priority order used across 
 1. **Current user clarification** — anything the user states explicitly in the current turn.
 2. **Confirmed interview-specific intelligence** — recruiter conversations, previous questions, previous feedback, interviewer information, assessments, and candidate observations already captured in Interview Intelligence (Framework 05).
 3. **Current interview stage** — as identified by Framework 03.
-4. **Role Intelligence** — as produced by Framework 01.
+4. **Verified Role Intelligence** — as produced by Framework 01 from user-supplied sources.
 5. **Resume Intelligence** — as produced by Framework 02.
-6. **General company or industry knowledge** — the lowest-priority source; usable only to fill gaps, never to override the sources above.
+6. **Corroborated current public research** — public research evidence classified as `corroborated_public_research` per [`evidence-policy.md`](evidence-policy.md) and [`schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md). Current, specific, and supported by user-supplied corroboration.
+7. **Unverified current public research** — public research evidence classified as `public_research_unverified`. Requires freshness and source metadata. Used only to fill gaps that affect preparation quality. Never overrides priorities 1–5.
+8. **General company or industry knowledge** — the lowest-priority source; usable only to fill gaps, never to override the sources above.
 
 ## Rules
 
@@ -125,6 +139,14 @@ This document defines the platform-independent input priority order used across 
 7. Do not claim access to context that was not actually supplied — no other conversations, no external accounts, no background monitoring.
 8. Absence of prior Interview Journey State does not block a focused task that has sufficient input on its own.
 
+### Public research priority rules
+
+9. Freshness does not automatically override specificity. A current generic company article does not outrank a slightly older role-specific recruiter statement.
+10. Current user-provided evidence remains higher priority than public research (priorities 1–5 always outrank priorities 6–7) unless the user-provided evidence is explicitly outdated or incorrect.
+11. Contradictions between public research and user-supplied evidence must be preserved rather than silently resolved.
+12. Public research evidence classified as `public_research_unverified` (priority 7) may not outrank any evidence in priorities 1–5.
+13. `corroborated_public_research` (priority 6) may inform preparation but must not be presented as Confirmed evidence.
+
 ## Worked example
 
 If a candidate has already confirmed (in this conversation) that the next interview is a System Design round, and the Role Intelligence inferred "likely system design focus" with Medium confidence, the confirmed stage information (priority 3) overrides the inferred focus (derived from priority 4) — the system should proceed directly to System Design preparation without re-asking or re-deriving.
@@ -135,6 +157,8 @@ If a candidate has already confirmed (in this conversation) that the next interv
 - [`state-management.md`](state-management.md)
 - [`orchestration-policy.md`](orchestration-policy.md)
 - [`../frameworks/15-interview-journey-intelligence-framework.md`](../frameworks/15-interview-journey-intelligence-framework.md)
+- [`../schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md)
+- [`../workflows/research-current-interview-intelligence.md`](../workflows/research-current-interview-intelligence.md)
 
 
 ---
