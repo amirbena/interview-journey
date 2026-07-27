@@ -5,7 +5,7 @@ Rebuild it using the ChatGPT Knowledge build script
 (scripts/build-chatgpt-knowledge.sh or .ps1).
 -->
 
-# 03-interview-intelligence-and-strategy
+# 04-interview-intelligence-and-strategy
 
 ## Source: `frameworks/05-interview-intelligence-framework.md`
 

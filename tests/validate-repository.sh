@@ -105,6 +105,60 @@ if [ -f "chatgpt/knowledge-manifest.md" ]; then
   check "all chatgpt/knowledge-manifest.md source paths resolve" "[ '${missing}' = '0' ]"
 fi
 
+# 11. Formula drift: priority scoring formula must match between Framework 01 §17 and Skill reference.
+FRAMEWORK_01="frameworks/01-role-intelligence-framework.md"
+SKILL_REF="claude/skill/references/role-and-resume-intelligence.md"
+if [ -f "${FRAMEWORK_01}" ] && [ -f "${SKILL_REF}" ]; then
+  for component in "Business Impact" "Core Responsibility Alignment" "Ownership Relevance" "Evidence Strength" "Repetition" "Interview Relevance" "Non-Substitutability"; do
+    check "Framework 01 scoring formula contains component: ${component}" "grep -qF '${component}' '${FRAMEWORK_01}'"
+    check "Skill reference scoring formula contains component: ${component}" "grep -qF '${component}' '${SKILL_REF}'"
+  done
+  # Component-weight pairings: catch individual weight drift in Framework 01
+  check "Framework 01 Business Impact weight is 25"           "grep -qE 'Business Impact.{0,15}25|25.{0,15}Business Impact'           '${FRAMEWORK_01}'"
+  check "Framework 01 Core Responsibility Alignment weight is 20" "grep -qE 'Core Responsibility Alignment.{0,15}20|20.{0,15}Core Responsibility' '${FRAMEWORK_01}'"
+  check "Framework 01 Ownership Relevance weight is 15"       "grep -qE 'Ownership Relevance.{0,15}15'                                '${FRAMEWORK_01}'"
+  check "Framework 01 Evidence Strength weight is 15"         "grep -qE 'Evidence Strength.{0,15}15'                                 '${FRAMEWORK_01}'"
+  check "Framework 01 Repetition weight is 10"                "grep -qE 'Repetition.{0,30}10|10.{0,30}Repetition'                    '${FRAMEWORK_01}'"
+  check "Framework 01 Interview Relevance weight is 10"       "grep -qE 'Interview Relevance.{0,15}10'                               '${FRAMEWORK_01}'"
+  check "Framework 01 Non-Substitutability weight is 5"       "grep -qE 'Non-Substitutability.{0,10}5|5.{0,10}Non-Substitutability'  '${FRAMEWORK_01}'"
+  # Same component-weight pairings in Skill reference (formula is on one line)
+  check "Skill reference Business Impact weight is 25"           "grep -qE 'Business Impact.{0,15}25|25.{0,15}Business Impact'           '${SKILL_REF}'"
+  check "Skill reference Core Responsibility Alignment weight is 20" "grep -qE 'Core Responsibility Alignment.{0,15}20|20.{0,15}Core Responsibility' '${SKILL_REF}'"
+  check "Skill reference Ownership Relevance weight is 15"       "grep -qE 'Ownership Relevance.{0,15}15'                                '${SKILL_REF}'"
+  check "Skill reference Evidence Strength weight is 15"         "grep -qE 'Evidence Strength.{0,15}15'                                 '${SKILL_REF}'"
+  check "Skill reference Repetition weight is 10"                "grep -qE 'Repetition.{0,15}10|10.{0,15}Repetition'                    '${SKILL_REF}'"
+  check "Skill reference Interview Relevance weight is 10"       "grep -qE 'Interview Relevance.{0,15}10'                               '${SKILL_REF}'"
+  check "Skill reference Non-Substitutability weight is 5"       "grep -qE 'Non-Substitutability.{0,10}5|5.{0,10}Non-Substitutability'  '${SKILL_REF}'"
+  # Four threshold boundaries must appear in both files: Critical≥90, High≥75, Medium≥50, Low≥25
+  for t in 90 75 50 25; do
+    check "Framework 01 contains priority threshold ${t}" "grep -qE '(^|[^0-9])${t}([^0-9]|$)' '${FRAMEWORK_01}'"
+    check "Skill reference contains priority threshold ${t}" "grep -qE '(^|[^0-9])${t}([^0-9]|$)' '${SKILL_REF}'"
+  done
+fi
+
+# 12. ChatGPT Knowledge bundle integrity: 10 bundles, correct names, old bundle absent.
+KNOWLEDGE_DIR="chatgpt/knowledge"
+if [ -d "${KNOWLEDGE_DIR}" ]; then
+  EXPECTED_BUNDLES=(01-product-orchestration-and-state.md 02-role-intelligence.md 03-resume-stage-and-fit.md 04-interview-intelligence-and-strategy.md 05-question-prediction-and-hypotheses.md 06-coding-interviews.md 07-system-design-interviews.md 08-behavioral-and-answer-coaching.md 09-mock-interviews-and-debrief.md 10-output-contracts-and-quality.md)
+  for bundle in "${EXPECTED_BUNDLES[@]}"; do
+    check "Knowledge bundle exists: ${bundle}" "[ -f '${KNOWLEDGE_DIR}/${bundle}' ]"
+  done
+  actual_count=$(find "${KNOWLEDGE_DIR}" -maxdepth 1 -type f -name "*.md" | wc -l | tr -d ' ')
+  check "Knowledge directory contains exactly 10 bundles" "[ '${actual_count}' = '10' ]"
+  check "stale bundle 02-role-resume-stage-and-fit.md is absent" "[ ! -f '${KNOWLEDGE_DIR}/02-role-resume-stage-and-fit.md' ]"
+  # Bundle content integrity: 02 must embed Framework 01, 03 must embed Framework 02
+  if [ -f "${KNOWLEDGE_DIR}/02-role-intelligence.md" ]; then
+    check "Knowledge bundle 02 embeds frameworks/01-role-intelligence-framework.md" \
+      "grep -qF 'frameworks/01-role-intelligence-framework.md' '${KNOWLEDGE_DIR}/02-role-intelligence.md'"
+    check "Knowledge bundle 02 does not embed frameworks/02-resume-intelligence-framework.md" \
+      "! grep -qF 'frameworks/02-resume-intelligence-framework.md' '${KNOWLEDGE_DIR}/02-role-intelligence.md'"
+  fi
+  if [ -f "${KNOWLEDGE_DIR}/03-resume-stage-and-fit.md" ]; then
+    check "Knowledge bundle 03 embeds frameworks/02-resume-intelligence-framework.md" \
+      "grep -qF 'frameworks/02-resume-intelligence-framework.md' '${KNOWLEDGE_DIR}/03-resume-stage-and-fit.md'"
+  fi
+fi
+
 echo ""
 echo "== Summary =="
 echo "Passed: ${PASS_COUNT}"

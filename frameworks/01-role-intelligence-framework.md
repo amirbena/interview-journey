@@ -1322,13 +1322,13 @@ Primary: FinTech Backend. Secondary: Product Backend. Secondary: SRE-oriented Ba
 
 Technical Scope 3, Autonomy 3, Architecture 3, Business Impact 3, Cross-Team Influence 2, Leadership 2, Operational Ownership 3, Ambiguity 2. Total: 21. Interpretation: Senior.
 
-## Critical Requirements
+## Top Requirements
 
-Distributed reliability — Score 94 — Central to payment correctness and explicitly reinforced by scale, Kafka, reliability, and on-call.
+Distributed reliability — Critical — Score 94 — Central to payment correctness and explicitly reinforced by scale, Kafka, reliability, and on-call.
 
-End-to-end service ownership — Score 91 — Explicit ownership language and direct production impact.
+End-to-end service ownership — Critical — Score 91 — Explicit ownership language and direct production impact.
 
-Data consistency and transactions — Score 88 — Strongly implied by payments and PostgreSQL, even if not repeated.
+Data consistency and transactions — High — Score 88 — Strongly implied by payments and PostgreSQL, even if not repeated.
 
 ## Likely Interview Focus
 

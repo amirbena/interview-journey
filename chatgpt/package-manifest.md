@@ -22,14 +22,15 @@ interview-journey-chatgpt/
   knowledge-manifest.md
   knowledge/
     01-product-orchestration-and-state.md
-    02-role-resume-stage-and-fit.md
-    03-interview-intelligence-and-strategy.md
-    04-question-prediction-and-hypotheses.md
-    05-coding-interviews.md
-    06-system-design-interviews.md
-    07-behavioral-and-answer-coaching.md
-    08-mock-interviews-and-debrief.md
-    09-output-contracts-and-quality.md
+    02-role-intelligence.md
+    03-resume-stage-and-fit.md
+    04-interview-intelligence-and-strategy.md
+    05-question-prediction-and-hypotheses.md
+    06-coding-interviews.md
+    07-system-design-interviews.md
+    08-behavioral-and-answer-coaching.md
+    09-mock-interviews-and-debrief.md
+    10-output-contracts-and-quality.md
 ```
 
 ## Intentionally excluded
@@ -43,7 +44,7 @@ interview-journey-chatgpt/
 
 ## Build order
 
-1. `build-chatgpt-knowledge.sh` (or `.ps1`) generates the nine bundles under `chatgpt/knowledge/` from the explicit source allowlist in [`knowledge-manifest.md`](knowledge-manifest.md).
+1. `build-chatgpt-knowledge.sh` (or `.ps1`) generates the ten bundles under `chatgpt/knowledge/` from the explicit source allowlist in [`knowledge-manifest.md`](knowledge-manifest.md).
 2. `package-chatgpt-gpt.sh` (or `.ps1`) validates all required documentation files exist, rebuilds the Knowledge bundles, and assembles the package archive around them in a dedicated staging directory.
 
 ## Validation

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Deterministically generates the 9 ChatGPT Custom GPT Knowledge bundles
+    Deterministically generates the 10 ChatGPT Custom GPT Knowledge bundles
     under chatgpt/knowledge/ from an explicit allowlist of canonical
     repository sources. See chatgpt/knowledge-manifest.md for the full
     bundle-to-source mapping.
@@ -34,14 +34,15 @@ Rebuild it using the ChatGPT Knowledge build script
 
 $Bundles = [ordered]@{
     "01-product-orchestration-and-state.md" = @("core/product-definition.md","core/terminology.md","core/scope-and-non-goals.md","core/workflow.md","core/orchestration-policy.md","core/state-management.md","frameworks/15-interview-journey-intelligence-framework.md")
-    "02-role-resume-stage-and-fit.md" = @("frameworks/01-role-intelligence-framework.md","frameworks/02-resume-intelligence-framework.md","frameworks/03-interview-stage-framework.md","frameworks/04-role-fit-gap-analysis-framework.md")
-    "03-interview-intelligence-and-strategy.md" = @("frameworks/05-interview-intelligence-framework.md","frameworks/06-preparation-strategy-framework.md")
-    "04-question-prediction-and-hypotheses.md" = @("frameworks/07-question-prediction-framework.md","frameworks/08-interview-hypothesis-framework.md")
-    "05-coding-interviews.md" = @("frameworks/09-coding-interview-decision-engine.md")
-    "06-system-design-interviews.md" = @("frameworks/10-system-design-framework.md")
-    "07-behavioral-and-answer-coaching.md" = @("frameworks/11-behavioral-interview-framework.md","frameworks/13-answer-coaching-framework.md")
-    "08-mock-interviews-and-debrief.md" = @("frameworks/12-mock-interview-framework.md","frameworks/14-post-interview-debrief-framework.md")
-    "09-output-contracts-and-quality.md" = @("core/evidence-policy.md","core/accuracy-policy.md","core/context-priority.md","core/quality-gates.md","core/output-contracts.md")
+    "02-role-intelligence.md" = @("frameworks/01-role-intelligence-framework.md")
+    "03-resume-stage-and-fit.md" = @("frameworks/02-resume-intelligence-framework.md","frameworks/03-interview-stage-framework.md","frameworks/04-role-fit-gap-analysis-framework.md")
+    "04-interview-intelligence-and-strategy.md" = @("frameworks/05-interview-intelligence-framework.md","frameworks/06-preparation-strategy-framework.md")
+    "05-question-prediction-and-hypotheses.md" = @("frameworks/07-question-prediction-framework.md","frameworks/08-interview-hypothesis-framework.md")
+    "06-coding-interviews.md" = @("frameworks/09-coding-interview-decision-engine.md")
+    "07-system-design-interviews.md" = @("frameworks/10-system-design-framework.md")
+    "08-behavioral-and-answer-coaching.md" = @("frameworks/11-behavioral-interview-framework.md","frameworks/13-answer-coaching-framework.md")
+    "09-mock-interviews-and-debrief.md" = @("frameworks/12-mock-interview-framework.md","frameworks/14-post-interview-debrief-framework.md")
+    "10-output-contracts-and-quality.md" = @("core/evidence-policy.md","core/accuracy-policy.md","core/context-priority.md","core/quality-gates.md","core/output-contracts.md")
 }
 
 foreach ($bundle in $Bundles.Keys) {

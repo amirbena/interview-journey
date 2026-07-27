@@ -5,7 +5,7 @@ Rebuild it using the ChatGPT Knowledge build script
 (scripts/build-chatgpt-knowledge.sh or .ps1).
 -->
 
-# 09-output-contracts-and-quality
+# 10-output-contracts-and-quality
 
 ## Source: `core/evidence-policy.md`
 

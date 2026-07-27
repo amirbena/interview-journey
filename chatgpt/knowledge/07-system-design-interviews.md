@@ -5,7 +5,7 @@ Rebuild it using the ChatGPT Knowledge build script
 (scripts/build-chatgpt-knowledge.sh or .ps1).
 -->
 
-# 06-system-design-interviews
+# 07-system-design-interviews
 
 ## Source: `frameworks/10-system-design-framework.md`
 

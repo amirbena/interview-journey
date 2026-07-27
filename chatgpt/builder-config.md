@@ -32,17 +32,18 @@ Add each starter listed there as one of the GPT's Conversation Starters.
 
 ## Knowledge uploads
 
-Upload all nine generated bundles under `chatgpt/knowledge/`:
+Upload all ten generated bundles under `chatgpt/knowledge/`:
 
 1. `01-product-orchestration-and-state.md`
-2. `02-role-resume-stage-and-fit.md`
-3. `03-interview-intelligence-and-strategy.md`
-4. `04-question-prediction-and-hypotheses.md`
-5. `05-coding-interviews.md`
-6. `06-system-design-interviews.md`
-7. `07-behavioral-and-answer-coaching.md`
-8. `08-mock-interviews-and-debrief.md`
-9. `09-output-contracts-and-quality.md`
+2. `02-role-intelligence.md`
+3. `03-resume-stage-and-fit.md`
+4. `04-interview-intelligence-and-strategy.md`
+5. `05-question-prediction-and-hypotheses.md`
+6. `06-coding-interviews.md`
+7. `07-system-design-interviews.md`
+8. `08-behavioral-and-answer-coaching.md`
+9. `09-mock-interviews-and-debrief.md`
+10. `10-output-contracts-and-quality.md`
 
 These are generated files — build or rebuild them with `scripts/build-chatgpt-knowledge.sh` (or `.ps1`) rather than editing them by hand. See [`knowledge-manifest.md`](knowledge-manifest.md) for what each bundle contains and where it comes from.
 

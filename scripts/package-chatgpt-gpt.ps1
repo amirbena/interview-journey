@@ -38,7 +38,7 @@ $BuildScript = Join-Path $PSScriptRoot "build-chatgpt-knowledge.ps1"
 if (-not (Test-Path -LiteralPath $BuildScript -PathType Leaf)) { Fail "required build script not found: $BuildScript" }
 & $BuildScript | Out-Null
 
-$KnowledgeFiles = @("01-product-orchestration-and-state.md","02-role-resume-stage-and-fit.md","03-interview-intelligence-and-strategy.md","04-question-prediction-and-hypotheses.md","05-coding-interviews.md","06-system-design-interviews.md","07-behavioral-and-answer-coaching.md","08-mock-interviews-and-debrief.md","09-output-contracts-and-quality.md")
+$KnowledgeFiles = @("01-product-orchestration-and-state.md","02-role-intelligence.md","03-resume-stage-and-fit.md","04-interview-intelligence-and-strategy.md","05-question-prediction-and-hypotheses.md","06-coding-interviews.md","07-system-design-interviews.md","08-behavioral-and-answer-coaching.md","09-mock-interviews-and-debrief.md","10-output-contracts-and-quality.md")
 foreach ($kf in $KnowledgeFiles) {
     $p = Join-Path $KnowledgeDir $kf
     if (-not (Test-Path -LiteralPath $p -PathType Leaf)) { Fail "Knowledge build did not produce: $p" }

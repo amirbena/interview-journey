@@ -5,7 +5,7 @@ Rebuild it using the ChatGPT Knowledge build script
 (scripts/build-chatgpt-knowledge.sh or .ps1).
 -->
 
-# 05-coding-interviews
+# 06-coding-interviews
 
 ## Source: `frameworks/09-coding-interview-decision-engine.md`
 

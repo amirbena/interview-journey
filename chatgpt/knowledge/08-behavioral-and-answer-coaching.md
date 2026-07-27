@@ -5,7 +5,7 @@ Rebuild it using the ChatGPT Knowledge build script
 (scripts/build-chatgpt-knowledge.sh or .ps1).
 -->
 
-# 07-behavioral-and-answer-coaching
+# 08-behavioral-and-answer-coaching
 
 ## Source: `frameworks/11-behavioral-interview-framework.md`
 

@@ -5,7 +5,7 @@ Rebuild it using the ChatGPT Knowledge build script
 (scripts/build-chatgpt-knowledge.sh or .ps1).
 -->
 
-# 08-mock-interviews-and-debrief
+# 09-mock-interviews-and-debrief
 
 ## Source: `frameworks/12-mock-interview-framework.md`
 

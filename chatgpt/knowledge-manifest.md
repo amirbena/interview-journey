@@ -1,6 +1,6 @@
 # Knowledge Manifest
 
-Defines the nine Knowledge bundles for the Interview Journey Custom GPT: what each contains, which canonical repository files it's generated from, and what Knowledge must never contain. A Custom GPT currently accepts up to 10 Knowledge files — this package uses 9, comfortably inside that limit.
+Defines the ten Knowledge bundles for the Interview Journey Custom GPT: what each contains, which canonical repository files it's generated from, and what Knowledge must never contain. A Custom GPT currently accepts up to 10 Knowledge files — this package uses all 10.
 
 Knowledge bundles are generated, not hand-written. Rebuild them with [`../scripts/build-chatgpt-knowledge.sh`](../scripts/build-chatgpt-knowledge.sh) (or `.ps1`) — never edit a file under `chatgpt/knowledge/` directly.
 
@@ -31,35 +31,37 @@ Knowledge bundles are generated, not hand-written. Rebuild them with [`../script
 - `core/state-management.md`
 - `frameworks/15-interview-journey-intelligence-framework.md`
 
-### `02-role-resume-stage-and-fit.md`
+### `02-role-intelligence.md`
 - `frameworks/01-role-intelligence-framework.md`
+
+### `03-resume-stage-and-fit.md`
 - `frameworks/02-resume-intelligence-framework.md`
 - `frameworks/03-interview-stage-framework.md`
 - `frameworks/04-role-fit-gap-analysis-framework.md`
 
-### `03-interview-intelligence-and-strategy.md`
+### `04-interview-intelligence-and-strategy.md`
 - `frameworks/05-interview-intelligence-framework.md`
 - `frameworks/06-preparation-strategy-framework.md`
 
-### `04-question-prediction-and-hypotheses.md`
+### `05-question-prediction-and-hypotheses.md`
 - `frameworks/07-question-prediction-framework.md`
 - `frameworks/08-interview-hypothesis-framework.md`
 
-### `05-coding-interviews.md`
+### `06-coding-interviews.md`
 - `frameworks/09-coding-interview-decision-engine.md`
 
-### `06-system-design-interviews.md`
+### `07-system-design-interviews.md`
 - `frameworks/10-system-design-framework.md`
 
-### `07-behavioral-and-answer-coaching.md`
+### `08-behavioral-and-answer-coaching.md`
 - `frameworks/11-behavioral-interview-framework.md`
 - `frameworks/13-answer-coaching-framework.md`
 
-### `08-mock-interviews-and-debrief.md`
+### `09-mock-interviews-and-debrief.md`
 - `frameworks/12-mock-interview-framework.md`
 - `frameworks/14-post-interview-debrief-framework.md`
 
-### `09-output-contracts-and-quality.md`
+### `10-output-contracts-and-quality.md`
 - `core/evidence-policy.md`
 - `core/accuracy-policy.md`
 - `core/context-priority.md`

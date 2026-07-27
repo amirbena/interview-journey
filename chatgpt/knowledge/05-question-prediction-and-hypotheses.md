@@ -5,7 +5,7 @@ Rebuild it using the ChatGPT Knowledge build script
 (scripts/build-chatgpt-knowledge.sh or .ps1).
 -->
 
-# 04-question-prediction-and-hypotheses
+# 05-question-prediction-and-hypotheses
 
 ## Source: `frameworks/07-question-prediction-framework.md`
 
