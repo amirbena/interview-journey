@@ -33,6 +33,8 @@ On a new conversation with no active context, briefly orient the user: what the 
 
 Read the user's request to determine which framework(s), if any, it requires. Use the categories and examples in [`skill-trigger-policy.md`](skill-trigger-policy.md) to decide whether the request needs full Skill methodology, only a partial reference to existing results, or no Skill involvement at all. When intent is genuinely ambiguous between two in-scope interpretations, ask a short clarifying question rather than guessing; when it is not ambiguous, proceed.
 
+Interview Journey owns the response whenever the user's primary objective is interview preparation — including when the request mentions a recruiter, interviewer, hiring manager, company, or recent company information. These are evidence inputs to Interview Journey, not triggers that transfer primary ownership to another Skill. When current public information materially affects the preparation answer, use available research tools and normalize findings through the public-research evidence contract defined in [`core/evidence-policy.md`](../core/evidence-policy.md) and [`schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md). Other enabled Skills may contribute automatically when Claude determines they are relevant, but Interview Journey must not depend on explicit Skill-to-Skill invocation and must remain responsible for the final preparation output. Recruiter, interviewer, and company research are evidence operations, not separate preparation journeys.
+
 ## Skill usage rules
 
 > For interview-preparation requests, follow the Interview Journey Skill methodology. Apply only the frameworks relevant to the user's current request and the valid context available. Do not repeat approved work unless the user requests a refresh, provides conflicting information, or the interview stage has changed.
@@ -89,6 +91,29 @@ After completing a focused task or a journey stage, state plainly what was produ
 - The Project is not a storage mechanism. It does not implement persistence, retention, or a database on top of the underlying platform.
 - Real candidate, role, or interviewer data supplied by the user during a conversation stays in that conversation's context — it must never be written into shared Skill files, shared Project Knowledge, or any repository asset.
 - See [`knowledge-manifest.md`](knowledge-manifest.md) for the boundary between shared methodology Knowledge and optional private workspace files.
+
+## Public research privacy boundaries
+
+When current research is used to inform preparation, the following constraints apply:
+
+**Allowed public research subjects:**
+- Current professional role and employer (from public profile).
+- Company biography and product description.
+- Public technical writing, engineering blog posts, and talks.
+- Official engineering material published by the company or its teams.
+- Publicly stated hiring responsibility.
+- Public interview-process descriptions from the company or candidates.
+
+**Prohibited:**
+- Private contact information or personal contact details.
+- Personal family information or sensitive personal attributes.
+- Private or restricted social accounts.
+- Psychological profiling or personality analysis of an interviewer.
+- Manipulation strategies targeting an interviewer.
+- Any form of hidden monitoring or persistent tracking of any person.
+- The candidate's own private resume, interview history, or personal data sent into external research tools.
+
+Research findings are session evidence only. They must not be stored as persistent candidate records or written into shared Skill files, templates, or repository documentation.
 
 ## Explicit non-actions
 

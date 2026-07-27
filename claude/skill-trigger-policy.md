@@ -47,6 +47,49 @@ The request has nothing to do with the interview-preparation methodology:
 
 Handle these as ordinary conversation. Do not load any Skill reference file, and do not frame the response as if Skill methodology applied.
 
+## Primary Objective Ownership
+
+The user's primary objective determines the owning Skill.
+
+When the objective is interview preparation, Interview Journey remains the
+primary Skill even when the request mentions:
+- a recruiter;
+- an interviewer;
+- a hiring manager;
+- a company;
+- recent activity;
+- public research;
+- hiring-process information;
+- or current company information.
+
+These terms describe evidence required by Interview Journey. They do not
+transfer ownership to a recruiter-discovery, company-targeting, or job-search
+Skill.
+
+When the objective is finding jobs, recruiters, hiring managers, outreach
+targets, or hiring opportunities, Interview Journey is not the primary Skill.
+
+### Negative Trigger Conditions
+
+Do not surrender ownership merely because the request includes the words
+recruiter, interviewer, company research, recent activity, or LinkedIn.
+
+Do not activate recruiter-discovery or outreach workflows when recruiter or
+interviewer information was supplied only as interview context.
+
+Do not use Interview Journey as the primary Skill for recruiter discovery,
+job discovery, outreach prioritization, or general company targeting.
+
+### Co-activation resolution
+
+When multiple Skills could match the same request, the Skill whose primary
+scope covers the user's objective owns the session and the final response.
+Other Skills may contribute supporting evidence automatically when Claude
+determines they are relevant, but they do not own the preparation output.
+Interview Journey must not depend on explicit Skill-to-Skill invocation — it
+must remain responsible for the final preparation response regardless of what
+other context becomes available.
+
 ## Mutual understandability
 
 These three categories are meant to be recognizable without ambiguity by matching a request against its examples above, not by any hidden signal. When a request plausibly spans two categories (for example, "why is this Critical, and can you also re-check whether my resume proves it?" mixes Partial Reference Use with Skill Methodology Required), treat it as belonging to the stronger category — do the new analysis the second half asks for, using only the framework it needs, rather than defaulting to the weaker category and under-delivering.
