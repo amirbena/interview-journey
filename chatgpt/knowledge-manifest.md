@@ -15,7 +15,7 @@ Knowledge bundles are generated, not hand-written. Rebuild them with [`../script
 - Behavioral instructions that belong in [`instructions.md`](instructions.md) (routing, clarification policy, non-actions).
 - Personal candidate, role, or interviewer records.
 - The synthetic-candidate golden journey content.
-- Repository-development rules (`CLAUDE.md`, working rules, commit conventions).
+- Repository-development rules (`AGENTS.md`, `CLAUDE.md`, working rules, commit conventions).
 - Packaging scripts.
 - `CHANGELOG.md` or `ROADMAP.md`.
 - Any promise of persistence.

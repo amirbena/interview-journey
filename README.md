@@ -147,6 +147,7 @@ The product may only analyze information explicitly provided by the user. It mus
 
 - [`ROADMAP.md`](ROADMAP.md)
 - [`CHANGELOG.md`](CHANGELOG.md)
+- [`AGENTS.md`](AGENTS.md)
 - [`CLAUDE.md`](CLAUDE.md)
 - [`core/product-definition.md`](core/product-definition.md)
 - [`core/scope-and-non-goals.md`](core/scope-and-non-goals.md)
