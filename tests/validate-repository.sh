@@ -28,7 +28,7 @@ check() {
 echo "== Interview Journey repository validation =="
 
 # 1. Required canonical top-level files exist.
-for f in README.md CLAUDE.md ROADMAP.md CHANGELOG.md .gitignore; do
+for f in README.md AGENTS.md CLAUDE.md ROADMAP.md CHANGELOG.md .gitignore; do
   check "root file exists: ${f}" "[ -f '${f}' ]"
 done
 

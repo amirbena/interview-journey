@@ -62,7 +62,7 @@ The package uses an explicit allowlist (`SKILL.md`, `references/`, `templates/`)
 
 - `.git/`, `.github/`
 - `.DS_Store`, `Thumbs.db`, `__MACOSX/`
-- The repository root `README.md`, `ROADMAP.md`, `CHANGELOG.md`, `CLAUDE.md`
+- The repository root `README.md`, `ROADMAP.md`, `CHANGELOG.md`, `AGENTS.md`, `CLAUDE.md`
 - `core/`, `frameworks/`, `schemas/`, `workflows/`, `outputs/`
 - `examples/` (including the synthetic-candidate golden journey — it is a repository development asset, not Skill content, and must never enter the package)
 - `tests/`

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Split repository instructions into AGENTS.md and CLAUDE.md (docs/split-agent-instructions)
+
+- Created `AGENTS.md` as the canonical, provider-neutral repository-wide instruction file: working rules, framework/methodology rules, platform packaging rules (Claude Skill, Claude Project, Claude external kit, ChatGPT), data/privacy rules, a standardized Git and PR workflow (implementation branch rule, up-to-date-main rule, pre-edit gate, squash-merge strategy, post-merge sync, safe local cleanup), before-completion checks, final response report requirements, and an anti-drift maintenance rule.
+- Reduced `CLAUDE.md` to a thin Claude-specific pointer that defers to `AGENTS.md` for all shared policy; no genuinely Claude-Code-CLI-specific rules existed to retain, so the file documents that explicitly rather than duplicating `AGENTS.md`.
+- Updated references to point at `AGENTS.md` alongside `CLAUDE.md`: `README.md`, `core/scope-and-non-goals.md`, `claude/skill-manifest.md`, `chatgpt/knowledge-manifest.md`, `tests/validate-repository.sh` (added `AGENTS.md` to required root files).
+- Regenerated `chatgpt/knowledge/01-product-orchestration-and-state.md` via `scripts/build-chatgpt-knowledge.sh` (never hand-edited) to pick up the `AGENTS.md` reference added to `core/scope-and-non-goals.md`.
+- No Interview Journey methodology, frameworks, schemas, workflows, or packaging behavior changed.
+
 ### Skill routing and bounded research (feature/fresh-research-routing)
 
 - Rewrote `claude/skill-trigger-policy.md` to define Interview Journey by positive ownership: added "In-Scope Ownership" section (interview preparation, company/interviewer research for preparation, mock interviews, debrief), "Context Does Not Change Ownership" section (recruiter/interviewer/company terms are evidence inputs), "Outside Scope" section (job discovery, outreach, pipeline management — marked outside scope without naming external Skills), and "Independent Operation" section declaring no dependency on other Skills.
