@@ -144,13 +144,70 @@ one focused commit on `main`. Use a different merge strategy only when
 there is a clear repository-specific reason to preserve multiple
 commits. Do not rewrite or force-push `main`.
 
-If a repository ruleset blocks the merge on an unmet requirement (e.g.
-required approving review count) and no reviewer is available, `gh pr
-merge --squash --admin` may be used to bypass that requirement with
-repository admin privileges. This is an override of an explicitly
-configured policy, not a routine step: use it only after asking the
-user for explicit confirmation, and state plainly in the final report
-that the required-review gate was bypassed.
+#### Admin merge fallback
+
+When squash merging a PR, if GitHub rejects the normal merge solely
+because of a required-review or equivalent branch/ruleset requirement,
+`--admin` may be used automatically without requesting additional user
+confirmation, provided all of the following are true:
+
+- the user has already requested or authorized the merge
+- the PR has been reviewed
+- the PR is mergeable
+- there are no merge conflicts
+- required CI/checks are passing, or no required checks exist
+- the reviewed remote diff has not changed unexpectedly
+- there are no unresolved review comments or known blocking issues
+- the only remaining blocker is the required-review/ruleset restriction
+- squash merge remains the intended merge method
+
+In that case, retry with:
+
+```bash
+gh pr merge <PR> --squash --admin
+```
+
+without stopping for another confirmation. State plainly in the final
+report that the required-review gate was bypassed.
+
+`--admin` must NOT be used automatically to bypass:
+
+- failing required checks
+- merge conflicts
+- unresolved code-review findings
+- unexpected new commits or changed scope
+- failed validation
+- security or policy findings
+- an explicit instruction not to merge
+- uncertainty about why GitHub rejected the merge
+
+If the merge failure reason is unclear, investigate first rather than
+bypassing it.
+
+A previous instruction to perform the merge is sufficient authorization
+to use the admin fallback when the only blocker is the known
+required-review ruleset — `--admin` does not itself require a second
+confirmation in that case. However, general implementation permission
+is never permission to merge: there must still be an explicit merge
+task or instruction from the user before any merge is attempted.
+
+Preferred merge flow:
+
+```text
+review
+→ verify remote diff/checks/mergeability
+→ attempt normal squash merge
+→ if blocked only by required-review ruleset:
+     retry squash merge with --admin
+→ verify MERGED
+→ sync local main
+→ delete merged branches
+→ safe cleanup
+```
+
+If the repository is known in advance to require the admin bypass
+consistently, it is acceptable to use `--admin` directly once all merge
+gates above are satisfied.
 
 ### Post-merge synchronization
 
