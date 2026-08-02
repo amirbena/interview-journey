@@ -144,6 +144,14 @@ one focused commit on `main`. Use a different merge strategy only when
 there is a clear repository-specific reason to preserve multiple
 commits. Do not rewrite or force-push `main`.
 
+If a repository ruleset blocks the merge on an unmet requirement (e.g.
+required approving review count) and no reviewer is available, `gh pr
+merge --squash --admin` may be used to bypass that requirement with
+repository admin privileges. This is an override of an explicitly
+configured policy, not a routine step: use it only after asking the
+user for explicit confirmation, and state plainly in the final report
+that the required-review gate was bypassed.
+
 ### Post-merge synchronization
 
 After a PR is successfully merged:
