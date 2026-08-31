@@ -136,28 +136,140 @@ if [ -f "${FRAMEWORK_01}" ] && [ -f "${SKILL_REF}" ]; then
   done
 fi
 
-# 12. ChatGPT Knowledge bundle integrity: 10 bundles, correct names, old bundle absent.
+# 12. ChatGPT Knowledge bundle integrity: 3 bundles, correct names, old 10-bundle
+#     set absent, deterministic provenance header, exactly-once source coverage.
 KNOWLEDGE_DIR="chatgpt/knowledge"
 if [ -d "${KNOWLEDGE_DIR}" ]; then
-  EXPECTED_BUNDLES=(01-product-orchestration-and-state.md 02-role-intelligence.md 03-resume-stage-and-fit.md 04-interview-intelligence-and-strategy.md 05-question-prediction-and-hypotheses.md 06-coding-interviews.md 07-system-design-interviews.md 08-behavioral-and-answer-coaching.md 09-mock-interviews-and-debrief.md 10-output-contracts-and-quality.md)
+  EXPECTED_BUNDLES=(01-product-orchestration-and-quality.md 02-role-resume-and-strategy.md 03-interview-execution.md)
   for bundle in "${EXPECTED_BUNDLES[@]}"; do
     check "Knowledge bundle exists: ${bundle}" "[ -f '${KNOWLEDGE_DIR}/${bundle}' ]"
   done
   actual_count=$(find "${KNOWLEDGE_DIR}" -maxdepth 1 -type f -name "*.md" | wc -l | tr -d ' ')
-  check "Knowledge directory contains exactly 10 bundles" "[ '${actual_count}' = '10' ]"
-  check "stale bundle 02-role-resume-stage-and-fit.md is absent" "[ ! -f '${KNOWLEDGE_DIR}/02-role-resume-stage-and-fit.md' ]"
-  # Bundle content integrity: 02 must embed Framework 01, 03 must embed Framework 02
-  if [ -f "${KNOWLEDGE_DIR}/02-role-intelligence.md" ]; then
-    check "Knowledge bundle 02 embeds frameworks/01-role-intelligence-framework.md" \
-      "grep -qF 'frameworks/01-role-intelligence-framework.md' '${KNOWLEDGE_DIR}/02-role-intelligence.md'"
-    check "Knowledge bundle 02 does not embed frameworks/02-resume-intelligence-framework.md" \
-      "! grep -qF 'frameworks/02-resume-intelligence-framework.md' '${KNOWLEDGE_DIR}/02-role-intelligence.md'"
-  fi
-  if [ -f "${KNOWLEDGE_DIR}/03-resume-stage-and-fit.md" ]; then
-    check "Knowledge bundle 03 embeds frameworks/02-resume-intelligence-framework.md" \
-      "grep -qF 'frameworks/02-resume-intelligence-framework.md' '${KNOWLEDGE_DIR}/03-resume-stage-and-fit.md'"
+  check "Knowledge directory contains exactly 3 bundles" "[ '${actual_count}' = '3' ]"
+  # The pre-consolidation 10-bundle names must all be gone.
+  for stale in 01-product-orchestration-and-state.md 02-role-intelligence.md 03-resume-stage-and-fit.md 04-interview-intelligence-and-strategy.md 05-question-prediction-and-hypotheses.md 06-coding-interviews.md 07-system-design-interviews.md 08-behavioral-and-answer-coaching.md 09-mock-interviews-and-debrief.md 10-output-contracts-and-quality.md; do
+    check "stale Knowledge bundle absent: ${stale}" "[ ! -f '${KNOWLEDGE_DIR}/${stale}' ]"
+  done
+  # Every bundle carries the deterministic provenance header.
+  for bundle in "${EXPECTED_BUNDLES[@]}"; do
+    if [ -f "${KNOWLEDGE_DIR}/${bundle}" ]; then
+      check "bundle ${bundle} has a Bundle: position line" \
+        "grep -qE '^Bundle: ${bundle} \\([0-9]+ of 3\\)$' '${KNOWLEDGE_DIR}/${bundle}'"
+      check "bundle ${bundle} has a Content-Digest sha256 line" \
+        "grep -qE '^Content-Digest \\(sha256, sources concatenated in order, CR bytes removed\\): [0-9a-f]{64}$' '${KNOWLEDGE_DIR}/${bundle}'"
+    fi
+  done
+  # Bundle content routing: representative source-to-bundle assignments.
+  check "bundle 01 embeds core/output-contracts.md" \
+    "grep -qF '## Source: \`core/output-contracts.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
+  check "bundle 01 embeds frameworks/15-interview-journey-intelligence-framework.md" \
+    "grep -qF '## Source: \`frameworks/15-interview-journey-intelligence-framework.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
+  check "bundle 02 embeds frameworks/01-role-intelligence-framework.md" \
+    "grep -qF '## Source: \`frameworks/01-role-intelligence-framework.md\`' '${KNOWLEDGE_DIR}/02-role-resume-and-strategy.md'"
+  check "bundle 02 embeds workflows/research-current-interview-intelligence.md" \
+    "grep -qF '## Source: \`workflows/research-current-interview-intelligence.md\`' '${KNOWLEDGE_DIR}/02-role-resume-and-strategy.md'"
+  check "bundle 03 embeds frameworks/09-coding-interview-decision-engine.md" \
+    "grep -qF '## Source: \`frameworks/09-coding-interview-decision-engine.md\`' '${KNOWLEDGE_DIR}/03-interview-execution.md'"
+  check "bundle 03 embeds frameworks/14-post-interview-debrief-framework.md" \
+    "grep -qF '## Source: \`frameworks/14-post-interview-debrief-framework.md\`' '${KNOWLEDGE_DIR}/03-interview-execution.md'"
+  # Exactly-once source coverage: every canonical source appears in one bundle,
+  # and no source appears twice across the set.
+  embedded_sources=$(grep -h '^## Source: ' "${KNOWLEDGE_DIR}"/*.md 2>/dev/null | sed 's/^## Source: `//;s/`$//' | sort)
+  expected_sources=$( { find core -maxdepth 1 -type f -name '*.md'; find frameworks -maxdepth 1 -type f -name '*.md'; echo schemas/public-research-evidence.schema.md; echo workflows/research-current-interview-intelligence.md; } | sort )
+  check "Knowledge bundles cover every canonical source exactly once" \
+    "[ \"\$(printf '%s\n' \"\${embedded_sources}\")\" = \"\$(printf '%s\n' \"\${expected_sources}\")\" ]"
+  dup_sources=$(grep -h '^## Source: ' "${KNOWLEDGE_DIR}"/*.md 2>/dev/null | sort | uniq -d)
+  check "no canonical source is embedded in more than one bundle" "[ -z \"\${dup_sources}\" ]"
+fi
+
+# 12b. Committed ChatGPT Knowledge bundles must be byte-identical to a fresh
+#      deterministic rebuild from the canonical sources. Rendered into a
+#      throwaway directory so the contributor's working tree is never touched.
+#      Detects: a canonical source changed without rebuilding Knowledge; a
+#      bundle hand-edited; a stale Content-Digest; wrong source membership or
+#      order; a missing or extra generated bundle.
+if [ -d "${KNOWLEDGE_DIR}" ]; then
+  if command -v shasum >/dev/null 2>&1 || command -v sha256sum >/dev/null 2>&1; then
+    KB_TMP="$(mktemp -d 2>/dev/null || mktemp -d -t ijkb)"
+    kb_synced=0
+    if bash scripts/build-chatgpt-knowledge.sh "${KB_TMP}" >/dev/null 2>&1; then
+      diff -r "${KNOWLEDGE_DIR}" "${KB_TMP}" >/dev/null 2>&1 && kb_synced=1
+    fi
+    check "committed chatgpt/knowledge/ is byte-identical to a fresh rebuild" "[ '${kb_synced}' = '1' ]"
+    if [ "${kb_synced}" != "1" ]; then
+      echo "       (differences between committed bundles and a fresh rebuild:)"
+      diff -r "${KNOWLEDGE_DIR}" "${KB_TMP}" 2>&1 | sed 's/^/       /' | head -n 40
+    fi
+    rm -rf -- "${KB_TMP}"
+  else
+    echo "SKIP: no sha256 tool (shasum/sha256sum) on PATH; Knowledge rebuild-sync check not run"
   fi
 fi
+
+# 12c. Digest normalization contract. Digest/body input is each source's raw
+#      bytes with every CR (0x0D) removed - nothing else added, removed, or
+#      normalized (final-LF presence preserved; lone CR treated identically).
+#      Verified against LF / CRLF / lone-CR / no-final-newline / empty /
+#      one-byte fixtures, each against an independently written expected
+#      value. When pwsh is present the same fixtures are compared Bash vs
+#      PowerShell, and a full build-chatgpt-knowledge.ps1 rebuild is
+#      mandatory (a non-zero pwsh exit or a byte mismatch fails - never a
+#      SKIP). SKIP is reserved strictly for pwsh being absent.
+NORM_TMP="$(mktemp -d 2>/dev/null || mktemp -d -t ijnorm)"
+printf 'alpha\nbeta\n'     > "${NORM_TMP}/lf.txt"
+printf 'alpha\r\nbeta\r\n' > "${NORM_TMP}/crlf.txt"
+printf 'alpha\rbeta\r'     > "${NORM_TMP}/lonecr.txt"
+printf 'alpha\nbeta'       > "${NORM_TMP}/nonl.txt"
+: > "${NORM_TMP}/empty.txt"
+printf 'A'                 > "${NORM_TMP}/onebyte.txt"
+norm_bash() { tr -d '\r' < "$1" | od -A n -t x1 -v | tr -d ' \n'; }
+# Expected values are written here as literal bytes, independent of tr / the
+# normalization implementation under test.
+exp_lf="$(printf 'alpha\nbeta\n' | od -A n -t x1 -v | tr -d ' \n')"
+exp_cat="$(printf 'alphabeta'    | od -A n -t x1 -v | tr -d ' \n')"
+exp_nonl="$(printf 'alpha\nbeta' | od -A n -t x1 -v | tr -d ' \n')"
+exp_empty=""
+exp_onebyte="$(printf 'A'        | od -A n -t x1 -v | tr -d ' \n')"
+check "normalization: LF input is unchanged"              "[ \"\$(norm_bash '${NORM_TMP}/lf.txt')\" = \"${exp_lf}\" ]"
+check "normalization: CRLF collapses to LF"               "[ \"\$(norm_bash '${NORM_TMP}/crlf.txt')\" = \"${exp_lf}\" ]"
+check "normalization: lone CR removed, no newline added"  "[ \"\$(norm_bash '${NORM_TMP}/lonecr.txt')\" = \"${exp_cat}\" ]"
+check "normalization: missing final newline is preserved" "[ \"\$(norm_bash '${NORM_TMP}/nonl.txt')\" = \"${exp_nonl}\" ]"
+check "normalization: empty input stays empty"            "[ \"\$(norm_bash '${NORM_TMP}/empty.txt')\" = \"${exp_empty}\" ]"
+check "normalization: one-byte input passes through"      "[ \"\$(norm_bash '${NORM_TMP}/onebyte.txt')\" = \"${exp_onebyte}\" ]"
+if command -v pwsh >/dev/null 2>&1; then
+  norm_ps() {
+    pwsh -NoProfile -NonInteractive -Command "\$b=[System.IO.File]::ReadAllBytes('$1'); \$o=[System.Collections.Generic.List[byte]]::new(); foreach(\$x in \$b){ if(\$x -ne 0x0D){ \$o.Add(\$x) } }; -join (\$o.ToArray() | ForEach-Object { \$_.ToString('x2') })" 2>/dev/null | tr -d ' \r\n'
+  }
+  # Both sides are also pinned to the independent expected values above, so a
+  # matching pair cannot be two identical bugs.
+  check "normalization (PowerShell): empty input stays empty"       "[ \"\$(norm_ps '${NORM_TMP}/empty.txt')\" = \"${exp_empty}\" ]"
+  check "normalization (PowerShell): one-byte input passes through" "[ \"\$(norm_ps '${NORM_TMP}/onebyte.txt')\" = \"${exp_onebyte}\" ]"
+  for f in lf crlf lonecr nonl empty onebyte; do
+    check "normalization parity (Bash == PowerShell): ${f}" \
+      "[ \"\$(norm_bash '${NORM_TMP}/${f}.txt')\" = \"\$(norm_ps '${NORM_TMP}/${f}.txt')\" ]"
+  done
+  if [ -d "${KNOWLEDGE_DIR}" ]; then
+    # pwsh is present -> running the real .ps1 is mandatory. A non-zero exit
+    # is a failure, not a SKIP.
+    PS_TMP="$(mktemp -d 2>/dev/null || mktemp -d -t ijps)"
+    ps_build_ok=0
+    pwsh -NoProfile -NonInteractive -File scripts/build-chatgpt-knowledge.ps1 "${PS_TMP}" >/dev/null 2>&1 && ps_build_ok=1
+    check "build-chatgpt-knowledge.ps1 runs under pwsh" "[ '${ps_build_ok}' = '1' ]"
+    if [ "${ps_build_ok}" = "1" ]; then
+      ps_synced=0
+      diff -r "${KNOWLEDGE_DIR}" "${PS_TMP}" >/dev/null 2>&1 && ps_synced=1
+      check "PowerShell rebuild is byte-identical to committed chatgpt/knowledge/" "[ '${ps_synced}' = '1' ]"
+      if [ "${ps_synced}" != "1" ]; then
+        echo "       (Bash vs PowerShell rebuild differences:)"
+        diff -r "${KNOWLEDGE_DIR}" "${PS_TMP}" 2>&1 | sed 's/^/       /' | head -n 40
+      fi
+    fi
+    rm -rf -- "${PS_TMP}"
+  fi
+else
+  echo "SKIP: pwsh not on PATH; Bash/PowerShell parity not executed (fixture-level Bash contract enforced above)"
+fi
+rm -rf -- "${NORM_TMP}"
 
 # 13. Skill routing: trigger policy must define in-scope ownership, outside-scope boundary,
 #     and independent operation. Must not name external Skills as required components.
