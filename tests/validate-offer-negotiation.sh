@@ -18,6 +18,53 @@ check() {
   fi
 }
 
+chatgpt_offer_route_ok() {
+  local file="$1"
+  grep -qF 'Recognize offer and negotiation intent' "${file}" &&
+    grep -qF 'Route it to Knowledge source `core/offer-negotiation-preparation.md`' "${file}"
+}
+
+skill_offer_route_ok() {
+  local file="$1"
+  grep -qF '| Offer or compensation-negotiation preparation | [`offer-and-negotiation-preparation.md`](references/offer-and-negotiation-preparation.md)' "${file}"
+}
+
+project_full_offer_route_ok() {
+  local file="$1"
+  grep -qF "Preparing for an offer call, compensation discussion, employer range, offer evaluation, or negotiation through the Skill's" "${file}" &&
+    grep -qF '[`offer-and-negotiation-preparation.md`](skill/references/offer-and-negotiation-preparation.md) adaptation of the canonical contract' "${file}"
+}
+
+project_compact_offer_route_ok() {
+  local file="$1"
+  local flattened
+  flattened=$(tr '\n' ' ' < "${file}")
+  grep -qF "Route offer calls, compensation expectations, employer ranges, offer evaluation, and negotiation through the Skill's offer-and-negotiation-preparation.md reference and canonical contract" <<< "${flattened}"
+}
+
+project_negotiation_dependencies_ok() {
+  local file="$1"
+  local flattened
+  flattened=$(tr '\n' ' ' < "${file}")
+  grep -qiE 'freshness.*contradiction.*reuse/invalidation' <<< "${flattened}"
+}
+
+extract_bundle_source() {
+  local source="$1"
+  local bundle="$2"
+  local destination="$3"
+  awk -v header="## Source: \`${source}\`" '
+    $0 == header { capture=1; next }
+    capture && $0 == "---" {
+      while (count > 0 && lines[count] == "") count--
+      start = (count > 0 && lines[1] == "") ? 2 : 1
+      for (i = start; i <= count; i++) print lines[i]
+      exit
+    }
+    capture { lines[++count]=$0 }
+  ' "${bundle}" > "${destination}"
+}
+
 CANONICAL="core/offer-negotiation-preparation.md"
 SCENARIOS="tests/fixtures/offer-negotiation-scenarios.md"
 
@@ -71,14 +118,37 @@ check "Skill state template uses canonical negotiation object" \
 
 check "ChatGPT depends on canonical ONP invariant set" \
   "grep -qE 'Canonical negotiation dependency.*ONP-001.*ONP-010' chatgpt/instructions.md"
+check "ChatGPT routes offer intent to canonical negotiation Knowledge" \
+  "chatgpt_offer_route_ok chatgpt/instructions.md"
 check "Claude Skill reference depends on canonical ONP invariant set" \
   "grep -qE 'Canonical dependency.*ONP-001.*ONP-010' claude/skill/references/offer-and-negotiation-preparation.md"
+check "Claude Skill routes offer intent to its negotiation reference" \
+  "skill_offer_route_ok claude/skill/SKILL.md"
 for project in claude/project-instructions.md claude/project-instructions.compact.md; do
   check "${project} depends on canonical ONP invariant set" \
     "grep -qE 'ONP-001.*ONP-010' '${project}'"
   check "${project} preserves freshness, contradiction, and state lifecycle dependency" \
-    "tr '\n' ' ' < '${project}' | grep -qiE 'freshness.*contradiction.*reuse/invalidation'"
+    "project_negotiation_dependencies_ok '${project}'"
 done
+check "Claude Project full instructions route offer intent through the Skill reference" \
+  "project_full_offer_route_ok claude/project-instructions.md"
+check "Claude Project compact instructions route offer intent through the Skill reference" \
+  "project_compact_offer_route_ok claude/project-instructions.compact.md"
+
+routing_tmp=$(mktemp -d 2>/dev/null || mktemp -d -t ijofferrouting)
+sed 's/Recognize offer and negotiation intent/Recognize general career intent/' chatgpt/instructions.md > "${routing_tmp}/chatgpt.md"
+sed 's/Offer or compensation-negotiation preparation/General career preparation/' claude/skill/SKILL.md > "${routing_tmp}/skill.md"
+sed 's/Preparing for an offer call/Documenting an offer call/' claude/project-instructions.md > "${routing_tmp}/project-full.md"
+sed 's/Route offer calls/Describe offer calls/' claude/project-instructions.compact.md > "${routing_tmp}/project-compact.md"
+check "ChatGPT routing assertion rejects a missing offer-intent trigger" \
+  "! chatgpt_offer_route_ok '${routing_tmp}/chatgpt.md'"
+check "Claude Skill routing assertion rejects a missing offer-intent route" \
+  "! skill_offer_route_ok '${routing_tmp}/skill.md'"
+check "Claude Project full routing assertion rejects a missing offer-intent route" \
+  "! project_full_offer_route_ok '${routing_tmp}/project-full.md'"
+check "Claude Project compact routing assertion rejects a missing offer-intent route" \
+  "! project_compact_offer_route_ok '${routing_tmp}/project-compact.md'"
+rm -rf -- "${routing_tmp}"
 
 package_ok=1
 bash scripts/package-claude-skill.sh >/dev/null 2>&1 || package_ok=0
@@ -92,13 +162,14 @@ if [ "${package_ok}" = "1" ]; then
   check "Skill ZIP normalized file set matches authoritative Skill source set" \
     "[ \"${skill_actual}\" = \"${skill_expected}\" ]"
   check "Skill ZIP contains negotiation reference" \
-    "printf '%s\n' \"${skill_actual}\" | grep -qx 'interview-journey/references/offer-and-negotiation-preparation.md'"
+    "grep -qx 'interview-journey/references/offer-and-negotiation-preparation.md' <<< \"${skill_actual}\""
   check "Skill ZIP contains negotiation template" \
-    "printf '%s\n' \"${skill_actual}\" | grep -qx 'interview-journey/templates/offer-negotiation-preparation.md'"
+    "grep -qx 'interview-journey/templates/offer-negotiation-preparation.md' <<< \"${skill_actual}\""
 
-  check "external-kit ZIP contains canonical negotiation Knowledge" \
-    "unzip -Z1 dist/interview-journey-claude-kit.zip | grep -qx 'interview-journey-claude-kit/knowledge/offer-negotiation-preparation.md'"
   kit_tmp=$(mktemp -d 2>/dev/null || mktemp -d -t ijofferkit)
+  unzip -Z1 dist/interview-journey-claude-kit.zip > "${kit_tmp}/archive-listing.txt"
+  check "external-kit ZIP contains canonical negotiation Knowledge" \
+    "grep -qx 'interview-journey-claude-kit/knowledge/offer-negotiation-preparation.md' '${kit_tmp}/archive-listing.txt'"
   unzip -q dist/interview-journey-claude-kit.zip -d "${kit_tmp}"
   check "external-kit negotiation Knowledge matches canonical source" \
     "cmp '${CANONICAL}' '${kit_tmp}/interview-journey-claude-kit/knowledge/offer-negotiation-preparation.md'"
@@ -111,8 +182,26 @@ if [ "${package_ok}" = "1" ]; then
     "grep -qF 'core/offer-negotiation-preparation.md' '${chatgpt_knowledge_file}'"
   check "ChatGPT package Knowledge carries complete invariant boundary" \
     "grep -qF 'ONP-001' '${chatgpt_knowledge_file}' && grep -qF 'ONP-010' '${chatgpt_knowledge_file}'"
+  check "ChatGPT package Knowledge embeds the canonical journey-state schema" \
+    "grep -qF 'schemas/interview-journey-state.schema.md' '${chatgpt_knowledge_file}'"
+  packaged_state_schema="${chatgpt_tmp}/packaged-state-schema.md"
+  extract_bundle_source "${STATE_SCHEMA}" "${chatgpt_knowledge_file}" "${packaged_state_schema}"
+  check "ChatGPT packaged journey-state schema matches the canonical source" \
+    "cmp '${STATE_SCHEMA}' '${packaged_state_schema}'"
+  packaged_state_schema_count=$(grep -h '^## Source: ' "${chatgpt_tmp}"/interview-journey-chatgpt/knowledge/*.md | grep -cF "${STATE_SCHEMA}")
+  check "ChatGPT package maps the journey-state schema exactly once" \
+    "[ '${packaged_state_schema_count}' = '1' ]"
+  for field in offer_negotiation_preparation_status artifact_reference source_context_reference target_range preferred_outcome fallback market_evidence_freshness invalidation_inputs; do
+    check "ChatGPT packaged state schema carries ${field}" \
+      "grep -qF '${field}' '${chatgpt_knowledge_file}'"
+  done
   rm -rf -- "${chatgpt_tmp}"
 fi
+
+check "Bash Knowledge mapping includes the canonical journey-state schema" \
+  "grep -qF 'core/state-management.md,schemas/interview-journey-state.schema.md,frameworks/15-interview-journey-intelligence-framework.md' scripts/build-chatgpt-knowledge.sh"
+check "PowerShell Knowledge mapping includes the canonical journey-state schema" \
+  "grep -qF 'core/state-management.md\",\"schemas/interview-journey-state.schema.md\",\"frameworks/15-interview-journey-intelligence-framework.md' scripts/build-chatgpt-knowledge.ps1"
 
 check "Bash external-kit allowlist contains canonical negotiation Knowledge" \
   "grep -qF 'offer-negotiation-preparation.md:offer-negotiation-preparation.md' scripts/package-claude-external-kit.sh"

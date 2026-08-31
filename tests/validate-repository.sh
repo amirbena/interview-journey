@@ -164,6 +164,8 @@ if [ -d "${KNOWLEDGE_DIR}" ]; then
     "grep -qF '## Source: \`core/output-contracts.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
   check "bundle 01 embeds core/offer-negotiation-preparation.md" \
     "grep -qF '## Source: \`core/offer-negotiation-preparation.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
+  check "bundle 01 embeds schemas/interview-journey-state.schema.md" \
+    "grep -qF '## Source: \`schemas/interview-journey-state.schema.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
   check "bundle 01 embeds frameworks/15-interview-journey-intelligence-framework.md" \
     "grep -qF '## Source: \`frameworks/15-interview-journey-intelligence-framework.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
   check "bundle 02 embeds frameworks/01-role-intelligence-framework.md" \
@@ -177,7 +179,7 @@ if [ -d "${KNOWLEDGE_DIR}" ]; then
   # Exactly-once source coverage: every canonical source appears in one bundle,
   # and no source appears twice across the set.
   embedded_sources=$(grep -h '^## Source: ' "${KNOWLEDGE_DIR}"/*.md 2>/dev/null | sed 's/^## Source: `//;s/`$//' | sort)
-  expected_sources=$( { find core -maxdepth 1 -type f -name '*.md'; find frameworks -maxdepth 1 -type f -name '*.md'; echo schemas/public-research-evidence.schema.md; echo workflows/research-current-interview-intelligence.md; } | sort )
+  expected_sources=$( { find core -maxdepth 1 -type f -name '*.md'; find frameworks -maxdepth 1 -type f -name '*.md'; echo schemas/interview-journey-state.schema.md; echo schemas/public-research-evidence.schema.md; echo workflows/research-current-interview-intelligence.md; } | sort )
   check "Knowledge bundles cover every canonical source exactly once" \
     "[ \"\$(printf '%s\n' \"\${embedded_sources}\")\" = \"\$(printf '%s\n' \"\${expected_sources}\")\" ]"
   dup_sources=$(grep -h '^## Source: ' "${KNOWLEDGE_DIR}"/*.md 2>/dev/null | sort | uniq -d)
