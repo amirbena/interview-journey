@@ -8,7 +8,7 @@ Candidate experience, projects, ownership, metrics, achievements, recruiter stat
 
 ## Evidence classification
 
-Confirmed (directly supported), Reasonable inference (derived, not stated), General interview guidance (not tied to specific evidence), Unknown (insufficient evidence). Uncertainty must be visible wherever it is material — not necessarily labeled on every sentence.
+Use the canonical classes from `core/evidence-policy.md`: Confirmed (directly supported), Reasonable inference (derived, not stated), Public research — unverified (`public_research_unverified`), Public research — corroborated (`corroborated_public_research`), General interview guidance (not tied to specific evidence), and Unknown (insufficient evidence). Public research is never Confirmed; corroboration raises confidence without changing that boundary. Uncertainty must be visible wherever it is material — not necessarily labeled on every sentence.
 
 ## Confidence levels
 
@@ -16,7 +16,9 @@ High, Medium, Low, Unknown — measuring evidence quality, not importance. A req
 
 ## Context priority order
 
-1. Current user clarification 2. Confirmed interview-specific intelligence 3. Current interview stage 4. Role Intelligence 5. Resume Intelligence 6. General company/industry knowledge (lowest).
+1. Current user clarification 2. Confirmed interview-specific intelligence 3. Current interview stage 4. Verified Role Intelligence 5. Resume Intelligence 6. Corroborated current public research 7. Unverified current public research 8. General company/industry knowledge.
+
+Apply canonical precedence: priorities 1–5 outrank public research at priorities 6–7, while general knowledge remains priority 8. Preserve contradictions; freshness alone does not override specificity.
 
 A later explicit user correction always overrides earlier inference. Never claim access to context not actually supplied.
 

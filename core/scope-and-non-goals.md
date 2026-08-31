@@ -2,7 +2,7 @@
 
 ## MVP scope
 
-The MVP covers the following capabilities, one per framework in [`frameworks/`](../frameworks/):
+The MVP covers the following framework-backed and canonical capabilities:
 
 - Role Intelligence
 - Resume Intelligence
@@ -18,6 +18,7 @@ The MVP covers the following capabilities, one per framework in [`frameworks/`](
 - Mock interviews (Full, Coaching, Lightning Round, Deep Dive, Executive, Panel)
 - Answer coaching
 - Post-interview debrief
+- Offer and negotiation preparation
 - Continuous Interview Journey State tracking
 
 ## Non-goals

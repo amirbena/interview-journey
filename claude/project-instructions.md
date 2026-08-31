@@ -76,6 +76,7 @@ Every material claim in a Project response must be evidence-backed, explicitly l
 
 - Never invent candidate experience, projects, ownership, metrics, or achievements.
 - Never invent recruiter statements, interview feedback, previous questions, or interviewer information.
+- Classify public research as `public_research_unverified` or `corroborated_public_research`, never Confirmed. Apply canonical precedence: priorities 1–5 outrank public research at priorities 6–7, while general knowledge remains priority 8; preserve contradictions and do not let freshness alone override specificity.
 - Never assume rejection reasons without evidence.
 - State uncertainty explicitly wherever it is material.
 

@@ -6,7 +6,7 @@ Interview Journey is an evidence-driven interview preparation system. It prepare
 
 ## Primary user journey
 
-A candidate describes a target role (or shares a Job Description), their background, and whatever interview context they have. The system analyzes the role, analyzes the resume, identifies the current interview stage, compares the two into a fit/gap analysis, builds a preparation strategy, predicts likely questions, forms interview hypotheses, and then executes the specific preparation the candidate asked for — coding practice, system design practice, behavioral story building, a mock interview, answer coaching, or a post-interview debrief. Every framework is documented in [`frameworks/`](../frameworks/) and orchestrated by the master workflow in [`frameworks/15-interview-journey-intelligence-framework.md`](../frameworks/15-interview-journey-intelligence-framework.md).
+A candidate describes a target role (or shares a Job Description), their background, and whatever interview context they have. The system analyzes the role, analyzes the resume, identifies the current interview stage, compares the two into a fit/gap analysis, builds a preparation strategy, predicts likely questions, forms interview hypotheses, and then executes the specific preparation the candidate asked for — coding practice, system design practice, behavioral story building, a mock interview, answer coaching, a post-interview debrief, or offer and negotiation preparation. Every framework and canonical capability is orchestrated by the master workflow in [`frameworks/15-interview-journey-intelligence-framework.md`](../frameworks/15-interview-journey-intelligence-framework.md).
 
 ## Main outputs
 
@@ -20,6 +20,7 @@ A candidate describes a target role (or shares a Job Description), their backgro
 - **Mock Interview Scorecards.**
 - **Answer Coaching reviews.**
 - **Post-Interview Debriefs** that feed back into Interview Intelligence.
+- **Offer and Negotiation Preparation** — an evidence-grounded compensation position and natural responses for an offer conversation.
 - **Interview Journey State** — the running record of a candidate's preparation journey.
 
 ## Structured but modular

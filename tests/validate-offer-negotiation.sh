@@ -49,6 +49,18 @@ project_negotiation_dependencies_ok() {
   grep -qiE 'freshness.*contradiction.*reuse/invalidation' <<< "${flattened}"
 }
 
+canonical_public_research_adapter_ok() {
+  local file="$1"
+  local flattened
+  flattened=$(tr '\n' ' ' < "${file}")
+  grep -qF 'public_research_unverified' <<< "${flattened}" &&
+    grep -qF 'corroborated_public_research' <<< "${flattened}" &&
+    grep -qE 'never.{0,20}Confirmed' <<< "${flattened}" &&
+    grep -qiF 'priorities 1–5' <<< "${flattened}" &&
+    grep -qiF 'priorities 6–7' <<< "${flattened}" &&
+    grep -qiF 'priority 8' <<< "${flattened}"
+}
+
 extract_bundle_source() {
   local source="$1"
   local bundle="$2"
@@ -115,6 +127,31 @@ check "Skill state adapter consumes canonical schema" \
   "grep -qF 'schemas/interview-journey-state.schema.md' claude/skill/references/state-and-output-generation.md"
 check "Skill state template uses canonical negotiation object" \
   "grep -qF 'offer_negotiation_preparation_status:' claude/skill/templates/interview-journey-state.md"
+check "canonical evidence policy distinguishes unverified public research" \
+  "grep -qF 'Public research — unverified' core/evidence-policy.md && grep -qF 'public_research_unverified' core/context-priority.md"
+check "canonical evidence policy distinguishes corroborated public research" \
+  "grep -qF 'Public research — corroborated' core/evidence-policy.md && grep -qF 'corroborated_public_research' core/context-priority.md"
+check "canonical context precedence keeps priorities 1–5 above public research" \
+  "grep -qF 'priorities 1–5 always outrank priorities 6–7' core/context-priority.md"
+check "canonical salary evidence requires attribution and freshness" \
+  "grep -qF 'Every material salary-data row' '${CANONICAL}' && grep -qF 'Retrieval date' '${CANONICAL}' && grep -qF 'Freshness/fit' '${CANONICAL}'"
+
+for adapter in \
+  claude/skill/references/accuracy-and-quality.md \
+  claude/skill/references/research-and-evidence.md \
+  claude/skill/references/product-and-orchestration.md \
+  chatgpt/instructions.md \
+  claude/project-instructions.md \
+  claude/project-instructions.compact.md; do
+  check "${adapter} preserves canonical public-research states and precedence" \
+    "canonical_public_research_adapter_ok '${adapter}'"
+done
+check "Offer market-evidence route loads the aligned Skill accuracy adapter" \
+  "grep -qF 'plus [\`accuracy-and-quality.md\`](references/accuracy-and-quality.md) when market evidence is used' claude/skill/SKILL.md"
+check "Claude Project Knowledge maps canonical evidence and context-priority sources" \
+  "grep -qF 'core/evidence-policy.md' claude/knowledge-manifest.md && grep -qF 'core/context-priority.md' claude/knowledge-manifest.md"
+check "ChatGPT Knowledge embeds canonical evidence and context-priority sources" \
+  "grep -qF '## Source: \`core/evidence-policy.md\`' chatgpt/knowledge/01-product-orchestration-and-quality.md && grep -qF '## Source: \`core/context-priority.md\`' chatgpt/knowledge/01-product-orchestration-and-quality.md"
 
 check "ChatGPT depends on canonical ONP invariant set" \
   "grep -qE 'Canonical negotiation dependency.*ONP-001.*ONP-010' chatgpt/instructions.md"
@@ -140,6 +177,10 @@ sed 's/Recognize offer and negotiation intent/Recognize general career intent/' 
 sed 's/Offer or compensation-negotiation preparation/General career preparation/' claude/skill/SKILL.md > "${routing_tmp}/skill.md"
 sed 's/Preparing for an offer call/Documenting an offer call/' claude/project-instructions.md > "${routing_tmp}/project-full.md"
 sed 's/Route offer calls/Describe offer calls/' claude/project-instructions.compact.md > "${routing_tmp}/project-compact.md"
+sed 's/public_research_unverified/public_research_removed/' chatgpt/instructions.md > "${routing_tmp}/chatgpt-evidence.md"
+sed 's/corroborated_public_research/public_research_removed/g' claude/skill/references/accuracy-and-quality.md > "${routing_tmp}/skill-evidence.md"
+sed 's/priorities 1–5/priorities removed/' claude/project-instructions.md > "${routing_tmp}/project-full-evidence.md"
+sed 's/public_research_unverified/public_research_removed/' claude/project-instructions.compact.md > "${routing_tmp}/project-compact-evidence.md"
 check "ChatGPT routing assertion rejects a missing offer-intent trigger" \
   "! chatgpt_offer_route_ok '${routing_tmp}/chatgpt.md'"
 check "Claude Skill routing assertion rejects a missing offer-intent route" \
@@ -148,6 +189,14 @@ check "Claude Project full routing assertion rejects a missing offer-intent rout
   "! project_full_offer_route_ok '${routing_tmp}/project-full.md'"
 check "Claude Project compact routing assertion rejects a missing offer-intent route" \
   "! project_compact_offer_route_ok '${routing_tmp}/project-compact.md'"
+check "ChatGPT evidence assertion rejects a missing public-research state" \
+  "! canonical_public_research_adapter_ok '${routing_tmp}/chatgpt-evidence.md'"
+check "Claude Skill evidence assertion rejects a degraded public-research state" \
+  "! canonical_public_research_adapter_ok '${routing_tmp}/skill-evidence.md'"
+check "Claude Project full evidence assertion rejects missing canonical precedence" \
+  "! canonical_public_research_adapter_ok '${routing_tmp}/project-full-evidence.md'"
+check "Claude Project compact evidence assertion rejects a missing public-research state" \
+  "! canonical_public_research_adapter_ok '${routing_tmp}/project-compact-evidence.md'"
 rm -rf -- "${routing_tmp}"
 
 package_ok=1

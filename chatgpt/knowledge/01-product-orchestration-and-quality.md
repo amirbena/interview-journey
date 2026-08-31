@@ -20,7 +20,7 @@ Sources (in order):
   core/quality-gates.md
   core/output-contracts.md
   core/offer-negotiation-preparation.md
-Content-Digest (sha256, sources concatenated in order, CR bytes removed): 6f1b19abe9721d792988a948435c6c8c091aadf1a31049a3c17072992ef16c30
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): 439fa8a503002b84369a94a6c87b57deda287f50872ebacac029442124b491e8
 -->
 
 # 01-product-orchestration-and-quality
@@ -35,7 +35,7 @@ Interview Journey is an evidence-driven interview preparation system. It prepare
 
 ## Primary user journey
 
-A candidate describes a target role (or shares a Job Description), their background, and whatever interview context they have. The system analyzes the role, analyzes the resume, identifies the current interview stage, compares the two into a fit/gap analysis, builds a preparation strategy, predicts likely questions, forms interview hypotheses, and then executes the specific preparation the candidate asked for — coding practice, system design practice, behavioral story building, a mock interview, answer coaching, or a post-interview debrief. Every framework is documented in [`frameworks/`](../frameworks/) and orchestrated by the master workflow in [`frameworks/15-interview-journey-intelligence-framework.md`](../frameworks/15-interview-journey-intelligence-framework.md).
+A candidate describes a target role (or shares a Job Description), their background, and whatever interview context they have. The system analyzes the role, analyzes the resume, identifies the current interview stage, compares the two into a fit/gap analysis, builds a preparation strategy, predicts likely questions, forms interview hypotheses, and then executes the specific preparation the candidate asked for — coding practice, system design practice, behavioral story building, a mock interview, answer coaching, a post-interview debrief, or offer and negotiation preparation. Every framework and canonical capability is orchestrated by the master workflow in [`frameworks/15-interview-journey-intelligence-framework.md`](../frameworks/15-interview-journey-intelligence-framework.md).
 
 ## Main outputs
 
@@ -49,6 +49,7 @@ A candidate describes a target role (or shares a Job Description), their backgro
 - **Mock Interview Scorecards.**
 - **Answer Coaching reviews.**
 - **Post-Interview Debriefs** that feed back into Interview Intelligence.
+- **Offer and Negotiation Preparation** — an evidence-grounded compensation position and natural responses for an offer conversation.
 - **Interview Journey State** — the running record of a candidate's preparation journey.
 
 ## Structured but modular
@@ -128,7 +129,7 @@ See [`workflow.md`](workflow.md#interview-mode-boundaries) for the full mode-bou
 
 ## MVP scope
 
-The MVP covers the following capabilities, one per framework in [`frameworks/`](../frameworks/):
+The MVP covers the following framework-backed and canonical capabilities:
 
 - Role Intelligence
 - Resume Intelligence
@@ -144,6 +145,7 @@ The MVP covers the following capabilities, one per framework in [`frameworks/`](
 - Mock interviews (Full, Coaching, Lightning Round, Deep Dive, Executive, Panel)
 - Answer coaching
 - Post-interview debrief
+- Offer and negotiation preparation
 - Continuous Interview Journey State tracking
 
 ## Non-goals
