@@ -6,11 +6,23 @@
 # bundle-to-source mapping and rationale.
 #
 # Each bundle carries a deterministic provenance header (bundle position,
-# ordered source list, and a sha256 Content-Digest over the concatenated
-# LF-normalized source bytes). The digest depends only on source content,
-# so rebuilding from unchanged sources produces byte-identical output.
+# ordered source list, and a sha256 Content-Digest).
+#
+# Digest normalization contract (identical in build-chatgpt-knowledge.ps1):
+#   Digest input is the ordered concatenation of each listed source's raw
+#   bytes with every CR (0x0D) byte removed. No other bytes are added,
+#   removed, or normalized — a source's final-LF presence or absence is
+#   preserved. The digest depends only on source content (no timestamp, no
+#   commit), so rebuilding from unchanged sources produces byte-identical
+#   output. The bundle body embeds the same CR-stripped bytes.
 #
 # Never edit a file under chatgpt/knowledge/ directly — rebuild it here.
+# tests/validate-repository.sh rebuilds the bundles into a temporary
+# directory and fails if the committed files differ in any byte.
+#
+# Usage: build-chatgpt-knowledge.sh [output_dir]
+#   output_dir defaults to <repo>/chatgpt/knowledge. A non-default value is
+#   used only by validation to render into a scratch directory.
 #
 # Works when invoked from inside or outside the repository root, since all
 # paths are resolved relative to this script's own location.
@@ -20,7 +32,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd -P)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd -P)"
 
-KNOWLEDGE_DIR="${REPO_ROOT}/chatgpt/knowledge"
+KNOWLEDGE_DIR="${1:-${REPO_ROOT}/chatgpt/knowledge}"
 
 fail() {
   echo "error: $1" >&2
@@ -91,11 +103,13 @@ for entry in "${BUNDLES[@]}"; do
   tmp_path="${out_path}.tmp"
   src_count="${#SRC_LIST[@]}"
 
-  # Content-Digest: sha256 over each source's CRLF->LF-normalized bytes,
-  # concatenated in listed order. Deterministic from source content only.
+  # Content-Digest: sha256 over the ordered concatenation of each source's
+  # raw bytes with every CR (0x0D) removed — nothing else added or removed.
+  # `tr -d '\r'` (unlike `sed`) never appends a missing final newline and
+  # removes a lone CR identically to the PowerShell implementation.
   digest="$(
     for src in "${SRC_LIST[@]}"; do
-      sed 's/\r$//' "${REPO_ROOT}/${src}"
+      tr -d '\r' < "${REPO_ROOT}/${src}"
     done | sha256_hex
   )"
 
@@ -111,15 +125,15 @@ for entry in "${BUNDLES[@]}"; do
     for src in "${SRC_LIST[@]}"; do
       printf '  %s\n' "${src}"
     done
-    printf 'Content-Digest (sha256 of concatenated LF-normalized sources): %s\n' "${digest}"
+    printf 'Content-Digest (sha256, sources concatenated in order, CR bytes removed): %s\n' "${digest}"
     printf '%s\n\n' '-->'
     printf '# %s\n\n' "${bundle_name%.md}"
     idx=0
     for src in "${SRC_LIST[@]}"; do
       idx=$((idx + 1))
       printf '## Source: `%s`\n\n' "${src}"
-      # Preserve source content without silent rewriting; normalize CRLF to LF.
-      sed 's/\r$//' "${REPO_ROOT}/${src}"
+      # Embed the same CR-stripped bytes that feed the digest — no other rewriting.
+      tr -d '\r' < "${REPO_ROOT}/${src}"
       if [ "${idx}" -lt "${src_count}" ]; then
         printf '\n\n---\n\n'
       else

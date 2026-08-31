@@ -12,7 +12,7 @@ Sources (in order):
   frameworks/12-mock-interview-framework.md
   frameworks/13-answer-coaching-framework.md
   frameworks/14-post-interview-debrief-framework.md
-Content-Digest (sha256 of concatenated LF-normalized sources): 8844f3b9c30d208e200ad81fc2af280705d4a2b8417997edb16558d068388a48
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): 8844f3b9c30d208e200ad81fc2af280705d4a2b8417997edb16558d068388a48
 -->
 
 # 03-interview-execution

@@ -108,7 +108,10 @@ $Release = [ordered]@{
 }
 
 $ReleaseJson = Join-Path $PackageRoot "deployment-release.json"
-($Release | ConvertTo-Json -Depth 6) | Set-Content -LiteralPath $ReleaseJson -Encoding utf8
+# UTF-8 without BOM (incl. Windows PowerShell 5.1, where `Set-Content -Encoding
+# utf8` would emit a BOM) with a trailing newline, matching the Bash packager.
+$ReleaseJsonText = ($Release | ConvertTo-Json -Depth 6) + "`n"
+[System.IO.File]::WriteAllText($ReleaseJson, $ReleaseJsonText, (New-Object System.Text.UTF8Encoding($false)))
 
 Get-ChildItem -LiteralPath $BuildDir -Recurse -Force -File |
     Where-Object { $_.Name -eq ".DS_Store" -or $_.Name -eq "Thumbs.db" } |

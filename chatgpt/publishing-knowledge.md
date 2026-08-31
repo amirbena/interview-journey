@@ -42,14 +42,23 @@ Knowledge bundles under `chatgpt/knowledge/`:
 
 Each bundle begins with a deterministic provenance header: its position
 (`Bundle: … (n of 3)`), its ordered source list, and a
-`Content-Digest (sha256 of concatenated LF-normalized sources)`. The digest
-depends only on source content, so an unchanged methodology rebuilds to
-byte-identical bundles. See [`knowledge-manifest.md`](knowledge-manifest.md)
-for the full bundle-to-source mapping.
+`Content-Digest (sha256, sources concatenated in order, CR bytes removed)`.
+The digest input is each listed source's raw bytes with every CR (`0x0D`)
+byte removed and nothing else changed — the same rule in the Bash and
+PowerShell builders — so an unchanged methodology rebuilds to byte-identical
+bundles on either platform. `tests/validate-repository.sh` enforces this by
+rebuilding into a throwaway directory and failing on any byte difference
+(stale digest, hand-edited bundle, a source changed without rebuilding,
+wrong source order), by checking the normalization rule against LF / CRLF /
+lone-CR / no-final-newline fixtures, and — only when `pwsh` is installed — by
+comparing the Bash and PowerShell output byte for byte (that cross-platform
+comparison is skipped, not failed, when `pwsh` is absent). See
+[`knowledge-manifest.md`](knowledge-manifest.md) for the full
+bundle-to-source mapping.
 
 `scripts/package-chatgpt-gpt.sh` (or `.ps1`) rebuilds the bundles, assembles
 `dist/interview-journey-chatgpt.zip`, and adds `deployment-release.json` at
-the package root:
+the package root (UTF-8, no BOM, identical shape from either builder):
 
 ```json
 {

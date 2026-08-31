@@ -36,14 +36,27 @@ Bundle: 02-role-resume-and-strategy.md (2 of 3)
 Sources (in order):
   frameworks/01-role-intelligence-framework.md
   ...
-Content-Digest (sha256 of concatenated LF-normalized sources): <hex>
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): <hex>
 ```
 
-The `Content-Digest` is a SHA-256 over each listed source's CRLF→LF-normalized
-bytes, concatenated in order. It depends only on source content — no
-timestamp, no commit — so rebuilding from unchanged sources yields
-byte-identical bundles. The packaging step additionally records these digests
-against a repository commit in `deployment-release.json`; see
+**Digest normalization contract** (identical in `build-chatgpt-knowledge.sh`
+and `.ps1`): the digest input is the ordered concatenation of each listed
+source's raw bytes with every CR (`0x0D`) byte removed. Nothing else is
+added, removed, or normalized — a source's final-LF presence or absence is
+preserved, and a lone CR is removed the same way on every platform. The
+bundle body embeds those same CR-stripped bytes. Because the digest depends
+only on source content — no timestamp, no commit — rebuilding from unchanged
+sources yields byte-identical bundles on Bash and PowerShell alike.
+
+`tests/validate-repository.sh` enforces this: it rebuilds the bundles into a
+throwaway directory and fails if any committed file differs by a single byte
+(catching a source changed without rebuilding, a hand-edited bundle, a stale
+digest, or wrong source membership/order), checks the normalization rule
+against LF / CRLF / lone-CR / no-final-newline fixtures, and — when `pwsh` is
+present — additionally compares the Bash and PowerShell output byte for byte.
+
+The packaging step additionally records these digests against a repository
+commit in `deployment-release.json` (UTF-8, no BOM); see
 [`publishing-knowledge.md`](publishing-knowledge.md).
 
 ## Bundle source mapping

@@ -156,7 +156,7 @@ if [ -d "${KNOWLEDGE_DIR}" ]; then
       check "bundle ${bundle} has a Bundle: position line" \
         "grep -qE '^Bundle: ${bundle} \\([0-9]+ of 3\\)$' '${KNOWLEDGE_DIR}/${bundle}'"
       check "bundle ${bundle} has a Content-Digest sha256 line" \
-        "grep -qE '^Content-Digest \\(sha256 of concatenated LF-normalized sources\\): [0-9a-f]{64}$' '${KNOWLEDGE_DIR}/${bundle}'"
+        "grep -qE '^Content-Digest \\(sha256, sources concatenated in order, CR bytes removed\\): [0-9a-f]{64}$' '${KNOWLEDGE_DIR}/${bundle}'"
     fi
   done
   # Bundle content routing: representative source-to-bundle assignments.
@@ -181,6 +181,73 @@ if [ -d "${KNOWLEDGE_DIR}" ]; then
   dup_sources=$(grep -h '^## Source: ' "${KNOWLEDGE_DIR}"/*.md 2>/dev/null | sort | uniq -d)
   check "no canonical source is embedded in more than one bundle" "[ -z \"\${dup_sources}\" ]"
 fi
+
+# 12b. Committed ChatGPT Knowledge bundles must be byte-identical to a fresh
+#      deterministic rebuild from the canonical sources. Rendered into a
+#      throwaway directory so the contributor's working tree is never touched.
+#      Detects: a canonical source changed without rebuilding Knowledge; a
+#      bundle hand-edited; a stale Content-Digest; wrong source membership or
+#      order; a missing or extra generated bundle.
+if [ -d "${KNOWLEDGE_DIR}" ]; then
+  if command -v shasum >/dev/null 2>&1 || command -v sha256sum >/dev/null 2>&1; then
+    KB_TMP="$(mktemp -d 2>/dev/null || mktemp -d -t ijkb)"
+    kb_synced=0
+    if bash scripts/build-chatgpt-knowledge.sh "${KB_TMP}" >/dev/null 2>&1; then
+      diff -r "${KNOWLEDGE_DIR}" "${KB_TMP}" >/dev/null 2>&1 && kb_synced=1
+    fi
+    check "committed chatgpt/knowledge/ is byte-identical to a fresh rebuild" "[ '${kb_synced}' = '1' ]"
+    if [ "${kb_synced}" != "1" ]; then
+      echo "       (differences between committed bundles and a fresh rebuild:)"
+      diff -r "${KNOWLEDGE_DIR}" "${KB_TMP}" 2>&1 | sed 's/^/       /' | head -n 40
+    fi
+    rm -rf -- "${KB_TMP}"
+  else
+    echo "SKIP: no sha256 tool (shasum/sha256sum) on PATH; Knowledge rebuild-sync check not run"
+  fi
+fi
+
+# 12c. Digest normalization contract. Digest/body input is each source's raw
+#      bytes with every CR (0x0D) removed - nothing else added, removed, or
+#      normalized (a source's final-LF presence is preserved; a lone CR is
+#      treated identically). Verified against LF / CRLF / lone-CR /
+#      no-final-newline fixtures. When pwsh is available, also verified for
+#      Bash/PowerShell byte-for-byte agreement (fixtures + a full rebuild).
+NORM_TMP="$(mktemp -d 2>/dev/null || mktemp -d -t ijnorm)"
+printf 'alpha\nbeta\n'     > "${NORM_TMP}/lf.txt"
+printf 'alpha\r\nbeta\r\n' > "${NORM_TMP}/crlf.txt"
+printf 'alpha\rbeta\r'     > "${NORM_TMP}/lonecr.txt"
+printf 'alpha\nbeta'       > "${NORM_TMP}/nonl.txt"
+norm_bash() { tr -d '\r' < "$1" | od -A n -t x1 -v | tr -d ' \n'; }
+exp_lf="$(printf 'alpha\nbeta\n' | od -A n -t x1 -v | tr -d ' \n')"
+exp_cat="$(printf 'alphabeta'    | od -A n -t x1 -v | tr -d ' \n')"
+exp_nonl="$(printf 'alpha\nbeta' | od -A n -t x1 -v | tr -d ' \n')"
+check "normalization: LF input is unchanged"              "[ \"\$(norm_bash '${NORM_TMP}/lf.txt')\" = \"${exp_lf}\" ]"
+check "normalization: CRLF collapses to LF"               "[ \"\$(norm_bash '${NORM_TMP}/crlf.txt')\" = \"${exp_lf}\" ]"
+check "normalization: lone CR removed, no newline added"  "[ \"\$(norm_bash '${NORM_TMP}/lonecr.txt')\" = \"${exp_cat}\" ]"
+check "normalization: missing final newline is preserved" "[ \"\$(norm_bash '${NORM_TMP}/nonl.txt')\" = \"${exp_nonl}\" ]"
+if command -v pwsh >/dev/null 2>&1; then
+  norm_ps() {
+    pwsh -NoProfile -NonInteractive -Command "\$b=[System.IO.File]::ReadAllBytes('$1'); \$o=[System.Collections.Generic.List[byte]]::new(); foreach(\$x in \$b){ if(\$x -ne 0x0D){ \$o.Add(\$x) } }; -join (\$o.ToArray() | ForEach-Object { \$_.ToString('x2') })" 2>/dev/null | tr -d ' \r\n'
+  }
+  for f in lf crlf lonecr nonl; do
+    check "normalization parity (Bash == PowerShell): ${f}" \
+      "[ \"\$(norm_bash '${NORM_TMP}/${f}.txt')\" = \"\$(norm_ps '${NORM_TMP}/${f}.txt')\" ]"
+  done
+  if [ -d "${KNOWLEDGE_DIR}" ]; then
+    PS_TMP="$(mktemp -d 2>/dev/null || mktemp -d -t ijps)"
+    ps_synced=0
+    if pwsh -NoProfile -NonInteractive -File scripts/build-chatgpt-knowledge.ps1 "${PS_TMP}" >/dev/null 2>&1; then
+      diff -r "${KNOWLEDGE_DIR}" "${PS_TMP}" >/dev/null 2>&1 && ps_synced=1
+      check "PowerShell rebuild is byte-identical to committed chatgpt/knowledge/" "[ '${ps_synced}' = '1' ]"
+    else
+      echo "SKIP: build-chatgpt-knowledge.ps1 did not run under pwsh; PowerShell full-build parity not checked"
+    fi
+    rm -rf -- "${PS_TMP}"
+  fi
+else
+  echo "SKIP: pwsh not on PATH; Bash/PowerShell parity not executed (fixture-level Bash contract enforced above)"
+fi
+rm -rf -- "${NORM_TMP}"
 
 # 13. Skill routing: trigger policy must define in-scope ownership, outside-scope boundary,
 #     and independent operation. Must not name external Skills as required components.

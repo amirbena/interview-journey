@@ -18,7 +18,7 @@ Sources (in order):
   core/context-priority.md
   core/quality-gates.md
   core/output-contracts.md
-Content-Digest (sha256 of concatenated LF-normalized sources): 002a5de1550ffa78811da9118cc00e3ff2448ea32bf156438bb0da3110a0de81
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): 002a5de1550ffa78811da9118cc00e3ff2448ea32bf156438bb0da3110a0de81
 -->
 
 # 01-product-orchestration-and-quality
