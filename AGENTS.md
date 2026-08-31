@@ -74,6 +74,7 @@ the ChatGPT Custom GPT, the Claude Skill, and the Claude Project.
 ## Claude Skill packaging rules
 
 - `claude/skill/` is the installable Skill source.
+- The Claude description in `claude/skill/SKILL.md` must not exceed 2,400 characters. Validate generated or edited description content before completion. This ceiling is not a target; when shortening is necessary, remove duplication with canonical framework and Knowledge files before weakening required behavior.
 - `core/`, `frameworks/`, `schemas/`, `workflows/`, and `outputs/` remain canonical — the Skill adapts them, it does not redefine them.
 - Packaging uses an explicit allowlist (`SKILL.md`, `references/`, `templates/`), never a recursive repository copy followed by exclusions.
 - Never recursively package the whole repository.
@@ -103,6 +104,7 @@ the ChatGPT Custom GPT, the Claude Skill, and the Claude Project.
 ## ChatGPT packaging rules
 
 - `chatgpt/instructions.md` is the canonical Custom GPT behavior source.
+- Deployment-ready Custom GPT Instructions must not exceed 8,000 characters. Validate generated or edited Instructions before completion. This ceiling is not a target; when shortening is necessary, remove duplication with canonical Knowledge and framework files before weakening required behavior.
 - GPT Instructions define behavior; Knowledge defines reference material.
 - Generated Knowledge bundles must not be edited manually — rebuild them with the build scripts.
 - Knowledge bundles derive only from explicit canonical source allowlists.
@@ -122,6 +124,10 @@ the ChatGPT Custom GPT, the Claude Skill, and the Claude Project.
 - Document assumptions explicitly when source information is incomplete.
 
 ## Git and PR workflow
+
+Implementation branches must use `feat/`, `fix/`, `refactor/`, or `docs/` followed by a short, descriptive kebab-case suffix. Use `feat/` for new user-facing or repository capabilities, `fix/` for defect corrections, `refactor/` for behavior-preserving structural improvements, and `docs/` for documentation-only work. Examples: `feat/offer-negotiation-prep`, `fix/skill-package-manifest`, `refactor/instruction-packaging`, `docs/update-contributor-guide`. Do not invent additional prefixes for normal implementation work unless repository policy adds them.
+
+Branch names describe the work, not the coding agent or provider. Never create an implementation branch with `codex/` or an equivalent agent/provider-owned prefix. Do not rename an already-active valid task branch solely to apply this convention unless branch normalization is part of the task.
 
 ### Implementation branch rule
 

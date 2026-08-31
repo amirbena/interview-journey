@@ -27,6 +27,17 @@ check() {
 
 echo "== Interview Journey repository validation =="
 
+# Character ceilings use decoded Unicode code points: stable semantics for
+# UTF-8/non-ASCII content, independent of byte length or locale.
+if command -v python3 >/dev/null 2>&1; then
+  CHATGPT_INSTRUCTIONS_COUNT=$(python3 -c "from pathlib import Path; print(len(Path('chatgpt/instructions.md').read_text(encoding='utf-8')))" 2>/dev/null || echo -1)
+  CLAUDE_DESCRIPTION_COUNT=$(python3 -c "from pathlib import Path; lines=Path('claude/skill/SKILL.md').read_text(encoding='utf-8').splitlines(); start=next(i for i,x in enumerate(lines) if x.startswith('description:')); end=next(i for i in range(start+1,len(lines)) if lines[i]=='---'); print(len(' '.join(x.strip() for x in lines[start+1:end])))" 2>/dev/null || echo -1)
+  check "ChatGPT Instructions are at most 8,000 Unicode code points" "[ '${CHATGPT_INSTRUCTIONS_COUNT}' -ge 0 ] && [ '${CHATGPT_INSTRUCTIONS_COUNT}' -le 8000 ]"
+  check "Claude description is at most 2,400 Unicode code points" "[ '${CLAUDE_DESCRIPTION_COUNT}' -ge 0 ] && [ '${CLAUDE_DESCRIPTION_COUNT}' -le 2400 ]"
+else
+  check "python3 is available for stable Unicode character-limit validation" "false"
+fi
+
 # 1. Required canonical top-level files exist.
 for f in README.md AGENTS.md CLAUDE.md ROADMAP.md CHANGELOG.md .gitignore; do
   check "root file exists: ${f}" "[ -f '${f}' ]"
