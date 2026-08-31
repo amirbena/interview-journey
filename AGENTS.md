@@ -48,6 +48,29 @@ scope and non-goals.
 - Document 15 (`frameworks/15-interview-journey-intelligence-framework.md`) is the master orchestrator; documents 01–14 are specialized modules. Changes to routing logic belong in Document 15 and `core/orchestration-policy.md`, not scattered across individual frameworks.
 - Platform adaptations (Skill references, GPT Knowledge) must not silently change canonical rules, scoring formulas, or enums defined in `frameworks/` and `core/`.
 
+## Cross-package delivery
+
+The methodology is distributed through three supported package surfaces:
+the ChatGPT Custom GPT, the Claude Skill, and the Claude Project.
+
+- Each user-facing capability or workflow is defined once, canonically,
+  in `core/` and `frameworks/`. Packages adapt that definition; they do
+  not restate or re-derive it.
+- A capability that applies to end users is not complete until it is
+  exposed through all three surfaces. Trigger points, scope, required
+  inputs, outputs, and methodology must stay equivalent across them.
+- Platform-specific wording, formatting, and presentation may differ to
+  fit each platform's constraints. Behavioral drift between packages
+  must not.
+- Issues and Acceptance Criteria for a cross-package capability must
+  reflect this: one canonical definition, exposure in the ChatGPT
+  package, the Claude Skill, and the Claude Project, and validation that
+  behavior is equivalent across the three.
+- This requirement does not apply to work that ships no user-facing
+  capability: repository maintenance, CI/tooling, documentation or
+  release infrastructure, research without a shipped capability, and
+  internal refactors that do not change distributed behavior.
+
 ## Claude Skill packaging rules
 
 - `claude/skill/` is the installable Skill source.
