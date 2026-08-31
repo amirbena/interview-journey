@@ -338,6 +338,20 @@ if [ -f "${ISSUE_CONFIG}" ]; then
     "grep -q 'blank_issues_enabled: false' '${ISSUE_CONFIG}'"
 fi
 
+# 27. GitHub pull request template is present and prose-oriented.
+PR_TEMPLATE=".github/pull_request_template.md"
+check "Pull request template exists" "[ -f '${PR_TEMPLATE}' ]"
+if [ -f "${PR_TEMPLATE}" ]; then
+  check "PR template has a What changed section" \
+    "grep -q '^## What changed' '${PR_TEMPLATE}'"
+  check "PR template has a Validation section" \
+    "grep -q '^## Validation' '${PR_TEMPLATE}'"
+  check "PR template carries the write-for-the-reviewer guardrail" \
+    "grep -qi 'Write for the reviewer' '${PR_TEMPLATE}'"
+  check "PR template is not a checklist form (no task-list checkboxes)" \
+    "! grep -qE '^ *- \[[ xX]\]' '${PR_TEMPLATE}'"
+fi
+
 echo ""
 echo "== Summary =="
 echo "Passed: ${PASS_COUNT}"

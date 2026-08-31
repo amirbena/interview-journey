@@ -1,4 +1,4 @@
 dist/
 .build/
 *.skill.zip
-*DS_Store*
+.DS_Store

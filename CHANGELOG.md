@@ -14,6 +14,9 @@ All notable changes to this project will be documented in this file.
 - Omitted the reference template's `help wanted` / `good first issue` / `/claim` paragraph — this repository has no such contribution workflow.
 - Added `.github/ISSUE_TEMPLATE/config.yml` with `blank_issues_enabled: false` so the "New issue" chooser always routes reporters to the structured Engineering Task form.
 - Extended `tests/validate-repository.sh` with a structural check block for the issue form and chooser config (presence, `labels: []`, the three dropdowns, P0 absence, repository-specific Area taxonomy, valid YAML with unique field ids, blank issues disabled).
+- Normalized the `.gitignore` macOS rule to the conventional `.DS_Store` entry and removed stray untracked `.DS_Store` files from the working tree, so `tests/validate-repository.sh` is fully green (the existing `.DS_Store` guardrail check is unchanged).
+- Added `.github/pull_request_template.md`, a concise prose-oriented PR template (What changed / Validation / Notes) with HTML-comment guidance that tells authors to write for the reviewer, explain why not just what, and skip file-by-file diff narration; no checklists, sign-off boxes, or mandatory metadata. Added a matching lightweight structural check to `tests/validate-repository.sh`.
+- Added a `Write Issues and PRs for humans, not for templates` subsection to the `Git and PR workflow` section of `AGENTS.md`, making the human-written, proportionate prose style a repository-level rule for all agents that complements the two `.github` templates without duplicating them; it explicitly does not weaken the mandatory Final response report and Before completion checks.
 - No Interview Journey methodology, frameworks, schemas, workflows, packaging, or application/skill behavior changed.
 
 ### Split repository instructions into AGENTS.md and CLAUDE.md (docs/split-agent-instructions)
