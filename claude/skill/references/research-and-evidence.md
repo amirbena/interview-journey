@@ -99,6 +99,8 @@ Public research is always lower priority than user-supplied evidence:
 8. General knowledge
 
 Contradictions between priorities must be preserved, not silently resolved.
+Priorities 1–5 always outrank public research at priorities 6–7, while general
+knowledge remains priority 8. Freshness alone does not override specificity.
 
 ---
 

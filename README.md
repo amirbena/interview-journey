@@ -76,6 +76,7 @@ Document 15 does not replace 01–14; it decides how they work together. See [`c
 - [`core/workflow.md`](core/workflow.md) — the three operating modes (Full Interview Journey, Focused Task, Resume Interview Journey) and the routing principle.
 - [`workflows/full-interview-journey.md`](workflows/full-interview-journey.md) — the complete, ordered end-to-end path.
 - [`workflows/focused-task-routing.md`](workflows/focused-task-routing.md) — routing a specific request to the minimum required frameworks.
+- [`workflows/prepare-offer-negotiation.md`](workflows/prepare-offer-negotiation.md) — focused offer and compensation-negotiation preparation.
 - [`workflows/resume-interview-journey.md`](workflows/resume-interview-journey.md) — continuing from the latest valid Interview Journey State.
 
 ## State handling

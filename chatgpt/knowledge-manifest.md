@@ -72,12 +72,14 @@ is held to.
 - `core/workflow.md`
 - `core/orchestration-policy.md`
 - `core/state-management.md`
+- `schemas/interview-journey-state.schema.md`
 - `frameworks/15-interview-journey-intelligence-framework.md`
 - `core/evidence-policy.md`
 - `core/accuracy-policy.md`
 - `core/context-priority.md`
 - `core/quality-gates.md`
 - `core/output-contracts.md`
+- `core/offer-negotiation-preparation.md`
 
 ### `02-role-resume-and-strategy.md`
 
@@ -110,8 +112,9 @@ interviews, answer coaching, and post-interview debrief.
 
 ## Integrity expectations
 
-- Every `core/*.md`, every `frameworks/NN-*.md` (01–15), and both
-  `schemas/public-research-evidence.schema.md` and
+- Every `core/*.md`, every `frameworks/NN-*.md` (01–15), and all three
+  `schemas/interview-journey-state.schema.md`,
+  `schemas/public-research-evidence.schema.md`, and
   `workflows/research-current-interview-intelligence.md` appear in exactly
   one bundle.
 - Rebuilding the bundles from unchanged sources must produce identical file

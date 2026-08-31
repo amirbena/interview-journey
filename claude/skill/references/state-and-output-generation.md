@@ -4,7 +4,9 @@ Canonical sources: [`core/state-management.md`](../../../core/state-management.m
 
 ## Interview Journey State
 
-Preserves: candidate identity/profile reference, current target company/role, Role and Resume Intelligence, current interview stage, known process, completed/upcoming stages, recruiter/interviewer signals, previous questions/answers/feedback, current fit strengths/gaps, preparation priorities, question predictions, interview hypotheses, completed practice, mock interview evaluations, debrief findings, recurring strengths/weaknesses, next actions, freshness metadata.
+Preserves: candidate identity/profile reference, current target company/role, Role and Resume Intelligence, current interview stage, known process, completed/upcoming stages, recruiter/interviewer signals, previous questions/answers/feedback, current fit strengths/gaps, preparation priorities, question predictions, interview hypotheses, completed practice, mock interview evaluations, debrief findings, recurring strengths/weaknesses, relevant offer/negotiation context and position, next actions, freshness metadata.
+
+For negotiation preparation, consume the canonical `offer_negotiation_preparation_status` and compact `offer_negotiation_preparation` object from [`schemas/interview-journey-state.schema.md`](../../../schemas/interview-journey-state.schema.md). Reuse `Completed`/`Confirmed` state when its referenced inputs and evidence remain valid; mark only that capability `Stale` when employer terms, candidate priorities, position inputs, or material evidence freshness changes. Do not define a Claude-specific state shape.
 
 Distinguishes: Confirmed facts, User observations, Inferred conclusions, Open questions, Outdated intelligence.
 
@@ -14,7 +16,7 @@ No background automation or hidden persistent data storage — state is represen
 
 ## Canonical outputs
 
-Fifteen canonical outputs are defined in [`core/output-contracts.md`](../../../core/output-contracts.md): Role Intelligence, Resume Intelligence, Interview Process Map, Interview Stage, Role Fit & Gap Analysis, Interview Intelligence, Preparation Strategy, Question Predictions, Interview Hypotheses, Coding Preparation Session, System Design Preparation, Behavioral Story Map, Mock Interview Scorecard, Answer Coaching Review, Post-Interview Debrief, plus the Interview Journey State itself.
+Sixteen canonical outputs are defined in [`core/output-contracts.md`](../../../core/output-contracts.md), including Offer and Negotiation Preparation, plus the Interview Journey State itself. Use [`offer-and-negotiation-preparation.md`](offer-and-negotiation-preparation.md) and [`../templates/offer-negotiation-preparation.md`](../templates/offer-negotiation-preparation.md) for that output; do not reconstruct its field rules here.
 
 ## Universal output rules
 

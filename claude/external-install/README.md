@@ -26,6 +26,7 @@ interview-journey-claude-kit/
     context-priority.md
     quality-gates.md
     output-contracts.md
+    offer-negotiation-preparation.md
     state-management.md
 ```
 

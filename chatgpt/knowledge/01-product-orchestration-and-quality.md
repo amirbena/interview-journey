@@ -12,13 +12,15 @@ Sources (in order):
   core/workflow.md
   core/orchestration-policy.md
   core/state-management.md
+  schemas/interview-journey-state.schema.md
   frameworks/15-interview-journey-intelligence-framework.md
   core/evidence-policy.md
   core/accuracy-policy.md
   core/context-priority.md
   core/quality-gates.md
   core/output-contracts.md
-Content-Digest (sha256, sources concatenated in order, CR bytes removed): 002a5de1550ffa78811da9118cc00e3ff2448ea32bf156438bb0da3110a0de81
+  core/offer-negotiation-preparation.md
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): 439fa8a503002b84369a94a6c87b57deda287f50872ebacac029442124b491e8
 -->
 
 # 01-product-orchestration-and-quality
@@ -33,7 +35,7 @@ Interview Journey is an evidence-driven interview preparation system. It prepare
 
 ## Primary user journey
 
-A candidate describes a target role (or shares a Job Description), their background, and whatever interview context they have. The system analyzes the role, analyzes the resume, identifies the current interview stage, compares the two into a fit/gap analysis, builds a preparation strategy, predicts likely questions, forms interview hypotheses, and then executes the specific preparation the candidate asked for — coding practice, system design practice, behavioral story building, a mock interview, answer coaching, or a post-interview debrief. Every framework is documented in [`frameworks/`](../frameworks/) and orchestrated by the master workflow in [`frameworks/15-interview-journey-intelligence-framework.md`](../frameworks/15-interview-journey-intelligence-framework.md).
+A candidate describes a target role (or shares a Job Description), their background, and whatever interview context they have. The system analyzes the role, analyzes the resume, identifies the current interview stage, compares the two into a fit/gap analysis, builds a preparation strategy, predicts likely questions, forms interview hypotheses, and then executes the specific preparation the candidate asked for — coding practice, system design practice, behavioral story building, a mock interview, answer coaching, a post-interview debrief, or offer and negotiation preparation. Every framework and canonical capability is orchestrated by the master workflow in [`frameworks/15-interview-journey-intelligence-framework.md`](../frameworks/15-interview-journey-intelligence-framework.md).
 
 ## Main outputs
 
@@ -47,6 +49,7 @@ A candidate describes a target role (or shares a Job Description), their backgro
 - **Mock Interview Scorecards.**
 - **Answer Coaching reviews.**
 - **Post-Interview Debriefs** that feed back into Interview Intelligence.
+- **Offer and Negotiation Preparation** — an evidence-grounded compensation position and natural responses for an offer conversation.
 - **Interview Journey State** — the running record of a candidate's preparation journey.
 
 ## Structured but modular
@@ -126,7 +129,7 @@ See [`workflow.md`](workflow.md#interview-mode-boundaries) for the full mode-bou
 
 ## MVP scope
 
-The MVP covers the following capabilities, one per framework in [`frameworks/`](../frameworks/):
+The MVP covers the following framework-backed and canonical capabilities:
 
 - Role Intelligence
 - Resume Intelligence
@@ -142,6 +145,7 @@ The MVP covers the following capabilities, one per framework in [`frameworks/`](
 - Mock interviews (Full, Coaching, Lightning Round, Deep Dive, Executive, Panel)
 - Answer coaching
 - Post-interview debrief
+- Offer and negotiation preparation
 - Continuous Interview Journey State tracking
 
 ## Non-goals
@@ -214,7 +218,7 @@ See [`workflows/full-interview-journey.md`](../workflows/full-interview-journey.
 
 The default for most requests. Enter a specific module directly when sufficient context is already available — for example: analyze a role, review a resume, predict questions for an already-known stage, run a coding drill, or debrief a single completed interview.
 
-See [`workflows/focused-task-routing.md`](../workflows/focused-task-routing.md) for the full routing table.
+See [`workflows/focused-task-routing.md`](../workflows/focused-task-routing.md) for the full routing table. Offer and compensation-negotiation requests use the focused [`prepare-offer-negotiation.md`](../workflows/prepare-offer-negotiation.md) workflow and the canonical [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md) contract.
 
 ### Resume Interview Journey
 
@@ -308,6 +312,7 @@ This table is copied verbatim in meaning from [Framework 15, Objective Routing](
 | Mock interview | 01 → 02 → 03 → 04 → 05 → 06 → 07 → 08 → 12 |
 | Answer review | 13 |
 | Post-interview debrief | 14 |
+| Offer / negotiation preparation | [`Offer and Negotiation Preparation`](offer-negotiation-preparation.md), reusing existing 01 and 03 outputs when relevant |
 | Full Interview Journey | Every framework, only as needed — never all fourteen unconditionally |
 
 ## Skip rule
@@ -328,6 +333,8 @@ Ask questions only when they change the preparation:
 
 - Good: "Which interview stage is this?" / "Do you already have a Job Description?"
 - Bad: repeating information already available; asking for details that won't affect the response.
+
+Offer and negotiation preparation follows the same rule: current compensation, competing offers, and every total-compensation field are optional unless the missing value materially changes the user's requested decision. See [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md).
 
 ## Response structure
 
@@ -356,6 +363,7 @@ Interview Journey is a coordinated decision system, not a collection of independ
 - [`context-priority.md`](context-priority.md)
 - [`output-contracts.md`](output-contracts.md)
 - [`../workflows/focused-task-routing.md`](../workflows/focused-task-routing.md)
+- [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md)
 
 
 ---
@@ -379,7 +387,20 @@ This document defines the canonical Interview Journey State model and its contex
 - Completed practice and mock interview evaluations.
 - Debrief findings, recurring strengths, recurring weaknesses.
 - Next actions.
+- Offer/negotiation context and the latest preparation position when relevant, including employer range, candidate priorities, total-compensation terms, and freshness of material market evidence.
 - Freshness/update metadata.
+
+## Offer and negotiation state lifecycle
+
+The optional `offer_negotiation_preparation` object in the canonical [Interview Journey State schema](../schemas/interview-journey-state.schema.md#offer-and-negotiation-preparation-state) is the compact state representation for canonical invariant `ONP-010`. It stores a reference/provenance summary and the latest decision-relevant position; it is not a second copy of the full preparation output.
+
+- **No preparation:** `offer_negotiation_preparation_status` is absent (for backward-compatible older state), `Not Requested`, or `Not Started`; the object may be absent. An absent status must be interpreted as `Not Requested`, never as completed work.
+- **In progress:** status is `Draft`; the object may be partial and must expose material open questions.
+- **Reusable:** status is `Completed` or `Confirmed`, the referenced artifact/context is available, and none of the recorded invalidation inputs has materially changed. Reuse it and skip rebuilding the preparation unless the user requests a refresh.
+- **Material change:** a changed employer range or package terms, candidate priorities, Target/Preferred/Fallback inputs, role/market context, or newer conflicting evidence makes the negotiation preparation `Stale`. Preserve the prior artifact reference and state why refresh is required rather than silently overwriting it.
+- **Evidence aging:** compare `market_evidence_retrieved_at` and `market_evidence_freshness` with the decision being made. When evidence is no longer sufficiently current or comparable, mark the preparation `Stale` or refresh the evidence-dependent portion; do not invalidate unrelated confirmed candidate facts.
+
+An updated artifact may return the status to `Draft`, `Completed`, or `Confirmed` only after recording refreshed provenance and `last_updated_at`.
 
 ## Confirmed vs. inferred vs. open
 
@@ -433,6 +454,137 @@ Interview Journey State is a **logical** record, not a storage mechanism.
 - [`workflow.md`](workflow.md)
 - [`../schemas/interview-journey-state.schema.md`](../schemas/interview-journey-state.schema.md)
 - [`../workflows/resume-interview-journey.md`](../workflows/resume-interview-journey.md)
+
+
+---
+
+## Source: `schemas/interview-journey-state.schema.md`
+
+# Interview Journey State Schema
+
+The Interview Journey State record is a logical representation of a candidate's overall preparation journey, based on the context available to the running platform. It exists to prevent unnecessary repetition and to support resuming work within the context the platform makes available. See [`core/state-management.md`](../core/state-management.md) for the governing principles and [Context Boundary](../core/state-management.md#context-boundary).
+
+Interview Journey State is not a storage mechanism and is not guaranteed to survive across conversations.
+
+## Identity
+
+| Field | Type | Required | Description | Example |
+|---|---|---|---|---|
+| `journey_id` | string | Required | A logical identifier for this journey. | `"journey-2026-07-20-dana-levi-northbridge"` |
+| `candidate_reference` | string | Optional | Reference to the candidate's identity or profile. | `"Dana Levi"` |
+| `target_company` | string | Optional | | `"Northbridge Payments"` |
+| `target_role` | string | Optional | | `"Senior Backend Engineer"` |
+| `created_at` | timestamp | Required | | `"2026-07-10T09:00:00Z"` |
+| `last_updated_at` | timestamp | Required | | `"2026-07-20T10:30:00Z"` |
+
+## Current Status
+
+| Field | Type | Required | Description | Example |
+|---|---|---|---|---|
+| `journey_mode` | enum: `Full Interview Journey`, `Focused Task`, `Resume Interview Journey` | Required | | `"Focused Task"` |
+| `overall_status` | enum: `Not Started`, `In Progress`, `Blocked`, `Completed`, `Stale` | Required | | `"In Progress"` |
+| `current_interview_stage` | reference to [`interview-stage.schema.md`](interview-stage.schema.md) | Optional | | `"System Design"` |
+
+## Framework Statuses
+
+Each framework status uses: `Not Started`, `Draft`, `Completed`, `Confirmed`, `Stale`, `Not Requested`.
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `role_intelligence_status` | enum | Required | Status of Framework 01 output. |
+| `resume_intelligence_status` | enum | Required | Status of Framework 02 output. |
+| `interview_stage_status` | enum | Required | Status of Framework 03 output. |
+| `fit_gap_analysis_status` | enum | Required | Status of Framework 04 output. |
+| `interview_intelligence_status` | enum | Required | Status of Framework 05 output. |
+| `preparation_strategy_status` | enum | Required | Status of Framework 06 output. |
+| `question_prediction_status` | enum | Required | Status of Framework 07 output. |
+| `interview_hypothesis_status` | enum | Required | Status of Framework 08 output. |
+| `coding_preparation_status` | enum | Required | Status of Framework 09 output(s). |
+| `system_design_preparation_status` | enum | Required | Status of Framework 10 output(s). |
+| `behavioral_preparation_status` | enum | Required | Status of Framework 11 output(s). |
+| `mock_interview_status` | enum | Required | Status of Framework 12 output(s). |
+| `answer_coaching_status` | enum | Required | Status of Framework 13 output(s). |
+| `post_interview_debrief_status` | enum | Required | Status of Framework 14 output(s). |
+| `offer_negotiation_preparation_status` | enum | Optional | Status of the canonical Offer and Negotiation Preparation capability. Absence in an older state means `Not Requested`. |
+
+Framework names align with [`core/workflow.md#frameworks`](../core/workflow.md#frameworks).
+
+## Offer and Negotiation Preparation State
+
+`offer_negotiation_preparation` is an optional compact object. It preserves enough derived state and provenance to reuse or invalidate prior preparation without copying the full output or silently rebuilding it from raw context.
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `artifact_reference` | string | Required when object exists | Reference to the latest Offer and Negotiation Preparation artifact available in active context. |
+| `source_context_reference` | string or list of strings | Optional | References to the role, employer communication, candidate clarification, or other inputs used. |
+| `employer_compensation_range` | structured value | Optional | Known employer range including currency, period, and base/total-compensation scope. |
+| `candidate_compensation_priorities` | list of strings | Optional | Candidate-provided preferences or decision criteria; never inferred as confirmed facts. |
+| `target_range` | structured value | Optional | Latest evidence-grounded Target range and material assumptions. |
+| `preferred_outcome` | structured value | Optional | Latest Preferred outcome including material package terms. |
+| `fallback` | structured value or string | Optional | Candidate-defined Fallback, or a clearly labeled provisional decision rule. |
+| `total_compensation_context` | structured value | Optional | Relevant base, bonus, equity, pension, benefits, sign-on, review timing, vesting/liquidity, risk, and terms. |
+| `market_evidence_retrieved_at` | timestamp or list of timestamps | Optional | Retrieval context for the material evidence underlying the position. |
+| `market_evidence_freshness` | enum: `Current`, `Aging`, `Stale`, `Unknown` | Optional | Whether the evidence can still support reuse; claim-specific source dates remain in the referenced artifact. |
+| `invalidation_inputs` | list of strings | Optional | Material inputs whose change requires reevaluation, such as employer range, candidate priorities, role/market context, or package terms. |
+| `open_questions` | list of strings | Optional | Missing facts that materially affect the position. |
+| `last_updated_at` | timestamp | Required when object exists | When this compact state was last updated. |
+
+Apply the lifecycle rules in [`core/state-management.md`](../core/state-management.md#offer-and-negotiation-state-lifecycle). A reusable `Completed` or `Confirmed` state is skipped; a material input change or stale evidence changes only `offer_negotiation_preparation_status` to `Stale` until the affected preparation is refreshed.
+
+## Recurring Signals
+
+| Field | Type | Required | Description | Example |
+|---|---|---|---|---|
+| `recurring_strengths` | list of strings | Optional | Aggregated across debriefs, per [Framework 14 Trend Detection](../frameworks/14-post-interview-debrief-framework.md#trend-detection). | `["Strong coding performance"]` |
+| `recurring_weaknesses` | list of strings | Optional | | `["System Design repeatedly weak on failure handling"]` |
+
+## Progress and Continuation
+
+| Field | Type | Required | Description | Example |
+|---|---|---|---|---|
+| `completed_stages` | list of strings | Optional | | `["Recruiter Screen"]` |
+| `upcoming_stage` | string | Optional | | `"System Design"` |
+| `next_actions` | ordered list of strings | Optional | | `["Run a system design mock interview"]` |
+| `open_questions` | list of strings | Optional | | `[]` |
+| `refresh_required` | boolean | Optional | | `false` |
+| `refresh_reason` | string | Optional | | `""` |
+
+## Interview Journey State Rules
+
+1. Confirmed work should not be repeated automatically.
+2. A focused task should execute only the required frameworks.
+3. A resumed journey should begin from the latest valid state.
+4. Interview intelligence may become stale independently of Role/Resume Intelligence.
+5. A single new piece of evidence should not invalidate unrelated, stable candidate facts.
+6. A framework may be `Not Requested` without blocking the journey.
+7. No state value may imply scheduled or background monitoring.
+8. Every refresh follows an explicit user request.
+9. Superseded records must not silently replace confirmed records without traceability.
+10. Real candidate data must never be written into shared repository files — see [`core/state-management.md`](../core/state-management.md#context-boundary).
+11. Offer/negotiation preparation follows the reuse and invalidation lifecycle in [`core/state-management.md`](../core/state-management.md#offer-and-negotiation-state-lifecycle); stale negotiation evidence does not invalidate unrelated framework outputs.
+
+## Example Record
+
+```text
+journey_id: "journey-2026-07-20-dana-levi-northbridge"
+target_company: "Northbridge Payments"
+target_role: "Senior Backend Engineer"
+journey_mode: "Focused Task"
+overall_status: "In Progress"
+role_intelligence_status: "Confirmed"
+resume_intelligence_status: "Confirmed"
+interview_stage_status: "Confirmed"
+system_design_preparation_status: "Draft"
+offer_negotiation_preparation_status: "Not Requested"
+upcoming_stage: "System Design"
+```
+
+## Related documents
+
+- [`../core/state-management.md`](../core/state-management.md)
+- [`../core/workflow.md`](../core/workflow.md)
+- [`../workflows/resume-interview-journey.md`](../workflows/resume-interview-journey.md)
+- [`../outputs/interview-journey-state-template.md`](../outputs/interview-journey-state-template.md)
 
 
 ---
@@ -505,6 +657,7 @@ Whenever possible, follow this sequence:
 12. Invoke the appropriate execution framework(s): Coding (09), System Design (10), Behavioral (11), Mock Interview (12).
 13. Coach answers when requested (13).
 14. Perform Debrief after completed interviews (14).
+15. When explicit offer or compensation-negotiation intent is present, or the current stage is Offer Stage and preparation is requested, run the canonical [Offer and Negotiation Preparation](../core/offer-negotiation-preparation.md) capability using only the upstream intelligence that materially improves the decision.
 
 Never execute unnecessary stages. Step 3 is conditional — skip it when the user has already supplied sufficient current context.
 
@@ -538,6 +691,9 @@ Run: 13
 
 ## Interview Debrief
 Run: 14
+
+## Offer / Negotiation Preparation
+Run: [Offer and Negotiation Preparation](../core/offer-negotiation-preparation.md), reusing 01 (Role Intelligence) and 03 (Interview Stage) outputs when already available. Do not require unrelated frameworks or a complete journey.
 
 ## Full Interview Journey
 Run every framework only when needed. Avoid mandatory execution of all fourteen modules.
@@ -687,6 +843,7 @@ The user-facing response does not need to mechanically label every sentence, but
 8. Behavioral answers must be based on real candidate experience only — see [Behavioral Framework Rule BI-002](../frameworks/11-behavioral-interview-framework.md#core-rules).
 9. Coaching feedback must target the real error class, not an invented one — see [Coding Framework CI-009](../frameworks/09-coding-interview-decision-engine.md#3-core-operating-principles).
 10. Every hypothesis, prediction, or gap must be evidence-backed — see [Interview Hypothesis IH-001](../frameworks/08-interview-hypothesis-framework.md#core-rules) and [Question Prediction QP-001](../frameworks/07-question-prediction-framework.md#rules).
+11. Every material compensation-data row must preserve its figure/range, population/context, source, and retrieval date. Do not silently average different populations or convert stale, sparse, or contradictory evidence into a precise current-market claim — see [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md#market-evidence-contract).
 
 ## Related documents
 
@@ -838,6 +995,10 @@ Before returning, confirm: feedback is evidence-based; no fabricated experience 
 
 Before returning, confirm: facts are separated from assumptions; root causes are identified per weakness, not generically; an improvement plan exists; Interview Intelligence was updated; lessons are reusable for the next interview. See [Post-Interview Debrief Validation Checklist](../frameworks/14-post-interview-debrief-framework.md#validation-checklist).
 
+## Offer and Negotiation Preparation
+
+Before returning, confirm: active context was reused; optional gaps did not cause over-questioning; every material market row contains figure/range, population/context, source, and retrieval date; freshness and contradictions remain visible; Target range, Preferred outcome, and Fallback are distinct and grounded in evidence plus explicit assumptions; total compensation is considered where relevant; and prepared answers are truthful, natural, and non-aggressive. See the [Offer and Negotiation Preparation checklist](offer-negotiation-preparation.md#validation-checklist).
+
 ## Universal final check
 
 Every material claim about the candidate, the role, or the interview process must either have supporting evidence, be explicitly labeled as inference, or be marked Unknown — never invented.
@@ -860,7 +1021,7 @@ This document defines the canonical outputs produced by Interview Journey, downs
 
 ## Canonical outputs
 
-At least the following fifteen outputs are defined. Each entry states purpose, required inputs, required sections, confirmed-versus-inferred handling, update behavior, validation rules, when it should be persisted, and when it should not be generated.
+At least the following sixteen outputs are defined. Each entry states purpose, required inputs, required sections, confirmed-versus-inferred handling, update behavior, validation rules, when it should be persisted, and when it should not be generated.
 
 ### 1. Role Intelligence
 - **Purpose:** Present the structured hiring-intent analysis of a target role.
@@ -953,6 +1114,15 @@ At least the following fifteen outputs are defined. Each entry states purpose, r
 - **Required sections:** [`outputs/post-interview-debrief-template.md`](../outputs/post-interview-debrief-template.md).
 - **Do not generate when:** No interview has actually occurred yet.
 
+### 16. Offer and Negotiation Preparation
+- **Purpose:** Prepare an evidence-grounded compensation position and natural responses for an offer or negotiation conversation.
+- **Required inputs:** Explicit offer/compensation intent plus enough known role, market, employer-range, or candidate-priority context to make a useful recommendation. No individual context field is universally mandatory.
+- **Required sections:** Context and assumptions; attributable market evidence; Target range; Preferred outcome; Fallback or provisional decision rule; reasoning and total-compensation trade-offs; relevant natural spoken answers; material risks/unknowns. See [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md) and [`outputs/offer-negotiation-preparation-template.md`](../outputs/offer-negotiation-preparation-template.md).
+- **Confirmed vs inferred:** User/employer facts, sourced market evidence, and assumptions remain distinct. Every material market row preserves figure/range, population/context, source, and retrieval date. Public evidence never becomes Confirmed candidate/employer fact merely because it is published.
+- **Update behavior:** Refresh when the offer, employer range, candidate priorities, comparable evidence, or material package terms change.
+- **Validation:** Apply the canonical [Offer and Negotiation Preparation checklist](offer-negotiation-preparation.md#validation-checklist).
+- **Do not generate when:** The request is unrelated to compensation or offer preparation.
+
 ### Interview Journey State
 - **Purpose:** The running, logical record of a candidate's preparation journey.
 - **Required sections:** [`outputs/interview-journey-state-template.md`](../outputs/interview-journey-state-template.md) and [`schemas/interview-journey-state.schema.md`](../schemas/interview-journey-state.schema.md).
@@ -976,4 +1146,138 @@ At least the following fifteen outputs are defined. Each entry states purpose, r
 - [`state-management.md`](state-management.md)
 - [`../outputs/`](../outputs/)
 - [`../schemas/`](../schemas/)
+
+
+---
+
+## Source: `core/offer-negotiation-preparation.md`
+
+# Offer and Negotiation Preparation
+
+This document defines the canonical, platform-independent contract for preparing a candidate for compensation conversations and offer negotiation. [Framework 15](../frameworks/15-interview-journey-intelligence-framework.md) routes into this capability; ChatGPT, the Claude Skill, and the Claude Project adapt it without redefining it.
+
+## Stable contract invariants
+
+These identifiers name durable behavior for cross-package and scenario validation. They are intentionally broader than individual paragraphs.
+
+| ID | Invariant |
+|---|---|
+| `ONP-001` | Explicit offer or compensation-negotiation intent routes to this canonical capability without forcing unrelated workflows. |
+| `ONP-002` | Material market evidence is attributable by figure/range, population/context, source, retrieval date, and freshness/fit. |
+| `ONP-003` | Sparse, stale, or adjacent-population evidence lowers confidence and widens or qualifies the recommendation without fake precision. |
+| `ONP-004` | Contradictory or unlike sources remain visible and are not naïvely averaged. |
+| `ONP-005` | The position distinguishes Target range, Preferred outcome, and candidate-defined Fallback or a provisional decision rule. |
+| `ONP-006` | Total compensation, risk, timing, and material terms can change the recommendation. |
+| `ONP-007` | Optional context is reused when available but does not block safe, useful preparation when absent. |
+| `ONP-008` | A lower employer range receives a truthful, constructive response without threats or fabricated leverage. |
+| `ONP-009` | Prepared answers are concise, conversational, truthful, and adaptable rather than rigid scripts. |
+| `ONP-010` | Negotiation state is reusable when valid and becomes stale when material employer terms, candidate priorities, position inputs, or evidence freshness change. |
+
+## Trigger
+
+Run this capability when the user's objective is to prepare for an offer call, discuss compensation, decide what salary range to give, evaluate or respond to an employer range, or negotiate an existing offer. An identified `Offer Stage` is a strong signal, but explicit negotiation intent is sufficient at any stage. Do not disturb unrelated routing.
+
+## Context and clarification
+
+Reuse relevant active context before asking a question. Consider, when available:
+
+- role/title and seniority;
+- location and employment market;
+- employment model;
+- company type or stage when it affects compensation structure;
+- known employer compensation range;
+- current compensation, only when the candidate chooses to provide it and it is relevant;
+- competing offers or active processes;
+- desired compensation;
+- total-compensation components such as base, bonus, equity, pension, benefits, sign-on, review timing, and vesting or liquidity conditions.
+
+No field is universally mandatory. Ask only for a missing fact that materially changes the recommendation. Otherwise proceed with a visible assumption and identify what could change the position. Never pressure the candidate to disclose current compensation.
+
+## Market evidence contract
+
+Market figures presented as facts must be attributable. Every material salary-data row must preserve:
+
+| Field | Requirement |
+|---|---|
+| Figure or range | Include currency, period, and whether it is base or total compensation. |
+| Population/context | State role/title, seniority, location, employment model, company segment, and sample scope when known. |
+| Source | Name and link or supplied-source reference. |
+| Retrieval date | Record the date the evidence was accessed. |
+| Freshness/fit | Explain material age or population mismatch. |
+
+Prefer current, role- and market-specific evidence. Keep sourced evidence, user-provided facts, and assumptions distinct. Do not invent precision, silently average unlike populations, or present public research as Confirmed candidate/employer fact. When sources disagree, expose the disagreement and explain which evidence is more comparable and why.
+
+If current research tools are unavailable, use supplied evidence and general principles, clearly label the market range as unresolved, and do not fabricate benchmarks.
+
+## Negotiation position
+
+Produce an actionable position with three distinct elements:
+
+- **Target range** — the defensible range the candidate can communicate, grounded in the best comparable evidence and total-compensation context.
+- **Preferred outcome** — the realistic package the candidate would be pleased to accept, including material non-base components.
+- **Fallback** — the minimum acceptable package or decision boundary, defined by the candidate rather than inferred as an objective market fact.
+
+Derive the position from available evidence and explicitly stated assumptions. Explain the reasoning without implying mathematical certainty. Never invent a fallback when the candidate has not supplied enough preference information; provide a provisional decision rule instead. Compare packages on total value, risk, timing, and terms where those factors are material—not base salary alone.
+
+## Natural answer preparation
+
+Prepare principles plus adaptable, candidate-ready spoken answers for the questions relevant to the situation, including at least:
+
+1. “What are your salary expectations?”
+2. Questions about current compensation, where applicable and lawful/relevant.
+3. Competing offers or interview processes.
+4. Desired increase.
+5. “Why do you think this range is justified?”
+6. A response when the employer gives a lower range.
+
+Answers must be truthful, concise, conversational, and adaptable to the candidate's voice. Avoid corporate scripts, fabricated leverage, theatrical language, threats, and unnecessary aggression. Prefer a principle followed by a natural example answer over a rigid script. A candidate may redirect from current compensation toward role scope and market value without disclosing information they do not wish to share.
+
+## Sparse, stale, or contradictory evidence
+
+- **Very little data:** reduce confidence, use a wider or qualified range, and emphasize employer range discovery and package trade-offs.
+- **Different populations:** do not combine them as equivalent; state each population and use only genuinely comparable evidence to anchor the position.
+- **Material contradiction:** show the conflicting rows, assess comparability and reliability, and use a conditional position rather than an unexplained average.
+- **Stale evidence:** make its age visible, downgrade confidence, and avoid treating it as a current benchmark.
+- **No reliable exact-title benchmark:** use carefully labeled adjacent-role or level evidence, explain the mapping, and widen the conclusion.
+
+Uncertainty changes the confidence and width of the conclusion; it never licenses a manufactured precise range.
+
+## Output depth
+
+- **Quick:** essential assumptions, position, one short evidence summary, and the immediately needed answer.
+- **Standard:** the normal output contract below.
+- **Professional:** deeper source comparison, package scenarios, trade-offs, risks, and a broader answer set.
+
+## Normal output contract
+
+A Standard result includes only relevant sections:
+
+1. Context and assumptions.
+2. Market evidence table, with source and retrieval date per material row.
+3. Target range, preferred outcome, and fallback.
+4. Reasoning, including total-compensation trade-offs.
+5. Natural spoken-answer preparation.
+6. Risks, unknowns, and facts that could change the position.
+
+## Validation checklist
+
+- Negotiation intent or Offer Stage triggered the capability.
+- Existing context was reused and optional gaps did not cause over-questioning.
+- Every material market row includes figure, population/context, source, and retrieval date.
+- Evidence freshness, mismatches, and contradictions remain visible.
+- Target range, preferred outcome, and fallback are distinct and evidence/assumption grounded.
+- Total compensation is considered when relevant.
+- Relevant compensation questions have natural, truthful spoken answers.
+- Sparse or stale evidence reduces confidence and precision.
+- Output depth matches the user's need.
+- Negotiation state reuse and invalidation follow `ONP-010` and [`state-management.md`](state-management.md#offer-and-negotiation-state-lifecycle).
+
+## Related documents
+
+- [`orchestration-policy.md`](orchestration-policy.md)
+- [`context-priority.md`](context-priority.md)
+- [`evidence-policy.md`](evidence-policy.md)
+- [`output-contracts.md`](output-contracts.md)
+- [`../workflows/prepare-offer-negotiation.md`](../workflows/prepare-offer-negotiation.md)
+- [`../outputs/offer-negotiation-preparation-template.md`](../outputs/offer-negotiation-preparation-template.md)
 

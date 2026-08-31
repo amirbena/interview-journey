@@ -2,7 +2,7 @@
 
 ## What belongs in shared Project Knowledge
 
-Only the eleven canonical `core/` methodology files in `knowledge/` — never personal data.
+Only the twelve canonical `core/` methodology files in `knowledge/` — never personal data.
 
 ## What never belongs in shared Knowledge or the Skill
 

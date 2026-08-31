@@ -20,6 +20,7 @@ The request needs one or more Skill frameworks to run, producing new or updated 
 - Running a mock interview.
 - Coaching a submitted answer.
 - Running a post-interview debrief.
+- Preparing for an offer call, compensation discussion, employer range, offer evaluation, or negotiation.
 - Producing a new artifact or canonical output from underlying records.
 
 Route these to the specific framework(s) they need, per [`state-routing.md`](state-routing.md) — not to a full journey by default.

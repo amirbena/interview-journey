@@ -41,6 +41,10 @@ Before returning, confirm: feedback is evidence-based; no fabricated experience 
 
 Before returning, confirm: facts are separated from assumptions; root causes are identified per weakness, not generically; an improvement plan exists; Interview Intelligence was updated; lessons are reusable for the next interview. See [Post-Interview Debrief Validation Checklist](../frameworks/14-post-interview-debrief-framework.md#validation-checklist).
 
+## Offer and Negotiation Preparation
+
+Before returning, confirm: active context was reused; optional gaps did not cause over-questioning; every material market row contains figure/range, population/context, source, and retrieval date; freshness and contradictions remain visible; Target range, Preferred outcome, and Fallback are distinct and grounded in evidence plus explicit assumptions; total compensation is considered where relevant; and prepared answers are truthful, natural, and non-aggressive. See the [Offer and Negotiation Preparation checklist](offer-negotiation-preparation.md#validation-checklist).
+
 ## Universal final check
 
 Every material claim about the candidate, the role, or the interview process must either have supporting evidence, be explicitly labeled as inference, or be marked Unknown — never invented.

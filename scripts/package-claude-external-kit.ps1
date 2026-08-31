@@ -53,6 +53,7 @@ $KnowledgeFiles = @(
     @{ Src = "context-priority.md"; Dest = "context-priority.md" },
     @{ Src = "quality-gates.md"; Dest = "quality-gates.md" },
     @{ Src = "output-contracts.md"; Dest = "output-contracts.md" },
+    @{ Src = "offer-negotiation-preparation.md"; Dest = "offer-negotiation-preparation.md" },
     @{ Src = "state-management.md"; Dest = "state-management.md" }
 )
 

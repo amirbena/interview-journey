@@ -40,7 +40,7 @@ See [`workflows/full-interview-journey.md`](../workflows/full-interview-journey.
 
 The default for most requests. Enter a specific module directly when sufficient context is already available — for example: analyze a role, review a resume, predict questions for an already-known stage, run a coding drill, or debrief a single completed interview.
 
-See [`workflows/focused-task-routing.md`](../workflows/focused-task-routing.md) for the full routing table.
+See [`workflows/focused-task-routing.md`](../workflows/focused-task-routing.md) for the full routing table. Offer and compensation-negotiation requests use the focused [`prepare-offer-negotiation.md`](../workflows/prepare-offer-negotiation.md) workflow and the canonical [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md) contract.
 
 ### Resume Interview Journey
 

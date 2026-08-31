@@ -25,6 +25,7 @@ This table is copied verbatim in meaning from [Framework 15, Objective Routing](
 | Mock interview | 01 → 02 → 03 → 04 → 05 → 06 → 07 → 08 → 12 |
 | Answer review | 13 |
 | Post-interview debrief | 14 |
+| Offer / negotiation preparation | [`Offer and Negotiation Preparation`](offer-negotiation-preparation.md), reusing existing 01 and 03 outputs when relevant |
 | Full Interview Journey | Every framework, only as needed — never all fourteen unconditionally |
 
 ## Skip rule
@@ -45,6 +46,8 @@ Ask questions only when they change the preparation:
 
 - Good: "Which interview stage is this?" / "Do you already have a Job Description?"
 - Bad: repeating information already available; asking for details that won't affect the response.
+
+Offer and negotiation preparation follows the same rule: current compensation, competing offers, and every total-compensation field are optional unless the missing value materially changes the user's requested decision. See [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md).
 
 ## Response structure
 
@@ -73,3 +76,4 @@ Interview Journey is a coordinated decision system, not a collection of independ
 - [`context-priority.md`](context-priority.md)
 - [`output-contracts.md`](output-contracts.md)
 - [`../workflows/focused-task-routing.md`](../workflows/focused-task-routing.md)
+- [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md)

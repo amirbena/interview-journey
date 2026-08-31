@@ -52,11 +52,11 @@ sha256_hex() {
 
 # Explicit bundle -> source allowlist. One "bundle:source1,source2,..." entry
 # per generated file, in generation order. Source paths are repo-root-relative.
-# Every core/*.md, frameworks/NN-*.md, and the two schema/workflow sources
+# Every core/*.md, frameworks/NN-*.md, and the three schema/workflow sources
 # appear in exactly one bundle. Boundaries follow the methodology's natural
 # layers so semantically related content stays co-located for retrieval.
 BUNDLES=(
-  "01-product-orchestration-and-quality.md:core/product-definition.md,core/terminology.md,core/scope-and-non-goals.md,core/workflow.md,core/orchestration-policy.md,core/state-management.md,frameworks/15-interview-journey-intelligence-framework.md,core/evidence-policy.md,core/accuracy-policy.md,core/context-priority.md,core/quality-gates.md,core/output-contracts.md"
+  "01-product-orchestration-and-quality.md:core/product-definition.md,core/terminology.md,core/scope-and-non-goals.md,core/workflow.md,core/orchestration-policy.md,core/state-management.md,schemas/interview-journey-state.schema.md,frameworks/15-interview-journey-intelligence-framework.md,core/evidence-policy.md,core/accuracy-policy.md,core/context-priority.md,core/quality-gates.md,core/output-contracts.md,core/offer-negotiation-preparation.md"
   "02-role-resume-and-strategy.md:frameworks/01-role-intelligence-framework.md,frameworks/02-resume-intelligence-framework.md,frameworks/03-interview-stage-framework.md,frameworks/04-role-fit-gap-analysis-framework.md,frameworks/05-interview-intelligence-framework.md,frameworks/06-preparation-strategy-framework.md,schemas/public-research-evidence.schema.md,workflows/research-current-interview-intelligence.md,frameworks/07-question-prediction-framework.md,frameworks/08-interview-hypothesis-framework.md"
   "03-interview-execution.md:frameworks/09-coding-interview-decision-engine.md,frameworks/10-system-design-framework.md,frameworks/11-behavioral-interview-framework.md,frameworks/12-mock-interview-framework.md,frameworks/13-answer-coaching-framework.md,frameworks/14-post-interview-debrief-framework.md"
 )

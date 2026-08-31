@@ -19,6 +19,7 @@ Interview Journey is an evidence-driven interview preparation system that tailor
 | Mock interview | 01 → 02 → 03 → 04 → 05 → 06 → 07 → 08 → 12 |
 | Answer review | 13 |
 | Post-interview debrief | 14 |
+| Offer / negotiation preparation | [`offer-and-negotiation-preparation.md`](offer-and-negotiation-preparation.md), reusing existing Role/Stage outputs when relevant |
 | Full Interview Journey | Every framework, only as needed |
 
 ## Skip rule
@@ -32,7 +33,11 @@ Skip any framework whose valid output already exists in the active Interview Jou
 3. Current interview stage
 4. Role Intelligence
 5. Resume Intelligence
-6. General company or industry knowledge (lowest priority)
+6. Corroborated current public research (`corroborated_public_research`)
+7. Unverified current public research (`public_research_unverified`)
+8. General company or industry knowledge
+
+Priorities 1–5 outrank public research at priorities 6–7, while general knowledge remains priority 8. Public research is never Confirmed, and contradictions remain visible.
 
 ## Output depth
 

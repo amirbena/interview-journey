@@ -31,6 +31,7 @@ interview-journey-claude-kit/
     context-priority.md              (from core/context-priority.md)
     quality-gates.md                 (from core/quality-gates.md)
     output-contracts.md              (from core/output-contracts.md)
+    offer-negotiation-preparation.md (from core/offer-negotiation-preparation.md)
     state-management.md              (from core/state-management.md)
 ```
 
@@ -38,7 +39,7 @@ interview-journey-claude-kit/
 
 - `.git/`, `.DS_Store`, `Thumbs.db`, `__MACOSX/`
 - `examples/synthetic-candidate/` (a repository development asset, never shipped in the kit)
-- `frameworks/`, `schemas/`, `workflows/`, `outputs/` (covered in depth by the Skill ZIP already embedded; not duplicated separately as flat Knowledge here beyond the eleven `core/` files above)
+- `frameworks/`, `schemas/`, `workflows/`, `outputs/` (covered in depth by the Skill ZIP already embedded; not duplicated separately as flat Knowledge here beyond the twelve `core/` files above)
 - `tests/`, `scripts/`, `.build/`, any previous `*.zip` output
 - Any real candidate, role, or interviewer data
 

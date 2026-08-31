@@ -32,7 +32,7 @@ None — a Full Interview Journey may start cold. Missing inputs reduce confiden
 
 ## Outputs
 
-Any subset of the fifteen canonical outputs in [`core/output-contracts.md`](../core/output-contracts.md), as actually produced by the stages run.
+Any subset of the sixteen canonical outputs in [`core/output-contracts.md`](../core/output-contracts.md), as actually produced by the stages run.
 
 ## State Updates
 
