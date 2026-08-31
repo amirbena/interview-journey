@@ -208,39 +208,61 @@ fi
 
 # 12c. Digest normalization contract. Digest/body input is each source's raw
 #      bytes with every CR (0x0D) removed - nothing else added, removed, or
-#      normalized (a source's final-LF presence is preserved; a lone CR is
-#      treated identically). Verified against LF / CRLF / lone-CR /
-#      no-final-newline fixtures. When pwsh is available, also verified for
-#      Bash/PowerShell byte-for-byte agreement (fixtures + a full rebuild).
+#      normalized (final-LF presence preserved; lone CR treated identically).
+#      Verified against LF / CRLF / lone-CR / no-final-newline / empty /
+#      one-byte fixtures, each against an independently written expected
+#      value. When pwsh is present the same fixtures are compared Bash vs
+#      PowerShell, and a full build-chatgpt-knowledge.ps1 rebuild is
+#      mandatory (a non-zero pwsh exit or a byte mismatch fails - never a
+#      SKIP). SKIP is reserved strictly for pwsh being absent.
 NORM_TMP="$(mktemp -d 2>/dev/null || mktemp -d -t ijnorm)"
 printf 'alpha\nbeta\n'     > "${NORM_TMP}/lf.txt"
 printf 'alpha\r\nbeta\r\n' > "${NORM_TMP}/crlf.txt"
 printf 'alpha\rbeta\r'     > "${NORM_TMP}/lonecr.txt"
 printf 'alpha\nbeta'       > "${NORM_TMP}/nonl.txt"
+: > "${NORM_TMP}/empty.txt"
+printf 'A'                 > "${NORM_TMP}/onebyte.txt"
 norm_bash() { tr -d '\r' < "$1" | od -A n -t x1 -v | tr -d ' \n'; }
+# Expected values are written here as literal bytes, independent of tr / the
+# normalization implementation under test.
 exp_lf="$(printf 'alpha\nbeta\n' | od -A n -t x1 -v | tr -d ' \n')"
 exp_cat="$(printf 'alphabeta'    | od -A n -t x1 -v | tr -d ' \n')"
 exp_nonl="$(printf 'alpha\nbeta' | od -A n -t x1 -v | tr -d ' \n')"
+exp_empty=""
+exp_onebyte="$(printf 'A'        | od -A n -t x1 -v | tr -d ' \n')"
 check "normalization: LF input is unchanged"              "[ \"\$(norm_bash '${NORM_TMP}/lf.txt')\" = \"${exp_lf}\" ]"
 check "normalization: CRLF collapses to LF"               "[ \"\$(norm_bash '${NORM_TMP}/crlf.txt')\" = \"${exp_lf}\" ]"
 check "normalization: lone CR removed, no newline added"  "[ \"\$(norm_bash '${NORM_TMP}/lonecr.txt')\" = \"${exp_cat}\" ]"
 check "normalization: missing final newline is preserved" "[ \"\$(norm_bash '${NORM_TMP}/nonl.txt')\" = \"${exp_nonl}\" ]"
+check "normalization: empty input stays empty"            "[ \"\$(norm_bash '${NORM_TMP}/empty.txt')\" = \"${exp_empty}\" ]"
+check "normalization: one-byte input passes through"      "[ \"\$(norm_bash '${NORM_TMP}/onebyte.txt')\" = \"${exp_onebyte}\" ]"
 if command -v pwsh >/dev/null 2>&1; then
   norm_ps() {
     pwsh -NoProfile -NonInteractive -Command "\$b=[System.IO.File]::ReadAllBytes('$1'); \$o=[System.Collections.Generic.List[byte]]::new(); foreach(\$x in \$b){ if(\$x -ne 0x0D){ \$o.Add(\$x) } }; -join (\$o.ToArray() | ForEach-Object { \$_.ToString('x2') })" 2>/dev/null | tr -d ' \r\n'
   }
-  for f in lf crlf lonecr nonl; do
+  # Both sides are also pinned to the independent expected values above, so a
+  # matching pair cannot be two identical bugs.
+  check "normalization (PowerShell): empty input stays empty"       "[ \"\$(norm_ps '${NORM_TMP}/empty.txt')\" = \"${exp_empty}\" ]"
+  check "normalization (PowerShell): one-byte input passes through" "[ \"\$(norm_ps '${NORM_TMP}/onebyte.txt')\" = \"${exp_onebyte}\" ]"
+  for f in lf crlf lonecr nonl empty onebyte; do
     check "normalization parity (Bash == PowerShell): ${f}" \
       "[ \"\$(norm_bash '${NORM_TMP}/${f}.txt')\" = \"\$(norm_ps '${NORM_TMP}/${f}.txt')\" ]"
   done
   if [ -d "${KNOWLEDGE_DIR}" ]; then
+    # pwsh is present -> running the real .ps1 is mandatory. A non-zero exit
+    # is a failure, not a SKIP.
     PS_TMP="$(mktemp -d 2>/dev/null || mktemp -d -t ijps)"
-    ps_synced=0
-    if pwsh -NoProfile -NonInteractive -File scripts/build-chatgpt-knowledge.ps1 "${PS_TMP}" >/dev/null 2>&1; then
+    ps_build_ok=0
+    pwsh -NoProfile -NonInteractive -File scripts/build-chatgpt-knowledge.ps1 "${PS_TMP}" >/dev/null 2>&1 && ps_build_ok=1
+    check "build-chatgpt-knowledge.ps1 runs under pwsh" "[ '${ps_build_ok}' = '1' ]"
+    if [ "${ps_build_ok}" = "1" ]; then
+      ps_synced=0
       diff -r "${KNOWLEDGE_DIR}" "${PS_TMP}" >/dev/null 2>&1 && ps_synced=1
       check "PowerShell rebuild is byte-identical to committed chatgpt/knowledge/" "[ '${ps_synced}' = '1' ]"
-    else
-      echo "SKIP: build-chatgpt-knowledge.ps1 did not run under pwsh; PowerShell full-build parity not checked"
+      if [ "${ps_synced}" != "1" ]; then
+        echo "       (Bash vs PowerShell rebuild differences:)"
+        diff -r "${KNOWLEDGE_DIR}" "${PS_TMP}" 2>&1 | sed 's/^/       /' | head -n 40
+      fi
     fi
     rm -rf -- "${PS_TMP}"
   fi

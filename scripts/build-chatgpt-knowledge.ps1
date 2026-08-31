@@ -75,12 +75,17 @@ Get-ChildItem -LiteralPath $KnowledgeDir -Filter "*.md" -File -ErrorAction Silen
 # Digest normalization contract: raw source bytes with every CR (0x0D)
 # removed; nothing else added, removed, or normalized. Byte-for-byte
 # equivalent to `tr -d '\r'` in build-chatgpt-knowledge.sh.
+#
+# Returns the array as a single object (unary comma) so the pipeline does
+# not unroll it. The caller keeps it as a real [byte[]] and never relies on
+# implicit object[] -> IEnumerable[byte] coercion. Correct for empty,
+# one-byte, multi-byte, CR-only, and no-final-LF sources.
 function Get-NormalizedSourceBytes {
     param([string]$RelPath)
     $bytes = [System.IO.File]::ReadAllBytes((Join-Path $RepoRoot $RelPath))
     $out = [System.Collections.Generic.List[byte]]::new($bytes.Length)
     foreach ($b in $bytes) { if ($b -ne 0x0D) { $out.Add($b) } }
-    return $out.ToArray()
+    return ,$out.ToArray()
 }
 
 $sha256 = [System.Security.Cryptography.SHA256]::Create()
@@ -97,9 +102,9 @@ foreach ($bundleName in $Bundles.Keys) {
     $normalized = @{}
     $digestInput = [System.Collections.Generic.List[byte]]::new()
     foreach ($src in $sources) {
-        $nb = Get-NormalizedSourceBytes $src
+        [byte[]] $nb = Get-NormalizedSourceBytes $src
         $normalized[$src] = $nb
-        $digestInput.AddRange($nb)
+        $digestInput.AddRange([byte[]] $nb)
     }
     $digest = ([BitConverter]::ToString($sha256.ComputeHash($digestInput.ToArray())) -replace '-', '').ToLowerInvariant()
 
@@ -122,7 +127,7 @@ foreach ($bundleName in $Bundles.Keys) {
     for ($i = 0; $i -lt $sources.Count; $i++) {
         $src = $sources[$i]
         $out.AddRange($utf8.GetBytes("## Source: ``$src```n`n"))
-        $out.AddRange($normalized[$src])
+        $out.AddRange([byte[]] $normalized[$src])
         if ($i -lt $sources.Count - 1) {
             $out.AddRange($utf8.GetBytes("`n`n---`n`n"))
         } else {
