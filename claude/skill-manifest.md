@@ -37,6 +37,7 @@ claude/skill/
     mock-interviews.md
     answer-coaching.md
     post-interview-debrief.md
+    offer-and-negotiation-preparation.md
     state-and-output-generation.md
     accuracy-and-quality.md
   templates/
@@ -53,6 +54,7 @@ claude/skill/
     mock-interview-scorecard.md
     answer-coaching.md
     post-interview-debrief.md
+    offer-negotiation-preparation.md
     interview-journey-state.md
 ```
 
@@ -87,6 +89,7 @@ Every reference file in `claude/skill/references/` adapts specific canonical rep
 | `mock-interviews.md` | `frameworks/12-*.md` |
 | `answer-coaching.md` | `frameworks/13-*.md` |
 | `post-interview-debrief.md` | `frameworks/14-*.md` |
+| `offer-and-negotiation-preparation.md` | `core/offer-negotiation-preparation.md`, `workflows/prepare-offer-negotiation.md`, `outputs/offer-negotiation-preparation-template.md` |
 | `state-and-output-generation.md` | `core/state-management.md`, `core/output-contracts.md`, `schemas/interview-journey-state.schema.md`, `outputs/*` |
 | `accuracy-and-quality.md` | `core/evidence-policy.md`, `core/accuracy-policy.md`, `core/quality-gates.md`, `core/context-priority.md` |
 
@@ -99,9 +102,9 @@ interview-journey.skill.zip
 └── interview-journey/
     ├── SKILL.md
     ├── references/
-    │   └── ... (13 files)
+    │   └── ... (14 files)
     └── templates/
-        └── ... (14 files)
+        └── ... (15 files)
 ```
 
 Exactly one top-level directory. No other files or directories at the ZIP root.

@@ -4,7 +4,7 @@ This document defines the canonical outputs produced by Interview Journey, downs
 
 ## Canonical outputs
 
-At least the following fifteen outputs are defined. Each entry states purpose, required inputs, required sections, confirmed-versus-inferred handling, update behavior, validation rules, when it should be persisted, and when it should not be generated.
+At least the following sixteen outputs are defined. Each entry states purpose, required inputs, required sections, confirmed-versus-inferred handling, update behavior, validation rules, when it should be persisted, and when it should not be generated.
 
 ### 1. Role Intelligence
 - **Purpose:** Present the structured hiring-intent analysis of a target role.
@@ -96,6 +96,15 @@ At least the following fifteen outputs are defined. Each entry states purpose, r
 - **Purpose:** Structured learning from a completed interview.
 - **Required sections:** [`outputs/post-interview-debrief-template.md`](../outputs/post-interview-debrief-template.md).
 - **Do not generate when:** No interview has actually occurred yet.
+
+### 16. Offer and Negotiation Preparation
+- **Purpose:** Prepare an evidence-grounded compensation position and natural responses for an offer or negotiation conversation.
+- **Required inputs:** Explicit offer/compensation intent plus enough known role, market, employer-range, or candidate-priority context to make a useful recommendation. No individual context field is universally mandatory.
+- **Required sections:** Context and assumptions; attributable market evidence; Target range; Preferred outcome; Fallback or provisional decision rule; reasoning and total-compensation trade-offs; relevant natural spoken answers; material risks/unknowns. See [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md) and [`outputs/offer-negotiation-preparation-template.md`](../outputs/offer-negotiation-preparation-template.md).
+- **Confirmed vs inferred:** User/employer facts, sourced market evidence, and assumptions remain distinct. Every material market row preserves figure/range, population/context, source, and retrieval date. Public evidence never becomes Confirmed candidate/employer fact merely because it is published.
+- **Update behavior:** Refresh when the offer, employer range, candidate priorities, comparable evidence, or material package terms change.
+- **Validation:** Apply the canonical [Offer and Negotiation Preparation checklist](offer-negotiation-preparation.md#validation-checklist).
+- **Do not generate when:** The request is unrelated to compensation or offer preparation.
 
 ### Interview Journey State
 - **Purpose:** The running, logical record of a candidate's preparation journey.

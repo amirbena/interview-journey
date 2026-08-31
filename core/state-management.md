@@ -15,6 +15,7 @@ This document defines the canonical Interview Journey State model and its contex
 - Completed practice and mock interview evaluations.
 - Debrief findings, recurring strengths, recurring weaknesses.
 - Next actions.
+- Offer/negotiation context and the latest preparation position when relevant, including employer range, candidate priorities, total-compensation terms, and freshness of material market evidence.
 - Freshness/update metadata.
 
 ## Confirmed vs. inferred vs. open

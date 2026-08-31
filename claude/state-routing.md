@@ -24,5 +24,6 @@ Defines how the Project uses available active context — conversation history, 
 | One new piece of interview intelligence (a recruiter comment, a piece of feedback) | Merge Interview Intelligence only, then update only the affected hypotheses/predictions/priorities — not the whole journey |
 | User asks to run a mock interview | Run Mock Interview, reusing Role Intelligence, Resume Intelligence, Fit & Gap Analysis, and Interview Intelligence if already available |
 | User reports a completed interview | Run Post-Interview Debrief — no other framework re-run unless the debrief itself surfaces new evidence that should feed forward |
+| User asks about an offer call, salary expectations, employer range, offer evaluation, or negotiation | Run the canonical Offer and Negotiation Preparation capability through `skill/references/offer-and-negotiation-preparation.md`; reuse known context and do not require unrelated frameworks |
 
 This table mirrors the Skill's [routing table](skill/references/product-and-orchestration.md#objective-routing-table) at the conversational-request level; it does not add new routing logic the Skill doesn't already define.

@@ -19,6 +19,7 @@ Interview Journey is an evidence-driven interview preparation system that tailor
 | Mock interview | 01 → 02 → 03 → 04 → 05 → 06 → 07 → 08 → 12 |
 | Answer review | 13 |
 | Post-interview debrief | 14 |
+| Offer / negotiation preparation | [`offer-and-negotiation-preparation.md`](offer-and-negotiation-preparation.md), reusing existing Role/Stage outputs when relevant |
 | Full Interview Journey | Every framework, only as needed |
 
 ## Skip rule

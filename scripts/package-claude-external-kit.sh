@@ -55,6 +55,7 @@ KNOWLEDGE_FILES=(
   "${CORE_DIR}/context-priority.md:context-priority.md"
   "${CORE_DIR}/quality-gates.md:quality-gates.md"
   "${CORE_DIR}/output-contracts.md:output-contracts.md"
+  "${CORE_DIR}/offer-negotiation-preparation.md:offer-negotiation-preparation.md"
   "${CORE_DIR}/state-management.md:state-management.md"
 )
 

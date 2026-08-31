@@ -33,7 +33,7 @@ for f in README.md AGENTS.md CLAUDE.md ROADMAP.md CHANGELOG.md .gitignore; do
 done
 
 # 2. Required core files exist.
-for f in product-definition.md terminology.md scope-and-non-goals.md workflow.md orchestration-policy.md evidence-policy.md accuracy-policy.md context-priority.md quality-gates.md output-contracts.md state-management.md; do
+for f in product-definition.md terminology.md scope-and-non-goals.md workflow.md orchestration-policy.md evidence-policy.md accuracy-policy.md context-priority.md quality-gates.md output-contracts.md offer-negotiation-preparation.md state-management.md; do
   check "core/${f} exists" "[ -f 'core/${f}' ]"
 done
 
@@ -61,12 +61,12 @@ if [ -f "${SKILL_MD}" ]; then
   check "SKILL.md frontmatter has description field" "grep -q '^description:' '${SKILL_MD}'"
 fi
 
-# 6. All 13 reference files and 14 templates referenced by SKILL.md exist.
-REFS=(product-and-orchestration role-and-resume-intelligence stage-fit-and-interview-intelligence preparation-strategy question-prediction-and-hypotheses coding-interviews system-design-interviews behavioral-interviews mock-interviews answer-coaching post-interview-debrief state-and-output-generation accuracy-and-quality)
+# 6. All Skill reference files and templates referenced by SKILL.md exist.
+REFS=(product-and-orchestration role-and-resume-intelligence stage-fit-and-interview-intelligence preparation-strategy question-prediction-and-hypotheses coding-interviews system-design-interviews behavioral-interviews mock-interviews answer-coaching post-interview-debrief offer-and-negotiation-preparation state-and-output-generation accuracy-and-quality)
 for r in "${REFS[@]}"; do
   check "claude/skill/references/${r}.md exists" "[ -f 'claude/skill/references/${r}.md' ]"
 done
-TEMPLATES=(role-intelligence resume-intelligence interview-process role-fit-gap-analysis preparation-strategy question-predictions interview-hypotheses coding-preparation system-design-preparation behavioral-story-map mock-interview-scorecard answer-coaching post-interview-debrief interview-journey-state)
+TEMPLATES=(role-intelligence resume-intelligence interview-process role-fit-gap-analysis preparation-strategy question-predictions interview-hypotheses coding-preparation system-design-preparation behavioral-story-map mock-interview-scorecard answer-coaching post-interview-debrief offer-negotiation-preparation interview-journey-state)
 for t in "${TEMPLATES[@]}"; do
   check "claude/skill/templates/${t}.md exists" "[ -f 'claude/skill/templates/${t}.md' ]"
 done
@@ -162,6 +162,8 @@ if [ -d "${KNOWLEDGE_DIR}" ]; then
   # Bundle content routing: representative source-to-bundle assignments.
   check "bundle 01 embeds core/output-contracts.md" \
     "grep -qF '## Source: \`core/output-contracts.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
+  check "bundle 01 embeds core/offer-negotiation-preparation.md" \
+    "grep -qF '## Source: \`core/offer-negotiation-preparation.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
   check "bundle 01 embeds frameworks/15-interview-journey-intelligence-framework.md" \
     "grep -qF '## Source: \`frameworks/15-interview-journey-intelligence-framework.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
   check "bundle 02 embeds frameworks/01-role-intelligence-framework.md" \
@@ -270,6 +272,11 @@ else
   echo "SKIP: pwsh not on PATH; Bash/PowerShell parity not executed (fixture-level Bash contract enforced above)"
 fi
 rm -rf -- "${NORM_TMP}"
+
+# 12d. Focused offer/negotiation capability and cross-package scenario validation.
+offer_validation_ok=0
+bash tests/validate-offer-negotiation.sh >/dev/null 2>&1 && offer_validation_ok=1
+check "offer/negotiation focused and cross-package validation passes" "[ '${offer_validation_ok}' = '1' ]"
 
 # 13. Skill routing: trigger policy must define in-scope ownership, outside-scope boundary,
 #     and independent operation. Must not name external Skills as required components.

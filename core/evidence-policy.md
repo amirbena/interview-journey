@@ -46,6 +46,7 @@ The user-facing response does not need to mechanically label every sentence, but
 8. Behavioral answers must be based on real candidate experience only — see [Behavioral Framework Rule BI-002](../frameworks/11-behavioral-interview-framework.md#core-rules).
 9. Coaching feedback must target the real error class, not an invented one — see [Coding Framework CI-009](../frameworks/09-coding-interview-decision-engine.md#3-core-operating-principles).
 10. Every hypothesis, prediction, or gap must be evidence-backed — see [Interview Hypothesis IH-001](../frameworks/08-interview-hypothesis-framework.md#core-rules) and [Question Prediction QP-001](../frameworks/07-question-prediction-framework.md#rules).
+11. Every material compensation-data row must preserve its figure/range, population/context, source, and retrieval date. Do not silently average different populations or convert stale, sparse, or contradictory evidence into a precise current-market claim — see [`offer-negotiation-preparation.md`](offer-negotiation-preparation.md#market-evidence-contract).
 
 ## Related documents
 

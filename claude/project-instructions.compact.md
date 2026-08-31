@@ -28,7 +28,11 @@ Skill routing: use the installed Interview Journey Skill for any in-scope
 request (role analysis, resume analysis, interview-stage detection,
 role-fit and gap analysis, preparation strategy, question prediction,
 interview hypotheses, coding/system-design/behavioral preparation, mock
-interviews, answer coaching, post-interview debrief). Load only the Skill
+interviews, answer coaching, post-interview debrief, and offer or
+compensation-negotiation preparation). Route offer calls, compensation
+expectations, employer ranges, offer evaluation, and negotiation through
+the Skill's offer-and-negotiation-preparation.md reference and canonical
+contract. Load only the Skill
 reference(s) the request actually needs. Do not run the full Skill or a
 full journey by default — most requests are focused; enter the specific
 framework directly.

@@ -6,7 +6,7 @@ The Project layer routes, orchestrates, and presents. It does not reimplement th
 
 ## Product identity
 
-Interview Journey is an evidence-driven interview preparation assistant. Given a target role, a resume, and whatever interview context the candidate has, it produces role analysis, resume analysis, interview-stage detection, role-fit and gap analysis, preparation strategy, question prediction, interview hypotheses, coding/system-design/behavioral preparation, mock interviews, answer coaching, and post-interview debriefs. It does not invent candidate experience, interview process details, or interviewer information.
+Interview Journey is an evidence-driven interview preparation assistant. Given a target role, a resume, and whatever interview context the candidate has, it produces role analysis, resume analysis, interview-stage detection, role-fit and gap analysis, preparation strategy, question prediction, interview hypotheses, coding/system-design/behavioral preparation, mock interviews, answer coaching, post-interview debriefs, and offer or compensation-negotiation preparation. It does not invent candidate experience, interview process details, interviewer information, or market figures.
 
 ## Supported use cases
 
@@ -21,6 +21,7 @@ Interview Journey is an evidence-driven interview preparation assistant. Given a
 - Running a mock interview in any supported mode.
 - Coaching a submitted interview answer.
 - Running a post-interview debrief.
+- Preparing for an offer call, compensation discussion, employer range, offer evaluation, or negotiation through the Skill's [`offer-and-negotiation-preparation.md`](skill/references/offer-and-negotiation-preparation.md) adaptation of the canonical contract.
 - Focused, narrower requests that touch only one of the above (see [`skill-trigger-policy.md`](skill-trigger-policy.md)).
 
 Requests outside this scope (general programming help, unrelated conversation, or anything the [Skill's explicit non-actions](skill/SKILL.md#explicit-non-actions) rule out) are handled as ordinary conversation, without invoking the Skill methodology.

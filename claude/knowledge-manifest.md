@@ -16,6 +16,7 @@ These files hold the platform-independent methodology and are safe to share acro
 - [`core/context-priority.md`](../core/context-priority.md)
 - [`core/quality-gates.md`](../core/quality-gates.md)
 - [`core/output-contracts.md`](../core/output-contracts.md)
+- [`core/offer-negotiation-preparation.md`](../core/offer-negotiation-preparation.md)
 - [`core/state-management.md`](../core/state-management.md)
 - All fifteen files in [`frameworks/`](../frameworks/)
 - [`schemas/public-research-evidence.schema.md`](../schemas/public-research-evidence.schema.md)

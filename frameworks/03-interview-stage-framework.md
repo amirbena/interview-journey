@@ -90,6 +90,12 @@ Focus on: Correctness, Readability, Documentation, Testing, Maintainability.
 
 Focus on: Closing gaps, Consistency, Company motivation, Long-term ownership.
 
+## Offer Stage
+
+Focus on: Offer understanding, Compensation expectations, Total compensation, Decision criteria, Negotiation preparation.
+
+Route compensation and offer-negotiation preparation through the canonical [`core/offer-negotiation-preparation.md`](../core/offer-negotiation-preparation.md) capability. Stage detection identifies where the candidate is; it does not duplicate the negotiation methodology.
+
 ---
 
 # Stage Signals
@@ -101,6 +107,7 @@ Recruiter says "Team fit" → HR / Hiring Manager
 "Architecture interview" → System Design
 "Walk through your projects" → Technical Deep Dive
 "Home assignment" → Take-Home
+"Offer call", "compensation expectations", or an existing offer → Offer Stage / negotiation-preparation signal
 
 ---
 

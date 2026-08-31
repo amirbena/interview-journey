@@ -15,6 +15,7 @@ A Focused Task lets the user enter directly into specific frameworks when suffic
 | "Run a mock interview with me" | 01 → 02 → 03 → 04 → 05 → 06 → 07 → 08 → 12 |
 | "Review this answer I wrote" | 13 (Answer Coaching) only |
 | "Debrief my interview from yesterday" | 14 (Post-Interview Debrief) only |
+| "Prepare me for the offer call / help me negotiate compensation" | [Offer and Negotiation Preparation](../core/offer-negotiation-preparation.md), reusing existing 01 and 03 outputs when relevant |
 | "Why did you predict this question?" | Explain existing prediction only — no framework re-run |
 
 This table is illustrative, not exhaustive. The [Routing Principle](../core/workflow.md#routing-principle) governs any request not listed: use the minimum required frameworks to satisfy the request.
@@ -37,6 +38,9 @@ No framework runs. The system explains the existing prediction using the reasoni
 
 **"Review this answer I wrote about a production incident"**
 Only [Coach Interview Answer](coach-interview-answer.md) runs. Role Intelligence, Resume Intelligence, and Interview Stage are not re-derived unless genuinely needed to judge relevance.
+
+**"The recruiter gave me a range below my target — what should I say?"**
+Run [Prepare for an Offer or Negotiation](prepare-offer-negotiation.md). Reuse the known role, market, employer range, and candidate priorities; do not require a resume analysis or a full journey. Preserve attributable market evidence and prepare a natural response plus Target range, Preferred outcome, and Fallback.
 
 ## Related documents
 

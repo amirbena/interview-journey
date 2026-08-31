@@ -6,7 +6,8 @@ description: >
   hiring journey. Use for role analysis, resume analysis, interview-stage
   detection, role-fit and gap analysis, preparation strategy, question
   prediction, interview hypotheses, coding/system-design/behavioral
-  preparation, mock interviews, answer coaching, and post-interview debrief.
+  preparation, mock interviews, answer coaching, post-interview debrief,
+  and offer or compensation-negotiation preparation.
 ---
 
 # Interview Journey
@@ -32,6 +33,7 @@ The canonical methodology lives in the repository's `frameworks/`, `core/`, `sch
 - Running a mock interview (Full, Coaching, Lightning Round, Deep Dive, Executive, Panel).
 - Coaching a submitted interview answer.
 - Running a post-interview debrief.
+- Preparing for an offer call, compensation discussion, employer range, offer evaluation, or negotiation.
 - Producing any canonical output listed in [`core/output-contracts.md`](../../core/output-contracts.md).
 
 ## Full, focused, and resumed journeys
@@ -67,6 +69,7 @@ Do not load every reference file for every request. Load only the reference file
 | Mock interview | [`mock-interviews.md`](references/mock-interviews.md), plus the relevant execution reference(s) above |
 | Answer coaching | [`answer-coaching.md`](references/answer-coaching.md) |
 | Post-interview debrief | [`post-interview-debrief.md`](references/post-interview-debrief.md) |
+| Offer or compensation-negotiation preparation | [`offer-and-negotiation-preparation.md`](references/offer-and-negotiation-preparation.md), plus [`accuracy-and-quality.md`](references/accuracy-and-quality.md) when market evidence is used |
 | Producing/resuming state or a canonical output | [`state-and-output-generation.md`](references/state-and-output-generation.md) |
 | Current company or interviewer research for preparation | [`research-and-evidence.md`](references/research-and-evidence.md), [`stage-fit-and-interview-intelligence.md`](references/stage-fit-and-interview-intelligence.md) |
 | Recent interview-question research | [`research-and-evidence.md`](references/research-and-evidence.md), [`stage-fit-and-interview-intelligence.md`](references/stage-fit-and-interview-intelligence.md), [`question-prediction-and-hypotheses.md`](references/question-prediction-and-hypotheses.md) |

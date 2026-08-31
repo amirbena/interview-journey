@@ -16,7 +16,7 @@ Sources (in order):
   workflows/research-current-interview-intelligence.md
   frameworks/07-question-prediction-framework.md
   frameworks/08-interview-hypothesis-framework.md
-Content-Digest (sha256, sources concatenated in order, CR bytes removed): 436d7bc50b7526ca63a0833a84e8d22c36b6910e5626a85c257024148232ebf0
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): 99ef0302827ee51e61b48267cb7cf7b6349d833e1af51c8320cf3194d60e17ab
 -->
 
 # 02-role-resume-and-strategy
@@ -1728,6 +1728,12 @@ Focus on: Correctness, Readability, Documentation, Testing, Maintainability.
 
 Focus on: Closing gaps, Consistency, Company motivation, Long-term ownership.
 
+## Offer Stage
+
+Focus on: Offer understanding, Compensation expectations, Total compensation, Decision criteria, Negotiation preparation.
+
+Route compensation and offer-negotiation preparation through the canonical [`core/offer-negotiation-preparation.md`](../core/offer-negotiation-preparation.md) capability. Stage detection identifies where the candidate is; it does not duplicate the negotiation methodology.
+
 ---
 
 # Stage Signals
@@ -1739,6 +1745,7 @@ Recruiter says "Team fit" → HR / Hiring Manager
 "Architecture interview" → System Design
 "Walk through your projects" → Technical Deep Dive
 "Home assignment" → Take-Home
+"Offer call", "compensation expectations", or an existing offer → Offer Stage / negotiation-preparation signal
 
 ---
 

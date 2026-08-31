@@ -64,6 +64,7 @@ Whenever possible, follow this sequence:
 12. Invoke the appropriate execution framework(s): Coding (09), System Design (10), Behavioral (11), Mock Interview (12).
 13. Coach answers when requested (13).
 14. Perform Debrief after completed interviews (14).
+15. When explicit offer or compensation-negotiation intent is present, or the current stage is Offer Stage and preparation is requested, run the canonical [Offer and Negotiation Preparation](../core/offer-negotiation-preparation.md) capability using only the upstream intelligence that materially improves the decision.
 
 Never execute unnecessary stages. Step 3 is conditional — skip it when the user has already supplied sufficient current context.
 
@@ -97,6 +98,9 @@ Run: 13
 
 ## Interview Debrief
 Run: 14
+
+## Offer / Negotiation Preparation
+Run: [Offer and Negotiation Preparation](../core/offer-negotiation-preparation.md), reusing 01 (Role Intelligence) and 03 (Interview Stage) outputs when already available. Do not require unrelated frameworks or a complete journey.
 
 ## Full Interview Journey
 Run every framework only when needed. Avoid mandatory execution of all fourteen modules.

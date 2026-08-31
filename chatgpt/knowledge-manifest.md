@@ -78,6 +78,7 @@ is held to.
 - `core/context-priority.md`
 - `core/quality-gates.md`
 - `core/output-contracts.md`
+- `core/offer-negotiation-preparation.md`
 
 ### `02-role-resume-and-strategy.md`
 
