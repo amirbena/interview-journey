@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Add Engineering Task issue form (docs/engineering-task-issue-template)
+
+- Added `.github/ISSUE_TEMPLATE/engineering-task.yml`, a GitHub Issue Form adapted from the canonical `amirbena/code-review-skill` `engineering-task.yml`. Preserves the shared philosophy (one issue = one independently closable outcome; short fields; a ticket, not a design document) and the reference structure: `Type`, `Area`, `Priority` dropdowns plus `Problem`, `Goal`, `Scope`, `Non-Goals` (optional), `Acceptance Criteria`, `Dependencies` (optional, parent/sub-issue lines), and `Validation`.
+- `Type` options are unchanged from the reference: Feature, Refactor, Quality, Research, Documentation, Infrastructure.
+- `Priority` options are P1 — High / P2 — Medium / P3 — Low, with P0 reserved for true blocking/correctness emergencies and applied manually.
+- `Area` is repository-specific, derived from this repository's stable top-level structure rather than copied from `code-review-skill`: Core Methodology, Frameworks, Schemas & Output Contracts, Workflows & Orchestration, Claude Skill & Project, ChatGPT GPT, Packaging & Distribution, Synthetic Example, Testing & Validation, Documentation, Instruction Architecture, Research.
+- `labels: []` — the form applies no labels automatically, since this repository has only GitHub's default label set and no established Type/Priority label taxonomy.
+- Omitted the reference template's `help wanted` / `good first issue` / `/claim` paragraph — this repository has no such contribution workflow.
+- Added `.github/ISSUE_TEMPLATE/config.yml` with `blank_issues_enabled: false` so the "New issue" chooser always routes reporters to the structured Engineering Task form.
+- Extended `tests/validate-repository.sh` with a structural check block for the issue form and chooser config (presence, `labels: []`, the three dropdowns, P0 absence, repository-specific Area taxonomy, valid YAML with unique field ids, blank issues disabled).
+- Normalized the `.gitignore` macOS rule to the conventional `.DS_Store` entry and removed stray untracked `.DS_Store` files from the working tree, so `tests/validate-repository.sh` is fully green (the existing `.DS_Store` guardrail check is unchanged).
+- Added `.github/pull_request_template.md`, a concise prose-oriented PR template (What changed / Validation / Notes) with HTML-comment guidance that tells authors to write for the reviewer, explain why not just what, and skip file-by-file diff narration; no checklists, sign-off boxes, or mandatory metadata. Added a matching lightweight structural check to `tests/validate-repository.sh`.
+- Added a `Write Issues and PRs for humans, not for templates` subsection to the `Git and PR workflow` section of `AGENTS.md`, making the human-written, proportionate prose style a repository-level rule for all agents that complements the two `.github` templates without duplicating them; it explicitly does not weaken the mandatory Final response report and Before completion checks.
+- No Interview Journey methodology, frameworks, schemas, workflows, packaging, or application/skill behavior changed.
+
 ### Split repository instructions into AGENTS.md and CLAUDE.md (docs/split-agent-instructions)
 
 - Created `AGENTS.md` as the canonical, provider-neutral repository-wide instruction file: working rules, framework/methodology rules, platform packaging rules (Claude Skill, Claude Project, Claude external kit, ChatGPT), data/privacy rules, a standardized Git and PR workflow (implementation branch rule, up-to-date-main rule, pre-edit gate, squash-merge strategy, post-merge sync, safe local cleanup), before-completion checks, final response report requirements, and an anti-drift maintenance rule.

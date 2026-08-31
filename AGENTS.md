@@ -239,6 +239,51 @@ intentional local configuration, and another active task's artifacts.
 Do not use broad destructive cleanup such as `git clean -fd` unless
 every affected file has been explicitly inspected and confirmed safe.
 
+### Write Issues and PRs for humans, not for templates
+
+`.github/ISSUE_TEMPLATE/engineering-task.yml` and
+`.github/pull_request_template.md` provide the structure. This rule
+governs how the prose inside that structure is written.
+
+When creating or drafting Engineering Tasks or Pull Request descriptions:
+
+- write for the engineer who needs to understand and act on the work;
+- use natural, concise prose; explain the problem, intent, and reasoning,
+  not just the file diff;
+- do not mechanically narrate every changed file or implementation step;
+- keep the description proportionate to the change — prefer a few useful
+  paragraphs or focused bullets over long generated reports;
+- do not repeat the same information across sections, and omit optional
+  sections that add no value;
+- still preserve scope, constraints, acceptance criteria, risks, and
+  validation details when they materially help execution or review.
+
+For Issues / Engineering Tasks specifically:
+
+- one Issue represents one independently closable outcome; split
+  independently closable work into separate Issues rather than a large
+  catch-all ticket;
+- describe the problem before prescribing implementation where possible;
+- keep Scope and Acceptance Criteria focused and non-duplicative;
+- do not turn the Issue into a design document unless the task genuinely
+  needs that depth.
+
+For PR descriptions specifically:
+
+- summarize what changed and why in human-readable language;
+- highlight non-obvious decisions and reviewer-relevant context;
+- include validation concisely; do not produce file-by-file changelogs or
+  dump test logs, command output, or exhaustive implementation
+  inventories unless they are needed to understand risk or correctness;
+- keep the Notes section optional.
+
+Conciseness must not remove information needed to execute the task
+correctly, understand important architectural decisions, review
+risk/correctness, or verify completion. Prefer useful density, not
+maximum brevity. This complements — and does not weaken — the mandatory
+[Final response report](#final-response-report) and
+[Before completion](#before-completion) checks.
+
 ## Before completion
 
 - Inspect the final diff.

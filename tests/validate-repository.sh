@@ -308,6 +308,50 @@ if [ -f "${F15}" ]; then
     "grep -qi 'self-contained\|does not route.*another Skill\|does not depend' '${F15}'"
 fi
 
+# 26. GitHub Engineering Task issue form is present and structurally sound.
+ISSUE_FORM=".github/ISSUE_TEMPLATE/engineering-task.yml"
+ISSUE_CONFIG=".github/ISSUE_TEMPLATE/config.yml"
+check "Engineering Task issue form exists" "[ -f '${ISSUE_FORM}' ]"
+check "Issue template chooser config exists" "[ -f '${ISSUE_CONFIG}' ]"
+if [ -f "${ISSUE_FORM}" ]; then
+  check "Issue form declares no auto-applied labels" \
+    "grep -q '^labels: \[\]' '${ISSUE_FORM}'"
+  check "Issue form keeps the Type dropdown" \
+    "grep -q 'id: type' '${ISSUE_FORM}'"
+  check "Issue form keeps the Area dropdown" \
+    "grep -q 'id: area' '${ISSUE_FORM}'"
+  check "Issue form keeps the Priority dropdown" \
+    "grep -q 'id: priority' '${ISSUE_FORM}'"
+  check "Issue form reserves P0 for manual assignment (P0 not a Priority option)" \
+    "! grep -qE '^ *- +P0' '${ISSUE_FORM}'"
+  check "Issue form Area taxonomy is repository-specific (Frameworks)" \
+    "grep -q 'Frameworks' '${ISSUE_FORM}'"
+  check "Issue form does not carry over code-review-skill Area values" \
+    "! grep -q 'Stateful Re-review\|Specialist Profiles' '${ISSUE_FORM}'"
+  if command -v python3 >/dev/null 2>&1; then
+    check "Issue form is valid YAML with unique field ids" \
+      "python3 -c \"import yaml,sys; d=yaml.safe_load(open('${ISSUE_FORM}')); ids=[e['id'] for e in d['body'] if 'id' in e]; sys.exit(0 if len(ids)==len(set(ids)) and d.get('labels')==[] else 1)\""
+  fi
+fi
+if [ -f "${ISSUE_CONFIG}" ]; then
+  check "Issue chooser disables blank issues" \
+    "grep -q 'blank_issues_enabled: false' '${ISSUE_CONFIG}'"
+fi
+
+# 27. GitHub pull request template is present and prose-oriented.
+PR_TEMPLATE=".github/pull_request_template.md"
+check "Pull request template exists" "[ -f '${PR_TEMPLATE}' ]"
+if [ -f "${PR_TEMPLATE}" ]; then
+  check "PR template has a What changed section" \
+    "grep -q '^## What changed' '${PR_TEMPLATE}'"
+  check "PR template has a Validation section" \
+    "grep -q '^## Validation' '${PR_TEMPLATE}'"
+  check "PR template carries the write-for-the-reviewer guardrail" \
+    "grep -qi 'Write for the reviewer' '${PR_TEMPLATE}'"
+  check "PR template is not a checklist form (no task-list checkboxes)" \
+    "! grep -qE '^ *- \[[ xX]\]' '${PR_TEMPLATE}'"
+fi
+
 echo ""
 echo "== Summary =="
 echo "Passed: ${PASS_COUNT}"
