@@ -19,7 +19,7 @@ Sources (in order):
   core/quality-gates.md
   core/output-contracts.md
   core/offer-negotiation-preparation.md
-Content-Digest (sha256, sources concatenated in order, CR bytes removed): d81feb3a3f002d4f21fe64def5b3b43b9fbbcc7feb5ff1621af44d23e9cc2816
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): e8f0d0ba29e91387469cbc1d825ff0ec90a2d108559028323742a79a0c92a035
 -->
 
 # 01-product-orchestration-and-quality
@@ -386,6 +386,18 @@ This document defines the canonical Interview Journey State model and its contex
 - Next actions.
 - Offer/negotiation context and the latest preparation position when relevant, including employer range, candidate priorities, total-compensation terms, and freshness of material market evidence.
 - Freshness/update metadata.
+
+## Offer and negotiation state lifecycle
+
+The optional `offer_negotiation_preparation` object in the canonical [Interview Journey State schema](../schemas/interview-journey-state.schema.md#offer-and-negotiation-preparation-state) is the compact state representation for canonical invariant `ONP-010`. It stores a reference/provenance summary and the latest decision-relevant position; it is not a second copy of the full preparation output.
+
+- **No preparation:** `offer_negotiation_preparation_status` is absent (for backward-compatible older state), `Not Requested`, or `Not Started`; the object may be absent. An absent status must be interpreted as `Not Requested`, never as completed work.
+- **In progress:** status is `Draft`; the object may be partial and must expose material open questions.
+- **Reusable:** status is `Completed` or `Confirmed`, the referenced artifact/context is available, and none of the recorded invalidation inputs has materially changed. Reuse it and skip rebuilding the preparation unless the user requests a refresh.
+- **Material change:** a changed employer range or package terms, candidate priorities, Target/Preferred/Fallback inputs, role/market context, or newer conflicting evidence makes the negotiation preparation `Stale`. Preserve the prior artifact reference and state why refresh is required rather than silently overwriting it.
+- **Evidence aging:** compare `market_evidence_retrieved_at` and `market_evidence_freshness` with the decision being made. When evidence is no longer sufficiently current or comparable, mark the preparation `Stale` or refresh the evidence-dependent portion; do not invalidate unrelated confirmed candidate facts.
+
+An updated artifact may return the status to `Draft`, `Completed`, or `Confirmed` only after recording refreshed provenance and `last_updated_at`.
 
 ## Confirmed vs. inferred vs. open
 
@@ -1010,6 +1022,23 @@ At least the following sixteen outputs are defined. Each entry states purpose, r
 
 This document defines the canonical, platform-independent contract for preparing a candidate for compensation conversations and offer negotiation. [Framework 15](../frameworks/15-interview-journey-intelligence-framework.md) routes into this capability; ChatGPT, the Claude Skill, and the Claude Project adapt it without redefining it.
 
+## Stable contract invariants
+
+These identifiers name durable behavior for cross-package and scenario validation. They are intentionally broader than individual paragraphs.
+
+| ID | Invariant |
+|---|---|
+| `ONP-001` | Explicit offer or compensation-negotiation intent routes to this canonical capability without forcing unrelated workflows. |
+| `ONP-002` | Material market evidence is attributable by figure/range, population/context, source, retrieval date, and freshness/fit. |
+| `ONP-003` | Sparse, stale, or adjacent-population evidence lowers confidence and widens or qualifies the recommendation without fake precision. |
+| `ONP-004` | Contradictory or unlike sources remain visible and are not naïvely averaged. |
+| `ONP-005` | The position distinguishes Target range, Preferred outcome, and candidate-defined Fallback or a provisional decision rule. |
+| `ONP-006` | Total compensation, risk, timing, and material terms can change the recommendation. |
+| `ONP-007` | Optional context is reused when available but does not block safe, useful preparation when absent. |
+| `ONP-008` | A lower employer range receives a truthful, constructive response without threats or fabricated leverage. |
+| `ONP-009` | Prepared answers are concise, conversational, truthful, and adaptable rather than rigid scripts. |
+| `ONP-010` | Negotiation state is reusable when valid and becomes stale when material employer terms, candidate priorities, position inputs, or evidence freshness change. |
+
 ## Trigger
 
 Run this capability when the user's objective is to prepare for an offer call, discuss compensation, decide what salary range to give, evaluate or respond to an employer range, or negotiate an existing offer. An identified `Offer Stage` is a strong signal, but explicit negotiation intent is sufficient at any stage. Do not disturb unrelated routing.
@@ -1107,6 +1136,7 @@ A Standard result includes only relevant sections:
 - Relevant compensation questions have natural, truthful spoken answers.
 - Sparse or stale evidence reduces confidence and precision.
 - Output depth matches the user's need.
+- Negotiation state reuse and invalidation follow `ONP-010` and [`state-management.md`](state-management.md#offer-and-negotiation-state-lifecycle).
 
 ## Related documents
 

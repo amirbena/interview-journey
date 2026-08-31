@@ -2,6 +2,8 @@
 
 > **Canonical sources:** [`core/offer-negotiation-preparation.md`](../../../core/offer-negotiation-preparation.md), [`workflows/prepare-offer-negotiation.md`](../../../workflows/prepare-offer-negotiation.md), and [`outputs/offer-negotiation-preparation-template.md`](../../../outputs/offer-negotiation-preparation-template.md). This reference adapts those sources for Skill execution and must not redefine them.
 
+**Canonical dependency:** implement `ONP-001`–`ONP-010` from `core/offer-negotiation-preparation.md`. The invariant identifiers, including evidence freshness, contradiction handling, and persisted-state reuse/invalidation, remain owned by that canonical source.
+
 ## When to load
 
 Load this reference when the user is preparing for an offer call, discussing compensation, choosing a salary range, evaluating or responding to an employer range, or negotiating an existing offer. Explicit intent is sufficient even before the Offer Stage.

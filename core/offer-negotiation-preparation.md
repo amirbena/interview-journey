@@ -2,6 +2,23 @@
 
 This document defines the canonical, platform-independent contract for preparing a candidate for compensation conversations and offer negotiation. [Framework 15](../frameworks/15-interview-journey-intelligence-framework.md) routes into this capability; ChatGPT, the Claude Skill, and the Claude Project adapt it without redefining it.
 
+## Stable contract invariants
+
+These identifiers name durable behavior for cross-package and scenario validation. They are intentionally broader than individual paragraphs.
+
+| ID | Invariant |
+|---|---|
+| `ONP-001` | Explicit offer or compensation-negotiation intent routes to this canonical capability without forcing unrelated workflows. |
+| `ONP-002` | Material market evidence is attributable by figure/range, population/context, source, retrieval date, and freshness/fit. |
+| `ONP-003` | Sparse, stale, or adjacent-population evidence lowers confidence and widens or qualifies the recommendation without fake precision. |
+| `ONP-004` | Contradictory or unlike sources remain visible and are not naïvely averaged. |
+| `ONP-005` | The position distinguishes Target range, Preferred outcome, and candidate-defined Fallback or a provisional decision rule. |
+| `ONP-006` | Total compensation, risk, timing, and material terms can change the recommendation. |
+| `ONP-007` | Optional context is reused when available but does not block safe, useful preparation when absent. |
+| `ONP-008` | A lower employer range receives a truthful, constructive response without threats or fabricated leverage. |
+| `ONP-009` | Prepared answers are concise, conversational, truthful, and adaptable rather than rigid scripts. |
+| `ONP-010` | Negotiation state is reusable when valid and becomes stale when material employer terms, candidate priorities, position inputs, or evidence freshness change. |
+
 ## Trigger
 
 Run this capability when the user's objective is to prepare for an offer call, discuss compensation, decide what salary range to give, evaluate or respond to an employer range, or negotiate an existing offer. An identified `Offer Stage` is a strong signal, but explicit negotiation intent is sufficient at any stage. Do not disturb unrelated routing.
@@ -99,6 +116,7 @@ A Standard result includes only relevant sections:
 - Relevant compensation questions have natural, truthful spoken answers.
 - Sparse or stale evidence reduces confidence and precision.
 - Output depth matches the user's need.
+- Negotiation state reuse and invalidation follow `ONP-010` and [`state-management.md`](state-management.md#offer-and-negotiation-state-lifecycle).
 
 ## Related documents
 

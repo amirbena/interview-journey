@@ -6,6 +6,8 @@ Canonical sources: [`core/state-management.md`](../../../core/state-management.m
 
 Preserves: candidate identity/profile reference, current target company/role, Role and Resume Intelligence, current interview stage, known process, completed/upcoming stages, recruiter/interviewer signals, previous questions/answers/feedback, current fit strengths/gaps, preparation priorities, question predictions, interview hypotheses, completed practice, mock interview evaluations, debrief findings, recurring strengths/weaknesses, relevant offer/negotiation context and position, next actions, freshness metadata.
 
+For negotiation preparation, consume the canonical `offer_negotiation_preparation_status` and compact `offer_negotiation_preparation` object from [`schemas/interview-journey-state.schema.md`](../../../schemas/interview-journey-state.schema.md). Reuse `Completed`/`Confirmed` state when its referenced inputs and evidence remain valid; mark only that capability `Stale` when employer terms, candidate priorities, position inputs, or material evidence freshness changes. Do not define a Claude-specific state shape.
+
 Distinguishes: Confirmed facts, User observations, Inferred conclusions, Open questions, Outdated intelligence.
 
 Supports: Start a new journey, Resume an existing journey, Run one focused task, Update an existing journey with new evidence, Debrief a completed interview, Prepare for the next stage.

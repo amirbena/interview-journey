@@ -20,6 +20,21 @@ behavioral_preparation_status:
 mock_interview_status:
 answer_coaching_status:
 post_interview_debrief_status:
+offer_negotiation_preparation_status:
+offer_negotiation_preparation:
+  artifact_reference:
+  source_context_reference:
+  employer_compensation_range:
+  candidate_compensation_priorities:
+  target_range:
+  preferred_outcome:
+  fallback:
+  total_compensation_context:
+  market_evidence_retrieved_at:
+  market_evidence_freshness:
+  invalidation_inputs:
+  open_questions:
+  last_updated_at:
 upcoming_stage:
 next_actions:
   -

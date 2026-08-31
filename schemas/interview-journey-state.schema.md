@@ -43,8 +43,31 @@ Each framework status uses: `Not Started`, `Draft`, `Completed`, `Confirmed`, `S
 | `mock_interview_status` | enum | Required | Status of Framework 12 output(s). |
 | `answer_coaching_status` | enum | Required | Status of Framework 13 output(s). |
 | `post_interview_debrief_status` | enum | Required | Status of Framework 14 output(s). |
+| `offer_negotiation_preparation_status` | enum | Optional | Status of the canonical Offer and Negotiation Preparation capability. Absence in an older state means `Not Requested`. |
 
 Framework names align with [`core/workflow.md#frameworks`](../core/workflow.md#frameworks).
+
+## Offer and Negotiation Preparation State
+
+`offer_negotiation_preparation` is an optional compact object. It preserves enough derived state and provenance to reuse or invalidate prior preparation without copying the full output or silently rebuilding it from raw context.
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `artifact_reference` | string | Required when object exists | Reference to the latest Offer and Negotiation Preparation artifact available in active context. |
+| `source_context_reference` | string or list of strings | Optional | References to the role, employer communication, candidate clarification, or other inputs used. |
+| `employer_compensation_range` | structured value | Optional | Known employer range including currency, period, and base/total-compensation scope. |
+| `candidate_compensation_priorities` | list of strings | Optional | Candidate-provided preferences or decision criteria; never inferred as confirmed facts. |
+| `target_range` | structured value | Optional | Latest evidence-grounded Target range and material assumptions. |
+| `preferred_outcome` | structured value | Optional | Latest Preferred outcome including material package terms. |
+| `fallback` | structured value or string | Optional | Candidate-defined Fallback, or a clearly labeled provisional decision rule. |
+| `total_compensation_context` | structured value | Optional | Relevant base, bonus, equity, pension, benefits, sign-on, review timing, vesting/liquidity, risk, and terms. |
+| `market_evidence_retrieved_at` | timestamp or list of timestamps | Optional | Retrieval context for the material evidence underlying the position. |
+| `market_evidence_freshness` | enum: `Current`, `Aging`, `Stale`, `Unknown` | Optional | Whether the evidence can still support reuse; claim-specific source dates remain in the referenced artifact. |
+| `invalidation_inputs` | list of strings | Optional | Material inputs whose change requires reevaluation, such as employer range, candidate priorities, role/market context, or package terms. |
+| `open_questions` | list of strings | Optional | Missing facts that materially affect the position. |
+| `last_updated_at` | timestamp | Required when object exists | When this compact state was last updated. |
+
+Apply the lifecycle rules in [`core/state-management.md`](../core/state-management.md#offer-and-negotiation-state-lifecycle). A reusable `Completed` or `Confirmed` state is skipped; a material input change or stale evidence changes only `offer_negotiation_preparation_status` to `Stale` until the affected preparation is refreshed.
 
 ## Recurring Signals
 
@@ -76,6 +99,7 @@ Framework names align with [`core/workflow.md#frameworks`](../core/workflow.md#f
 8. Every refresh follows an explicit user request.
 9. Superseded records must not silently replace confirmed records without traceability.
 10. Real candidate data must never be written into shared repository files — see [`core/state-management.md`](../core/state-management.md#context-boundary).
+11. Offer/negotiation preparation follows the reuse and invalidation lifecycle in [`core/state-management.md`](../core/state-management.md#offer-and-negotiation-state-lifecycle); stale negotiation evidence does not invalidate unrelated framework outputs.
 
 ## Example Record
 
@@ -89,6 +113,7 @@ role_intelligence_status: "Confirmed"
 resume_intelligence_status: "Confirmed"
 interview_stage_status: "Confirmed"
 system_design_preparation_status: "Draft"
+offer_negotiation_preparation_status: "Not Requested"
 upcoming_stage: "System Design"
 ```
 

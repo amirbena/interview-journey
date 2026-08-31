@@ -23,10 +23,13 @@ resume_intelligence_status: "Confirmed"
 interview_stage_status: "Confirmed"
 fit_gap_analysis_status: "Confirmed"
 system_design_preparation_status: "Draft"
+offer_negotiation_preparation_status: "Not Requested"
 upcoming_stage: "System Design"
 next_actions:
   - "Run a system design mock interview"
 ```
+
+When negotiation preparation exists, add the compact `offer_negotiation_preparation` object defined by the canonical schema. Keep the full preparation in its referenced artifact; preserve status, artifact/source references, employer range, candidate priorities, Target/Preferred/Fallback, relevant package context, evidence retrieval/freshness, invalidation inputs, open questions, and update time only as applicable.
 
 ## Related documents
 

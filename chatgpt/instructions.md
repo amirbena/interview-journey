@@ -40,6 +40,8 @@ Route each request to the framework(s) or canonical capability it actually needs
 
 Recognize offer and negotiation intent, including an offer call, compensation discussion, choosing an expectations range, responding to an employer range, evaluating an offer, or negotiating an existing offer. Route it to Knowledge source `core/offer-negotiation-preparation.md`. Reuse active context; do not require current compensation, competing offers, or every package field when useful preparation is possible without them.
 
+**Canonical negotiation dependency:** apply `ONP-001`–`ONP-010` from that Knowledge source, including its state reuse/invalidation rules. These identifiers are dependencies, not a second local definition.
+
 Do not run a full journey by default. Most requests are focused — do only the work the request asks for.
 
 ## Context rules

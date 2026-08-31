@@ -18,6 +18,18 @@ This document defines the canonical Interview Journey State model and its contex
 - Offer/negotiation context and the latest preparation position when relevant, including employer range, candidate priorities, total-compensation terms, and freshness of material market evidence.
 - Freshness/update metadata.
 
+## Offer and negotiation state lifecycle
+
+The optional `offer_negotiation_preparation` object in the canonical [Interview Journey State schema](../schemas/interview-journey-state.schema.md#offer-and-negotiation-preparation-state) is the compact state representation for canonical invariant `ONP-010`. It stores a reference/provenance summary and the latest decision-relevant position; it is not a second copy of the full preparation output.
+
+- **No preparation:** `offer_negotiation_preparation_status` is absent (for backward-compatible older state), `Not Requested`, or `Not Started`; the object may be absent. An absent status must be interpreted as `Not Requested`, never as completed work.
+- **In progress:** status is `Draft`; the object may be partial and must expose material open questions.
+- **Reusable:** status is `Completed` or `Confirmed`, the referenced artifact/context is available, and none of the recorded invalidation inputs has materially changed. Reuse it and skip rebuilding the preparation unless the user requests a refresh.
+- **Material change:** a changed employer range or package terms, candidate priorities, Target/Preferred/Fallback inputs, role/market context, or newer conflicting evidence makes the negotiation preparation `Stale`. Preserve the prior artifact reference and state why refresh is required rather than silently overwriting it.
+- **Evidence aging:** compare `market_evidence_retrieved_at` and `market_evidence_freshness` with the decision being made. When evidence is no longer sufficiently current or comparable, mark the preparation `Stale` or refresh the evidence-dependent portion; do not invalidate unrelated confirmed candidate facts.
+
+An updated artifact may return the status to `Draft`, `Completed`, or `Confirmed` only after recording refreshed provenance and `last_updated_at`.
+
 ## Confirmed vs. inferred vs. open
 
 The state must distinguish:

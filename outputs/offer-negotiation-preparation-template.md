@@ -1,7 +1,7 @@
 # Offer and Negotiation Preparation
 
-**Status:** Draft / Confirmed / Stale  
-**Depth:** Quick / Standard / Professional  
+**Status:** Draft / Confirmed / Stale
+**Depth:** Quick / Standard / Professional
 **Prepared on:** [date]
 
 ## Context and assumptions

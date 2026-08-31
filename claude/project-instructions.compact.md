@@ -32,7 +32,9 @@ interviews, answer coaching, post-interview debrief, and offer or
 compensation-negotiation preparation). Route offer calls, compensation
 expectations, employer ranges, offer evaluation, and negotiation through
 the Skill's offer-and-negotiation-preparation.md reference and canonical
-contract. Load only the Skill
+contract (`ONP-001`–`ONP-010`), including evidence freshness,
+contradiction handling, and persisted-state reuse/invalidation; do not
+define weaker Project-specific behavior. Load only the Skill
 reference(s) the request actually needs. Do not run the full Skill or a
 full journey by default — most requests are focused; enter the specific
 framework directly.

@@ -22,6 +22,7 @@ Interview Journey is an evidence-driven interview preparation assistant. Given a
 - Coaching a submitted interview answer.
 - Running a post-interview debrief.
 - Preparing for an offer call, compensation discussion, employer range, offer evaluation, or negotiation through the Skill's [`offer-and-negotiation-preparation.md`](skill/references/offer-and-negotiation-preparation.md) adaptation of the canonical contract.
+- For that capability, depend on canonical invariants `ONP-001`–`ONP-010` through the Skill reference, including evidence freshness, contradiction handling, and persisted-state reuse/invalidation; do not define weaker Project-specific negotiation behavior.
 - Focused, narrower requests that touch only one of the above (see [`skill-trigger-policy.md`](skill-trigger-policy.md)).
 
 Requests outside this scope (general programming help, unrelated conversation, or anything the [Skill's explicit non-actions](skill/SKILL.md#explicit-non-actions) rule out) are handled as ordinary conversation, without invoking the Skill methodology.
