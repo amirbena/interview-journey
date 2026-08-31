@@ -28,7 +28,7 @@ $BuildDir = Join-Path $RepoRoot ".build\chatgpt-gpt-package"
 $PackageName = "interview-journey-chatgpt"
 $OutputZip = Join-Path $DistDir "$PackageName.zip"
 
-$Docs = @("README.md","instructions.md","builder-config.md","conversation-starters.md","builder-setup.md","capability-policy.md","testing-guide.md","sharing-and-publishing.md","knowledge-manifest.md")
+$Docs = @("README.md","instructions.md","builder-config.md","conversation-starters.md","builder-setup.md","capability-policy.md","testing-guide.md","sharing-and-publishing.md","publishing-knowledge.md","knowledge-manifest.md")
 foreach ($doc in $Docs) {
     $p = Join-Path $ChatGptDir $doc
     if (-not (Test-Path -LiteralPath $p -PathType Leaf)) { Fail "required file not found: $p" }
@@ -38,7 +38,7 @@ $BuildScript = Join-Path $PSScriptRoot "build-chatgpt-knowledge.ps1"
 if (-not (Test-Path -LiteralPath $BuildScript -PathType Leaf)) { Fail "required build script not found: $BuildScript" }
 & $BuildScript | Out-Null
 
-$KnowledgeFiles = @("01-product-orchestration-and-state.md","02-role-intelligence.md","03-resume-stage-and-fit.md","04-interview-intelligence-and-strategy.md","05-question-prediction-and-hypotheses.md","06-coding-interviews.md","07-system-design-interviews.md","08-behavioral-and-answer-coaching.md","09-mock-interviews-and-debrief.md","10-output-contracts-and-quality.md")
+$KnowledgeFiles = @("01-product-orchestration-and-quality.md","02-role-resume-and-strategy.md","03-interview-execution.md")
 foreach ($kf in $KnowledgeFiles) {
     $p = Join-Path $KnowledgeDir $kf
     if (-not (Test-Path -LiteralPath $p -PathType Leaf)) { Fail "Knowledge build did not produce: $p" }
@@ -57,6 +57,58 @@ foreach ($doc in $Docs) {
 foreach ($kf in $KnowledgeFiles) {
     Copy-Item -LiteralPath (Join-Path $KnowledgeDir $kf) -Destination (Join-Path $PackageRoot "knowledge\$kf") -Force
 }
+
+# Release metadata — ties the packaged bundles to a repository commit so a
+# deployed Custom GPT can be traced back to a repository version. dist/ is
+# gitignored; this file is a build artifact, not a committed source.
+function Get-GitValue {
+    param([string[]]$GitArgs, [string]$Fallback = "unknown")
+    try {
+        $out = & git -C $RepoRoot @GitArgs 2>$null
+        if ($LASTEXITCODE -eq 0 -and $out) { return ($out | Select-Object -First 1).Trim() }
+    } catch { }
+    return $Fallback
+}
+
+$RelCommit     = Get-GitValue @("rev-parse","HEAD")
+$RelDescribe   = Get-GitValue @("describe","--tags","--always","--dirty")
+$RelCommitDate = Get-GitValue @("show","-s","--format=%cI","HEAD")
+$RelPackagedAt = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+
+$Bundles = foreach ($kf in $KnowledgeFiles) {
+    $bundlePath = Join-Path $PackageRoot "knowledge\$kf"
+    $header = Get-Content -LiteralPath $bundlePath
+    $digestLine = $header | Where-Object { $_ -like 'Content-Digest (sha256*' } | Select-Object -First 1
+    $digest = ($digestLine -replace '^.*: ', '').Trim()
+    $sources = @()
+    $inSources = $false
+    foreach ($line in $header) {
+        if ($line -eq 'Sources (in order):') { $inSources = $true; continue }
+        if ($inSources) {
+            if ($line -like 'Content-Digest*') { break }
+            if ($line -like '  *') { $sources += $line.Trim() }
+        }
+    }
+    [ordered]@{
+        file                  = "knowledge/$kf"
+        content_digest_sha256 = $digest
+        sources               = $sources
+    }
+}
+
+$Release = [ordered]@{
+    package     = $PackageName
+    repository  = [ordered]@{
+        commit      = $RelCommit
+        describe    = $RelDescribe
+        commit_date = $RelCommitDate
+    }
+    packaged_at = $RelPackagedAt
+    knowledge_bundles = @($Bundles)
+}
+
+$ReleaseJson = Join-Path $PackageRoot "deployment-release.json"
+($Release | ConvertTo-Json -Depth 6) | Set-Content -LiteralPath $ReleaseJson -Encoding utf8
 
 Get-ChildItem -LiteralPath $BuildDir -Recurse -Force -File |
     Where-Object { $_.Name -eq ".DS_Store" -or $_.Name -eq "Thumbs.db" } |
@@ -91,4 +143,14 @@ try {
     $Archive.Entries | Where-Object { -not $_.FullName.EndsWith("/") } | ForEach-Object { $_.FullName } | Sort-Object
 } finally {
     $Archive.Dispose()
+}
+
+Write-Host ""
+Write-Host "== Deployment checklist (see chatgpt/publishing-knowledge.md) =="
+Write-Host "Repository commit: $RelCommit"
+Write-Host "Repository describe: $RelDescribe"
+Write-Host ("Replace exactly these {0} Knowledge files in the GPT editor," -f $KnowledgeFiles.Count)
+Write-Host "then Save/Update and Publish:"
+foreach ($b in $Bundles) {
+    Write-Host ("  - {0}  sha256:{1}" -f $b.file, $b.content_digest_sha256)
 }

@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Smallest reliable Custom GPT Knowledge deployment workflow (feature/chatgpt-knowledge-deploy-workflow)
+
+- Researched supported deployment mechanisms for an existing Custom GPT's Knowledge. Finding: OpenAI exposes no API, CLI, connector, or deploy hook for creating or updating a Custom GPT or its Knowledge files — the GPT editor is the only supported surface. The Assistants API / Responses API `file_search` + vector stores are a separate product and not a deployment path (Assistants API also retires 2026-08-26). Undocumented `backend-api/gizmos` endpoints are private/ToS-risky and are not used. Browser automation is a non-goal and no helper was added.
+- Collapsed the ChatGPT Knowledge package from ten bundles to **three** logical bundles along the methodology's natural layers, cutting the manual publish step count ~70% while keeping semantically related content co-located for retrieval: `01-product-orchestration-and-quality.md` (orchestration/state + quality/output contracts), `02-role-resume-and-strategy.md` (role/resume/stage/fit/intelligence/strategy/prediction + research schema/workflow), `03-interview-execution.md` (coding/system-design/behavioral/mock/coaching/debrief). Every `core/`, `frameworks/01–15`, and referenced schema/workflow source still maps to exactly one bundle.
+- Added a deterministic provenance header to every generated bundle: bundle position, ordered source list, and a `Content-Digest` (sha256 over the concatenated LF-normalized sources). The digest depends only on source content, so rebuilds stay byte-identical and the existing determinism invariant holds.
+- `scripts/package-chatgpt-gpt.sh` / `.ps1` now emit `deployment-release.json` into the archive (repository `commit`, `git describe`, `commit_date`, and per-bundle `content_digest_sha256`) and print a deployment checklist, so a deployed GPT can be traced back to a repository commit. `dist/` stays gitignored; the JSON is a build artifact.
+- Rewrote `scripts/build-chatgpt-knowledge.sh` / `.ps1` for the three-bundle allowlist, kept logically equivalent (same names, order, normalized output, digests).
+- Added `chatgpt/publishing-knowledge.md`: the authoritative, reproducible publish procedure plus the supported-vs-unsupported capability record and the digest-based traceability method.
+- Updated `chatgpt/knowledge-manifest.md`, `chatgpt/package-manifest.md`, `chatgpt/builder-config.md`, `chatgpt/builder-setup.md` (also fixing a stale "nine files" step), `chatgpt/README.md`, `chatgpt/sharing-and-publishing.md`, `ROADMAP.md`, and `AGENTS.md` (ChatGPT packaging rules) to the three-bundle reality.
+- Updated `tests/validate-repository.sh` Knowledge-bundle integrity checks for the three new bundles, the absence of the old ten, the provenance-header lines, and exactly-once source coverage.
+- No Interview Journey methodology, frameworks, schemas, workflows, GPT Instructions, or Claude Skill/Project packaging changed.
+
 ### Add Engineering Task issue form (docs/engineering-task-issue-template)
 
 - Added `.github/ISSUE_TEMPLATE/engineering-task.yml`, a GitHub Issue Form adapted from the canonical `amirbena/code-review-skill` `engineering-task.yml`. Preserves the shared philosophy (one issue = one independently closable outcome; short fields; a ticket, not a design document) and the reference structure: `Type`, `Area`, `Priority` dropdowns plus `Problem`, `Goal`, `Scope`, `Non-Goals` (optional), `Acceptance Criteria`, `Dependencies` (optional, parent/sub-issue lines), and `Validation`.

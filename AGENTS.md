@@ -106,7 +106,10 @@ the ChatGPT Custom GPT, the Claude Skill, and the Claude Project.
 - GPT Instructions define behavior; Knowledge defines reference material.
 - Generated Knowledge bundles must not be edited manually — rebuild them with the build scripts.
 - Knowledge bundles derive only from explicit canonical source allowlists.
-- Keep the Knowledge file count within the current GPT limit.
+- Keep the Knowledge file count small — it is the manual publish-step count, since no supported OpenAI API deploys Custom GPT Knowledge. Every canonical `core/`, `frameworks/`, and referenced schema/workflow source must map to exactly one bundle.
+- Each generated bundle carries a deterministic provenance header (bundle position, ordered source list, and a `Content-Digest` sha256 over the concatenated LF-normalized sources). The digest must depend only on source content, so rebuilds stay byte-identical.
+- The ChatGPT packaging script emits `deployment-release.json` (repository commit, `git describe`, commit date, per-bundle digests) into the archive. It is a generated build artifact, never hand-edited or committed.
+- `chatgpt/publishing-knowledge.md` is the authoritative publish procedure and record of supported vs unsupported deployment mechanisms; keep it in sync with the scripts.
 - Do not upload the synthetic example or personal records as shared GPT Knowledge.
 - The GPT must not claim unavailable memory, browsing, storage, or automation.
 - Actions, Apps, APIs, monitoring, and automated outreach/scheduling remain out of scope.

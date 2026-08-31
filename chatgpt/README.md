@@ -7,10 +7,11 @@ This directory contains everything needed to deploy Interview Journey as a ChatG
 - [`builder-setup.md`](builder-setup.md) — step-by-step setup guide.
 - [`capability-policy.md`](capability-policy.md) — behavior when optional capabilities are/aren't available.
 - [`conversation-starters.md`](conversation-starters.md) — starter prompts.
-- [`knowledge-manifest.md`](knowledge-manifest.md) — the ten Knowledge bundles and their canonical sources.
+- [`knowledge-manifest.md`](knowledge-manifest.md) — the three Knowledge bundles and their canonical sources.
 - [`knowledge/`](knowledge/) — the generated Knowledge bundles (build with `scripts/build-chatgpt-knowledge.sh` / `.ps1`).
 - [`testing-guide.md`](testing-guide.md) — smoke tests to run before sharing.
 - [`sharing-and-publishing.md`](sharing-and-publishing.md) — visibility guidance.
+- [`publishing-knowledge.md`](publishing-knowledge.md) — supported-capability limits and the procedure for updating a published GPT's Knowledge.
 - [`package-manifest.md`](package-manifest.md) — the deployable archive's exact contents.
 
 ## Build the deployable package

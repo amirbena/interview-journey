@@ -136,27 +136,50 @@ if [ -f "${FRAMEWORK_01}" ] && [ -f "${SKILL_REF}" ]; then
   done
 fi
 
-# 12. ChatGPT Knowledge bundle integrity: 10 bundles, correct names, old bundle absent.
+# 12. ChatGPT Knowledge bundle integrity: 3 bundles, correct names, old 10-bundle
+#     set absent, deterministic provenance header, exactly-once source coverage.
 KNOWLEDGE_DIR="chatgpt/knowledge"
 if [ -d "${KNOWLEDGE_DIR}" ]; then
-  EXPECTED_BUNDLES=(01-product-orchestration-and-state.md 02-role-intelligence.md 03-resume-stage-and-fit.md 04-interview-intelligence-and-strategy.md 05-question-prediction-and-hypotheses.md 06-coding-interviews.md 07-system-design-interviews.md 08-behavioral-and-answer-coaching.md 09-mock-interviews-and-debrief.md 10-output-contracts-and-quality.md)
+  EXPECTED_BUNDLES=(01-product-orchestration-and-quality.md 02-role-resume-and-strategy.md 03-interview-execution.md)
   for bundle in "${EXPECTED_BUNDLES[@]}"; do
     check "Knowledge bundle exists: ${bundle}" "[ -f '${KNOWLEDGE_DIR}/${bundle}' ]"
   done
   actual_count=$(find "${KNOWLEDGE_DIR}" -maxdepth 1 -type f -name "*.md" | wc -l | tr -d ' ')
-  check "Knowledge directory contains exactly 10 bundles" "[ '${actual_count}' = '10' ]"
-  check "stale bundle 02-role-resume-stage-and-fit.md is absent" "[ ! -f '${KNOWLEDGE_DIR}/02-role-resume-stage-and-fit.md' ]"
-  # Bundle content integrity: 02 must embed Framework 01, 03 must embed Framework 02
-  if [ -f "${KNOWLEDGE_DIR}/02-role-intelligence.md" ]; then
-    check "Knowledge bundle 02 embeds frameworks/01-role-intelligence-framework.md" \
-      "grep -qF 'frameworks/01-role-intelligence-framework.md' '${KNOWLEDGE_DIR}/02-role-intelligence.md'"
-    check "Knowledge bundle 02 does not embed frameworks/02-resume-intelligence-framework.md" \
-      "! grep -qF 'frameworks/02-resume-intelligence-framework.md' '${KNOWLEDGE_DIR}/02-role-intelligence.md'"
-  fi
-  if [ -f "${KNOWLEDGE_DIR}/03-resume-stage-and-fit.md" ]; then
-    check "Knowledge bundle 03 embeds frameworks/02-resume-intelligence-framework.md" \
-      "grep -qF 'frameworks/02-resume-intelligence-framework.md' '${KNOWLEDGE_DIR}/03-resume-stage-and-fit.md'"
-  fi
+  check "Knowledge directory contains exactly 3 bundles" "[ '${actual_count}' = '3' ]"
+  # The pre-consolidation 10-bundle names must all be gone.
+  for stale in 01-product-orchestration-and-state.md 02-role-intelligence.md 03-resume-stage-and-fit.md 04-interview-intelligence-and-strategy.md 05-question-prediction-and-hypotheses.md 06-coding-interviews.md 07-system-design-interviews.md 08-behavioral-and-answer-coaching.md 09-mock-interviews-and-debrief.md 10-output-contracts-and-quality.md; do
+    check "stale Knowledge bundle absent: ${stale}" "[ ! -f '${KNOWLEDGE_DIR}/${stale}' ]"
+  done
+  # Every bundle carries the deterministic provenance header.
+  for bundle in "${EXPECTED_BUNDLES[@]}"; do
+    if [ -f "${KNOWLEDGE_DIR}/${bundle}" ]; then
+      check "bundle ${bundle} has a Bundle: position line" \
+        "grep -qE '^Bundle: ${bundle} \\([0-9]+ of 3\\)$' '${KNOWLEDGE_DIR}/${bundle}'"
+      check "bundle ${bundle} has a Content-Digest sha256 line" \
+        "grep -qE '^Content-Digest \\(sha256 of concatenated LF-normalized sources\\): [0-9a-f]{64}$' '${KNOWLEDGE_DIR}/${bundle}'"
+    fi
+  done
+  # Bundle content routing: representative source-to-bundle assignments.
+  check "bundle 01 embeds core/output-contracts.md" \
+    "grep -qF '## Source: \`core/output-contracts.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
+  check "bundle 01 embeds frameworks/15-interview-journey-intelligence-framework.md" \
+    "grep -qF '## Source: \`frameworks/15-interview-journey-intelligence-framework.md\`' '${KNOWLEDGE_DIR}/01-product-orchestration-and-quality.md'"
+  check "bundle 02 embeds frameworks/01-role-intelligence-framework.md" \
+    "grep -qF '## Source: \`frameworks/01-role-intelligence-framework.md\`' '${KNOWLEDGE_DIR}/02-role-resume-and-strategy.md'"
+  check "bundle 02 embeds workflows/research-current-interview-intelligence.md" \
+    "grep -qF '## Source: \`workflows/research-current-interview-intelligence.md\`' '${KNOWLEDGE_DIR}/02-role-resume-and-strategy.md'"
+  check "bundle 03 embeds frameworks/09-coding-interview-decision-engine.md" \
+    "grep -qF '## Source: \`frameworks/09-coding-interview-decision-engine.md\`' '${KNOWLEDGE_DIR}/03-interview-execution.md'"
+  check "bundle 03 embeds frameworks/14-post-interview-debrief-framework.md" \
+    "grep -qF '## Source: \`frameworks/14-post-interview-debrief-framework.md\`' '${KNOWLEDGE_DIR}/03-interview-execution.md'"
+  # Exactly-once source coverage: every canonical source appears in one bundle,
+  # and no source appears twice across the set.
+  embedded_sources=$(grep -h '^## Source: ' "${KNOWLEDGE_DIR}"/*.md 2>/dev/null | sed 's/^## Source: `//;s/`$//' | sort)
+  expected_sources=$( { find core -maxdepth 1 -type f -name '*.md'; find frameworks -maxdepth 1 -type f -name '*.md'; echo schemas/public-research-evidence.schema.md; echo workflows/research-current-interview-intelligence.md; } | sort )
+  check "Knowledge bundles cover every canonical source exactly once" \
+    "[ \"\$(printf '%s\n' \"\${embedded_sources}\")\" = \"\$(printf '%s\n' \"\${expected_sources}\")\" ]"
+  dup_sources=$(grep -h '^## Source: ' "${KNOWLEDGE_DIR}"/*.md 2>/dev/null | sort | uniq -d)
+  check "no canonical source is embedded in more than one bundle" "[ -z \"\${dup_sources}\" ]"
 fi
 
 # 13. Skill routing: trigger policy must define in-scope ownership, outside-scope boundary,

@@ -18,4 +18,4 @@ Guidance for deciding the visibility of the Interview Journey Custom GPT.
 ## After publishing
 
 - This is a static configuration — publishing does not add capabilities like persistence, browsing, or automation beyond what was configured in the Builder.
-- If you rebuild the Knowledge bundles later (via the build scripts), re-upload them to keep the published GPT in sync with the repository.
+- When you rebuild the Knowledge bundles later (via the build scripts), follow [`publishing-knowledge.md`](publishing-knowledge.md) to re-upload the three files and re-publish. That document also records why no supported API deployment exists and how to trace a live GPT back to a repository commit.
