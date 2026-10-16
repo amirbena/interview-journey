@@ -24,3 +24,7 @@ Not used by this product. Do not generate images as part of interview preparatio
 ## Universal rule
 
 Never claim a capability is available when it is not, and never claim guaranteed persistence, browsing, or automation beyond what the current environment actually provides.
+
+## Skills-only ChatGPT Plugin
+
+The ChatGPT Plugin package may contain only `plugin.json`, one `SKILL.md`, and `references/` (the generated Knowledge bundles and this policy). It must contain no MCP servers, Actions, Apps, hooks, external APIs, or background automation. Actions, Apps, and APIs remain out of scope for both the Custom GPT and the plugin.

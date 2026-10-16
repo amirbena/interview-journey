@@ -4,7 +4,7 @@
 **Version:** 1.0
 **Depends on:** Document 01 — Role Intelligence Decision Engine
 
-> **Canonical framework.** Platform adaptations (`claude/skill/references/`, `chatgpt/knowledge/`) must reference this document rather than redefine its rules. See [`core/orchestration-policy.md`](../core/orchestration-policy.md).
+> **Canonical framework.** Platform adaptations (`skills/interview-journey/references/`, `chatgpt/knowledge/`) must reference this document rather than redefine its rules. See [`core/orchestration-policy.md`](../core/orchestration-policy.md).
 
 ---
 

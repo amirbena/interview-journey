@@ -1,6 +1,6 @@
 # Orchestration Policy
 
-This document is the platform-independent adaptation surface for [Framework 15 — Interview Journey Intelligence Framework](../frameworks/15-interview-journey-intelligence-framework.md), the master orchestrator. Framework 15 defines the actual routing logic; this document restates it as the operational contract that [`claude/skill/SKILL.md`](../claude/skill/SKILL.md), the Claude Project instructions, and `chatgpt/instructions.md` must all implement identically, without redefining it.
+This document is the platform-independent adaptation surface for [Framework 15 — Interview Journey Intelligence Framework](../frameworks/15-interview-journey-intelligence-framework.md), the master orchestrator. Framework 15 defines the actual routing logic; this document restates it as the operational contract that [`skills/interview-journey/SKILL.md`](../skills/interview-journey/SKILL.md), the Claude Project instructions, and `chatgpt/instructions.md` must all implement identically, without redefining it.
 
 ## The master orchestrator decides
 

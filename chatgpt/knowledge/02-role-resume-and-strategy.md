@@ -16,7 +16,7 @@ Sources (in order):
   workflows/research-current-interview-intelligence.md
   frameworks/07-question-prediction-framework.md
   frameworks/08-interview-hypothesis-framework.md
-Content-Digest (sha256, sources concatenated in order, CR bytes removed): 99ef0302827ee51e61b48267cb7cf7b6349d833e1af51c8320cf3194d60e17ab
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): bbb8a868de75843f5c5b2a05b8a4a6a115621d8bc06d21d12e34ec8fbcf61a00
 -->
 
 # 02-role-resume-and-strategy
@@ -32,7 +32,7 @@ Content-Digest (sha256, sources concatenated in order, CR bytes removed): 99ef03
 **Domain:** Interview Preparation and Business Intelligence
 **Language:** English
 
-> **Canonical framework.** This file is the platform-independent source of truth for Role Intelligence. `claude/skill/references/`, `chatgpt/knowledge/`, and any other platform adaptation must reference this document rather than redefine its rules, scoring formulas, or enums. See [`core/orchestration-policy.md`](../core/orchestration-policy.md) for how this framework fits into the master workflow (Document 15).
+> **Canonical framework.** This file is the platform-independent source of truth for Role Intelligence. `skills/interview-journey/references/`, `chatgpt/knowledge/`, and any other platform adaptation must reference this document rather than redefine its rules, scoring formulas, or enums. See [`core/orchestration-policy.md`](../core/orchestration-policy.md) for how this framework fits into the master workflow (Document 15).
 
 ---
 
@@ -1447,7 +1447,7 @@ If the answer is not clearly yes, the Role Intelligence analysis is incomplete.
 **Version:** 1.0
 **Depends on:** Document 01 — Role Intelligence Decision Engine
 
-> **Canonical framework.** Platform adaptations (`claude/skill/references/`, `chatgpt/knowledge/`) must reference this document rather than redefine its rules. See [`core/orchestration-policy.md`](../core/orchestration-policy.md).
+> **Canonical framework.** Platform adaptations (`skills/interview-journey/references/`, `chatgpt/knowledge/`) must reference this document rather than redefine its rules. See [`core/orchestration-policy.md`](../core/orchestration-policy.md).
 
 ---
 

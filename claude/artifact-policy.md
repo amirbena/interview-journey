@@ -1,6 +1,6 @@
 # Artifact Policy
 
-Defines when the Project should produce a dedicated artifact (a standalone, reusable document) versus keeping a result inline in the conversation, and what every artifact must preserve. This adapts the canonical [`core/output-contracts.md`](../core/output-contracts.md) and the Skill's [state-and-output-generation reference](skill/references/state-and-output-generation.md) for the Project's conversational layer — it does not redefine either.
+Defines when the Project should produce a dedicated artifact (a standalone, reusable document) versus keeping a result inline in the conversation, and what every artifact must preserve. This adapts the canonical [`core/output-contracts.md`](../core/output-contracts.md) and the Skill's [state-and-output-generation reference](../skills/interview-journey/references/state-and-output-generation.md) for the Project's conversational layer — it does not redefine either.
 
 ## Supported artifacts
 
@@ -19,7 +19,7 @@ Defines when the Project should produce a dedicated artifact (a standalone, reus
 - Post-Interview Debrief
 - Interview Journey State
 
-Each uses the shape defined by its matching [Skill template](skill/templates/) and the corresponding canonical output contract — an artifact is a presentation of that shape, not a new one.
+Each uses the shape defined by its matching [Skill template](../skills/interview-journey/templates/) and the corresponding canonical output contract — an artifact is a presentation of that shape, not a new one.
 
 ## Rules
 

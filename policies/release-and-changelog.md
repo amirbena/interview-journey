@@ -47,10 +47,24 @@ Every PR carries exactly one label:
 - A release is cut only from `main` by the release workflow, using the merged
   PRs' `release:` labels since the last tag and semantic versioning. The
   first release is the `v1.0.0` baseline.
-- Release assets are the existing Skill, External Kit, and ChatGPT GPT ZIPs,
-  built by the existing packaging scripts from the tagged revision after
-  `tests/validate-repository.sh` passes on that commit. Package contents and
-  filenames do not change.
+- Release assets are the Skill, External Kit, and ChatGPT GPT ZIPs plus the
+  Claude plugin and ChatGPT plugin ZIPs (`interview-journey-claude-plugin.zip`,
+  `interview-journey-chatgpt-plugin.zip`, built by `scripts/package-claude-plugin.sh`
+  and `scripts/package-chatgpt-plugin.sh`). A plugin ZIP is attached only when
+  the tagged revision contains its packager. All are built by the packaging
+  scripts from the tagged revision, with `RELEASE_VERSION` set to the release
+  version, after `tests/validate-repository.sh` passes on that commit. The
+  release fails if any manifest inside a built archive carries a version other
+  than the tag's.
+- **Version synchronization:** `scripts/release/sync-versions.sh` writes the
+  release version into every discovered marketplace/plugin manifest
+  (every `marketplace.json` and `plugin.json`: `.claude-plugin/marketplace.json`,
+  `.claude-plugin/plugin.json`, `chatgpt/plugin/plugin.json`; existing `version`
+  fields only, formatting preserved). The change goes into the same
+  `chore(release)` commit as `CHANGELOG.md`, and no commit is made when nothing
+  changed. Humans and agents do not bump these versions in ordinary PRs.
+  `sync-versions.sh check` (also run by `tests/validate-repository.sh`) fails
+  when manifest versions disagree. It requires `jq`.
 - GitHub Release ZIPs are the distribution channel for now. Do not assume they
   are consumed by Claude or Codex marketplaces; marketplace distribution is a
   separate decision.
@@ -69,7 +83,7 @@ another. Nothing secret is committed.
   them and uses it for checkout, push, and `gh`. The job's own
   `GITHUB_TOKEN` stays read-only.
 - **Ruleset on `main`:** the App is a bypass actor, so its `chore(release)`
-  changelog commit can be pushed directly. Humans still merge through PRs.
+  changelog and manifest-version commit can be pushed directly. Humans still merge through PRs.
 - **Loop guard:** the workflow skips runs triggered by the App's own push, so
   release commits never start a redundant release job.
 
@@ -82,7 +96,8 @@ the failed workflow run; runs are serialized by a `concurrency` group.
 
 - **Dry run:** run the workflow manually (it defaults to dry run) or run
   `scripts/release/release.sh --dry-run`. It prints the next version, the
-  changelog diff, and what it would tag or upload, without changing anything.
+  changelog diff, the planned manifest version syncs, and what it would tag or
+  upload, without changing anything.
 - **Manual release:** from an up-to-date `main` with `gh` authenticated and
   permission to push, run `scripts/release/release.sh`. If the workflow or App
   is unavailable, the packaging scripts in `scripts/` still build the ZIPs into

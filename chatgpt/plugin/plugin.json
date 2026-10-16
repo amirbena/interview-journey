@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "interview-journey",
+  "version": "1.0.0",
+  "description": "Evidence-driven technical interview preparation: role and resume analysis, fit and gap analysis, preparation strategy, question prediction, mock interviews, answer coaching, post-interview debriefs, and offer-negotiation preparation.",
+  "author": {
+    "name": "Amir Ben-Assayag"
+  },
+  "repository": "https://github.com/amirbena/interview-journey",
+  "keywords": ["interview", "interview-prep", "career", "resume"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Interview Journey",
+        "shortDescription": "Evidence-based interview prep",
+        "longDescription": "Interview Journey prepares you for technical interviews using your real resume, the target role, and your current interview stage. It builds role and resume analysis, fit and gap analysis, a focused preparation strategy, likely questions, mock interviews, answer coaching, post-interview debriefs, and offer-negotiation preparation. It works only from information you provide and never invents experience, monitors, or automates anything on your behalf.",
+        "developerName": "Amir Ben-Assayag",
+        "category": "Productivity",
+        "defaultPrompt": [
+          "Here is the job description and my resume. Analyze the role and my fit.",
+          "I have a system design interview next week. Build my preparation plan.",
+          "Run a mock behavioral interview and coach my answers."
+        ]
+      }
+    }
+  }
+}

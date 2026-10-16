@@ -21,7 +21,7 @@ check() {
 chatgpt_offer_route_ok() {
   local file="$1"
   grep -qF 'Recognize offer and negotiation intent' "${file}" &&
-    grep -qF 'Route it to Knowledge source `core/offer-negotiation-preparation.md`' "${file}"
+    grep -qF 'Route it to reference source `core/offer-negotiation-preparation.md`' "${file}"
 }
 
 skill_offer_route_ok() {
@@ -32,7 +32,7 @@ skill_offer_route_ok() {
 project_full_offer_route_ok() {
   local file="$1"
   grep -qF "Preparing for an offer call, compensation discussion, employer range, offer evaluation, or negotiation through the Skill's" "${file}" &&
-    grep -qF '[`offer-and-negotiation-preparation.md`](skill/references/offer-and-negotiation-preparation.md) adaptation of the canonical contract' "${file}"
+    grep -qF '[`offer-and-negotiation-preparation.md`](../skills/interview-journey/references/offer-and-negotiation-preparation.md) adaptation of the canonical contract' "${file}"
 }
 
 project_compact_offer_route_ok() {
@@ -124,9 +124,9 @@ check "valid negotiation state is explicitly reused/skipped" \
 check "material changes stale only negotiation preparation" \
   "grep -qE 'changes only .*offer_negotiation_preparation_status.*Stale' '${STATE_SCHEMA}'"
 check "Skill state adapter consumes canonical schema" \
-  "grep -qF 'schemas/interview-journey-state.schema.md' claude/skill/references/state-and-output-generation.md"
+  "grep -qF 'schemas/interview-journey-state.schema.md' skills/interview-journey/references/state-and-output-generation.md"
 check "Skill state template uses canonical negotiation object" \
-  "grep -qF 'offer_negotiation_preparation_status:' claude/skill/templates/interview-journey-state.md"
+  "grep -qF 'offer_negotiation_preparation_status:' skills/interview-journey/templates/interview-journey-state.md"
 check "canonical evidence policy distinguishes unverified public research" \
   "grep -qF 'Public research — unverified' core/evidence-policy.md && grep -qF 'public_research_unverified' core/context-priority.md"
 check "canonical evidence policy distinguishes corroborated public research" \
@@ -137,9 +137,9 @@ check "canonical salary evidence requires attribution and freshness" \
   "grep -qF 'Every material salary-data row' '${CANONICAL}' && grep -qF 'Retrieval date' '${CANONICAL}' && grep -qF 'Freshness/fit' '${CANONICAL}'"
 
 for adapter in \
-  claude/skill/references/accuracy-and-quality.md \
-  claude/skill/references/research-and-evidence.md \
-  claude/skill/references/product-and-orchestration.md \
+  skills/interview-journey/references/accuracy-and-quality.md \
+  skills/interview-journey/references/research-and-evidence.md \
+  skills/interview-journey/references/product-and-orchestration.md \
   chatgpt/instructions.md \
   claude/project-instructions.md \
   claude/project-instructions.compact.md; do
@@ -147,7 +147,7 @@ for adapter in \
     "canonical_public_research_adapter_ok '${adapter}'"
 done
 check "Offer market-evidence route loads the aligned Skill accuracy adapter" \
-  "grep -qF 'plus [\`accuracy-and-quality.md\`](references/accuracy-and-quality.md) when market evidence is used' claude/skill/SKILL.md"
+  "grep -qF 'plus [\`accuracy-and-quality.md\`](references/accuracy-and-quality.md) when market evidence is used' skills/interview-journey/SKILL.md"
 check "Claude Project Knowledge maps canonical evidence and context-priority sources" \
   "grep -qF 'core/evidence-policy.md' claude/knowledge-manifest.md && grep -qF 'core/context-priority.md' claude/knowledge-manifest.md"
 check "ChatGPT Knowledge embeds canonical evidence and context-priority sources" \
@@ -158,9 +158,9 @@ check "ChatGPT depends on canonical ONP invariant set" \
 check "ChatGPT routes offer intent to canonical negotiation Knowledge" \
   "chatgpt_offer_route_ok chatgpt/instructions.md"
 check "Claude Skill reference depends on canonical ONP invariant set" \
-  "grep -qE 'Canonical dependency.*ONP-001.*ONP-010' claude/skill/references/offer-and-negotiation-preparation.md"
+  "grep -qE 'Canonical dependency.*ONP-001.*ONP-010' skills/interview-journey/references/offer-and-negotiation-preparation.md"
 check "Claude Skill routes offer intent to its negotiation reference" \
-  "skill_offer_route_ok claude/skill/SKILL.md"
+  "skill_offer_route_ok skills/interview-journey/SKILL.md"
 for project in claude/project-instructions.md claude/project-instructions.compact.md; do
   check "${project} depends on canonical ONP invariant set" \
     "grep -qE 'ONP-001.*ONP-010' '${project}'"
@@ -174,11 +174,11 @@ check "Claude Project compact instructions route offer intent through the Skill 
 
 routing_tmp=$(mktemp -d 2>/dev/null || mktemp -d -t ijofferrouting)
 sed 's/Recognize offer and negotiation intent/Recognize general career intent/' chatgpt/instructions.md > "${routing_tmp}/chatgpt.md"
-sed 's/Offer or compensation-negotiation preparation/General career preparation/' claude/skill/SKILL.md > "${routing_tmp}/skill.md"
+sed 's/Offer or compensation-negotiation preparation/General career preparation/' skills/interview-journey/SKILL.md > "${routing_tmp}/skill.md"
 sed 's/Preparing for an offer call/Documenting an offer call/' claude/project-instructions.md > "${routing_tmp}/project-full.md"
 sed 's/Route offer calls/Describe offer calls/' claude/project-instructions.compact.md > "${routing_tmp}/project-compact.md"
 sed 's/public_research_unverified/public_research_removed/' chatgpt/instructions.md > "${routing_tmp}/chatgpt-evidence.md"
-sed 's/corroborated_public_research/public_research_removed/g' claude/skill/references/accuracy-and-quality.md > "${routing_tmp}/skill-evidence.md"
+sed 's/corroborated_public_research/public_research_removed/g' skills/interview-journey/references/accuracy-and-quality.md > "${routing_tmp}/skill-evidence.md"
 sed 's/priorities 1–5/priorities removed/' claude/project-instructions.md > "${routing_tmp}/project-full-evidence.md"
 sed 's/public_research_unverified/public_research_removed/' claude/project-instructions.compact.md > "${routing_tmp}/project-compact-evidence.md"
 check "ChatGPT routing assertion rejects a missing offer-intent trigger" \
@@ -206,7 +206,7 @@ bash scripts/package-chatgpt-gpt.sh >/dev/null 2>&1 || package_ok=0
 check "all three package artifacts build" "[ '${package_ok}' = '1' ]"
 
 if [ "${package_ok}" = "1" ]; then
-  skill_expected=$(cd claude/skill && find . -type f -name '*.md' | sed 's#^./#interview-journey/#' | sort)
+  skill_expected=$(cd skills/interview-journey && find . -type f -name '*.md' | sed 's#^./#interview-journey/#' | sort)
   skill_actual=$(unzip -Z1 dist/interview-journey.skill.zip | grep -v '/$' | sort)
   check "Skill ZIP normalized file set matches authoritative Skill source set" \
     "[ \"${skill_actual}\" = \"${skill_expected}\" ]"
@@ -257,7 +257,7 @@ check "Bash external-kit allowlist contains canonical negotiation Knowledge" \
 check "PowerShell external-kit allowlist contains canonical negotiation Knowledge" \
   "grep -qF 'Src = \"offer-negotiation-preparation.md\"; Dest = \"offer-negotiation-preparation.md\"' scripts/package-claude-external-kit.ps1"
 
-reference_count=$(find claude/skill/references -maxdepth 1 -type f -name '*.md' | wc -l | tr -d ' ')
+reference_count=$(find skills/interview-journey/references -maxdepth 1 -type f -name '*.md' | wc -l | tr -d ' ')
 check "Skill source contains 15 references" "[ '${reference_count}' = '15' ]"
 check "Skill manifest documents research-and-evidence.md" \
   "grep -qF 'research-and-evidence.md' claude/skill-manifest.md"

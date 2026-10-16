@@ -20,7 +20,7 @@ Sources (in order):
   core/quality-gates.md
   core/output-contracts.md
   core/offer-negotiation-preparation.md
-Content-Digest (sha256, sources concatenated in order, CR bytes removed): 439fa8a503002b84369a94a6c87b57deda287f50872ebacac029442124b491e8
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): 8a33ff390e4e3a2219034a2b28b5a7c6c461fc232057aa0aada97340866285f8
 -->
 
 # 01-product-orchestration-and-quality
@@ -287,7 +287,7 @@ Each framework below is documented independently in [`frameworks/`](../framework
 
 # Orchestration Policy
 
-This document is the platform-independent adaptation surface for [Framework 15 — Interview Journey Intelligence Framework](../frameworks/15-interview-journey-intelligence-framework.md), the master orchestrator. Framework 15 defines the actual routing logic; this document restates it as the operational contract that [`claude/skill/SKILL.md`](../claude/skill/SKILL.md), the Claude Project instructions, and `chatgpt/instructions.md` must all implement identically, without redefining it.
+This document is the platform-independent adaptation surface for [Framework 15 — Interview Journey Intelligence Framework](../frameworks/15-interview-journey-intelligence-framework.md), the master orchestrator. Framework 15 defines the actual routing logic; this document restates it as the operational contract that [`skills/interview-journey/SKILL.md`](../skills/interview-journey/SKILL.md), the Claude Project instructions, and `chatgpt/instructions.md` must all implement identically, without redefining it.
 
 ## The master orchestrator decides
 
