@@ -543,6 +543,10 @@ if [ -f "${RELEASE_SH}" ]; then
   check "release script asset names match the packagers' outputs" \
     "grep -q 'PACKAGE_NAME=\"interview-journey\"' scripts/package-claude-skill.sh && grep -q 'interview-journey-claude-kit' scripts/package-claude-external-kit.sh && grep -q 'interview-journey-chatgpt' scripts/package-chatgpt-gpt.sh && grep -q 'interview-journey-chatgpt.zip' '${RELEASE_SH}' && grep -q 'interview-journey-claude-kit.zip' '${RELEASE_SH}' && grep -q 'interview-journey.skill.zip' '${RELEASE_SH}'"
 fi
+if [ -x scripts/release/sync-versions.sh ] && command -v jq >/dev/null 2>&1; then
+  check "marketplace and plugin manifest versions agree" "scripts/release/sync-versions.sh check >/dev/null 2>&1"
+fi
+check "release script syncs manifest versions" "grep -q 'sync-versions.sh' '${RELEASE_SH}' && [ -x scripts/release/sync-versions.sh ]"
 check "CHANGELOG has the 1.0.0 release baseline" "grep -q '^## 1.0.0 ' CHANGELOG.md || git tag --list 'v[0-9]*' | grep -q ."
 
 echo ""
