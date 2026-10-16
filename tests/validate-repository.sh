@@ -484,6 +484,28 @@ if [ -f "${PR_TEMPLATE}" ]; then
     "! grep -qE '^ *- \[[ xX]\]' '${PR_TEMPLATE}'"
 fi
 
+# 28. Release policy, CI workflow, and PR release-label check.
+check "release policy exists" "[ -f policies/release-and-changelog.md ]"
+check "AGENTS.md references the release policy" "grep -q 'policies/release-and-changelog.md' AGENTS.md"
+check "PR template has a Release impact section" "grep -q '^## Release impact' '${PR_TEMPLATE}'"
+check "CI workflow exists" "[ -f .github/workflows/ci.yml ]"
+if [ -f .github/workflows/ci.yml ]; then
+  check "CI runs the repository validator" "grep -q 'tests/validate-repository.sh' .github/workflows/ci.yml"
+  check "CI uses a Linux runner and no Claude CLI or PowerShell" \
+    "grep -q 'ubuntu-latest' .github/workflows/ci.yml && ! grep -v '^ *#' .github/workflows/ci.yml | grep -qiE 'claude|pwsh|powershell|matrix'"
+fi
+check "release-label validator is executable" "[ -x scripts/validate-pr-release.sh ]"
+if [ -x scripts/validate-pr-release.sh ]; then
+  V=scripts/validate-pr-release.sh
+  check "label check accepts feat + release: minor" "$V 'feat: x' 'release: minor' >/dev/null 2>&1"
+  check "label check accepts docs + release: none" "$V 'docs: x' 'release: none' >/dev/null 2>&1"
+  check "label check rejects a missing label" "! $V 'docs: x' 'bug' >/dev/null 2>&1"
+  check "label check rejects two labels" "! $V 'docs: x' 'release: none,release: patch' >/dev/null 2>&1"
+  check "label check rejects feat + release: none" "! $V 'feat: x' 'release: none' >/dev/null 2>&1"
+  check "label check rejects major without a breaking marker" "! $V 'feat: x' 'release: major' >/dev/null 2>&1"
+  check "label check accepts feat! + release: major" "$V 'feat!: x' 'release: major' >/dev/null 2>&1"
+fi
+
 echo ""
 echo "== Summary =="
 echo "Passed: ${PASS_COUNT}"

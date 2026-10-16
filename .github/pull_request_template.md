@@ -28,3 +28,12 @@ Optional. Anything reviewers should pay special attention to: trade-offs,
 follow-up work, or context that isn't visible in the diff.
 Delete this section if there's nothing useful to add.
 -->
+
+## Release impact
+
+<!--
+State the single `release:` label (`major`, `minor`, `patch`, or `none`) and
+why, in a sentence. Agents propose it; the reviewer decides. Maintenance
+changes (CI, policies, docs, tests) are normally `release: none`.
+See policies/release-and-changelog.md.
+-->

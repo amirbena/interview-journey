@@ -316,6 +316,14 @@ maximum brevity. This complements — and does not weaken — the mandatory
 [Final response report](#final-response-report) and
 [Before completion](#before-completion) checks.
 
+## Release and changelog
+
+CI, release classification (`release:` labels), the changelog, and GitHub
+Releases are repository-maintenance rules defined in
+[`policies/release-and-changelog.md`](policies/release-and-changelog.md).
+Propose one `release:` label in every PR's *Release impact* section; the
+reviewer decides.
+
 ## Before completion
 
 - Inspect the final diff.
@@ -345,4 +353,5 @@ Every task's final response must include:
 
 - [`README.md`](README.md)
 - [`CLAUDE.md`](CLAUDE.md)
+- [`policies/release-and-changelog.md`](policies/release-and-changelog.md)
 - [`core/scope-and-non-goals.md`](core/scope-and-non-goals.md)
