@@ -14,6 +14,7 @@ Interview Journey prepares you for a specific interview using your real evidence
 | Coding, system design, behavioral | Preparation grounded in your real experience | [`prepare-coding-interview`](../workflows/prepare-coding-interview.md), [`prepare-system-design-interview`](../workflows/prepare-system-design-interview.md), [`prepare-behavioral-interview`](../workflows/prepare-behavioral-interview.md) |
 | Mock interviews | Realistic simulation with a scorecard | [`run-mock-interview`](../workflows/run-mock-interview.md) |
 | Answer coaching | Structured feedback on an answer you submit | [`coach-interview-answer`](../workflows/coach-interview-answer.md) |
+| Natural Answer Mode | Natural, conversational answers instead of heavily structured ones; opt-in, off by default | [`natural-answer-mode`](natural-answer-mode.md) |
 | Post-interview debrief | Structured lessons from a completed interview | [`run-post-interview-debrief`](../workflows/run-post-interview-debrief.md) |
 | Offer and negotiation preparation | Preparing an offer call, range, evaluation, or negotiation | [`prepare-offer-negotiation`](../workflows/prepare-offer-negotiation.md) |
 
@@ -22,7 +23,7 @@ Interview Journey prepares you for a specific interview using your real evidence
 - **Full Interview Journey** — the complete ordered path: [`full-interview-journey`](../workflows/full-interview-journey.md).
 - **Focused Task** — only the modules a request needs: [`focused-task-routing`](../workflows/focused-task-routing.md).
 - **Resume Interview Journey** — continue from a saved state: [`resume-interview-journey`](../workflows/resume-interview-journey.md).
-- **Natural Answer Mode** — optional spoken-style answers for practice: [`natural-answer-mode`](natural-answer-mode.md).
+- **Natural Answer Mode** — natural, conversational interview answers you could say out loud, instead of heavily structured, document-style responses. It is opt-in and disabled by default; see [`natural-answer-mode`](natural-answer-mode.md) for how to turn it on and off.
 
 ## Boundaries
 
