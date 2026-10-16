@@ -8,7 +8,7 @@
     {
       "name": "interview-journey",
       "source": ".",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Evidence-driven interview preparation: role and resume analysis, fit and gap analysis, preparation strategy, question prediction, mock interviews, answer coaching, debriefs, and offer-negotiation preparation.",
       "category": "productivity",
       "skills": ["./skills/interview-journey"]

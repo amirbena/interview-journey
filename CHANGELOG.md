@@ -3,6 +3,12 @@
 Released versions are summarized here by the release automation from merged
 pull requests. See [`policies/release-and-changelog.md`](policies/release-and-changelog.md).
 
+## 1.1.0 - 2026-10-16
+
+### Features
+
+- prepare Interview Journey for cross-platform plugin distribution
+
 ## 1.0.0 - 2026-10-16
 
 ### Features
