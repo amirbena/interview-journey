@@ -506,6 +506,27 @@ if [ -x scripts/validate-pr-release.sh ]; then
   check "label check accepts feat! + release: major" "$V 'feat!: x' 'release: major' >/dev/null 2>&1"
 fi
 
+# 28b. Branch naming: policy, local validator, and PR source-branch check.
+check "AGENTS.md references branch-name validation" "grep -q 'validate-branch-name.sh' AGENTS.md"
+check "branch-name workflow exists" "[ -f .github/workflows/pr-branch-name.yml ]"
+if [ -f .github/workflows/pr-branch-name.yml ]; then
+  check "branch-name workflow validates the PR source branch on pull_request only" \
+    "grep -q 'github.head_ref' .github/workflows/pr-branch-name.yml && grep -q 'pull_request:' .github/workflows/pr-branch-name.yml && ! grep -q 'push:' .github/workflows/pr-branch-name.yml"
+  check "policy documents the required status-check name" \
+    "grep -q 'Validate PR branch name' policies/git-workflow.md && grep -q 'Validate PR branch name' .github/workflows/pr-branch-name.yml"
+fi
+check "branch-name validator is executable" "[ -x scripts/validate-branch-name.sh ]"
+if [ -x scripts/validate-branch-name.sh ]; then
+  B=scripts/validate-branch-name.sh
+  check "branch check accepts feat/25-plugin-distribution" "$B feat/25-plugin-distribution >/dev/null 2>&1"
+  check "branch check accepts ci/26-branch-naming" "$B ci/26-branch-naming >/dev/null 2>&1"
+  check "branch check exempts main" "$B main >/dev/null 2>&1"
+  check "branch check rejects claude/* names" "! $B claude/interview-journey-issues-125223 >/dev/null 2>&1"
+  check "branch check rejects codex/* names" "! $B codex/25-plugin-distribution >/dev/null 2>&1"
+  check "branch check rejects a missing issue number" "! $B feat/plugin-distribution >/dev/null 2>&1"
+  check "branch check rejects uppercase and unknown types" "! $B feat/25-Plugin >/dev/null 2>&1 && ! $B wip/25-x >/dev/null 2>&1"
+fi
+
 # 29. Release automation: script, workflow guards, and asset names.
 RELEASE_SH="scripts/release/release.sh"
 RELEASE_YML=".github/workflows/release.yml"

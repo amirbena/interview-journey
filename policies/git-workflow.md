@@ -16,21 +16,40 @@ modified. Never implement directly on `main`.
 
 ### Branch naming
 
-Implementation branches must use `feat/`, `fix/`, `refactor/`, or
-`docs/` followed by a short, descriptive kebab-case suffix. Use `feat/`
-for new user-facing or repository capabilities, `fix/` for defect
-corrections, `refactor/` for behavior-preserving structural
-improvements, and `docs/` for documentation-only work. Examples:
-`feat/offer-negotiation-prep`, `fix/skill-package-manifest`,
-`refactor/instruction-packaging`, `docs/update-contributor-guide`. Do
-not invent additional prefixes for normal implementation work unless
-repository policy adds them.
+Published branches must be named:
 
-Branch names describe the work, not the coding agent or provider. Never
-create an implementation branch with `codex/` or an equivalent
-agent/provider-owned prefix. Do not rename an already-active valid task
-branch solely to apply this convention unless branch normalization is
-part of the task.
+```text
+<type>/<issue-number>-<short-description>
+```
+
+- `type` is one of `feat`, `fix`, `refactor`, `docs`, `ci`, `chore`, `test`.
+  Use `feat` for new user-facing or repository capabilities, `fix` for
+  defect corrections, `refactor` for behavior-preserving structural work,
+  `docs` for documentation-only work, `ci` for CI and release automation,
+  `chore` for other maintenance, and `test` for tests.
+- `issue-number` is the GitHub Issue the work implements. If there is no
+  Issue, create one first.
+- `short-description` is lowercase kebab-case describing the work.
+
+Examples: `feat/25-plugin-distribution`, `ci/12-release-integration`,
+`ci/26-branch-naming`.
+
+Branch names describe the work, not the coding agent or provider.
+Harness-generated local branches (`claude/<slug>-<id>`, `codex/...`) are
+fine while developing locally, but they are **not exempt**: before the
+first `git push`, and before opening a PR, rename the branch with
+`git branch -m <type>/<issue-number>-<short-description>` and make
+`scripts/validate-branch-name.sh` pass (it checks the current branch when
+run without arguments). Never push a generated name.
+
+The only exempt branch is `main`. Historical branches are not renamed.
+
+CI enforces this on pull requests with the workflow
+`.github/workflows/pr-branch-name.yml`, which checks the PR source branch.
+Its status check is named exactly **`Validate PR branch name`**; the
+repository administrator adds it as a required check in the `main`
+ruleset. Release commits pushed directly to `main` do not run it. No Git
+hooks are used.
 
 ## Up-to-date main rule
 
