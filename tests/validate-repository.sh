@@ -557,14 +557,24 @@ for s in package-claude-plugin package-chatgpt-plugin; do
   check "${s} has Bash and PowerShell twins" "[ -x scripts/${s}.sh ] && [ -f scripts/${s}.ps1 ] && bash -n scripts/${s}.sh"
 done
 PLUGIN_TMP="$(mktemp -d)"
-check "plugin packagers produce the expected file lists" "scripts/package-claude-plugin.sh >/dev/null && scripts/package-chatgpt-plugin.sh >/dev/null && unzip -Z1 dist/interview-journey-claude-plugin.zip | grep -q 'skills/interview-journey/templates/' && unzip -Z1 dist/interview-journey-chatgpt-plugin.zip | grep -q 'references/03-interview-execution.md' && ! unzip -Z1 dist/interview-journey-chatgpt-plugin.zip | grep -qE 'examples/|\\.app\\.json'"
+plugin_packages_ok() {
+  scripts/package-claude-plugin.sh >/dev/null && scripts/package-chatgpt-plugin.sh >/dev/null || return 1
+  local claude_list chatgpt_list
+  claude_list="$(unzip -Z1 dist/interview-journey-claude-plugin.zip)" || return 1
+  chatgpt_list="$(unzip -Z1 dist/interview-journey-chatgpt-plugin.zip)" || return 1
+  grep -qF 'skills/interview-journey/templates/' <<< "${claude_list}" &&
+    grep -qF 'references/03-interview-execution.md' <<< "${chatgpt_list}" &&
+    ! grep -qE 'examples/|\.app\.json' <<< "${chatgpt_list}"
+}
+check "plugin packagers produce the expected file lists" "plugin_packages_ok"
 plugin_skill_ok() {
   local zip="dist/interview-journey-chatgpt-plugin.zip" root="interview-journey-chatgpt-plugin/skills/interview-journey"
-  local skill; skill="$(unzip -p "${zip}" "${root}/SKILL.md")" || return 1
+  local skill list; skill="$(unzip -p "${zip}" "${root}/SKILL.md")" || return 1
+  list="$(unzip -Z1 "${zip}")" || return 1
   ! grep -qiE "custom gpt|attached knowledge|knowledge file|paste it" <<< "${skill}" || return 1
   local r
   for r in $(sed -n '1,12p' <<< "${skill}" | grep -oE '[0-9]{2}-[a-z-]+\.md|capability-policy\.md' | sort -u); do
-    unzip -Z1 "${zip}" | grep -qx "${root}/references/${r}" || return 1
+    grep -qxF "${root}/references/${r}" <<< "${list}" || return 1
   done
 }
 check "ChatGPT plugin SKILL.md has no Custom GPT deployment text and its references exist in the package" "plugin_skill_ok"
