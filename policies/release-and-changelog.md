@@ -58,9 +58,9 @@ Every PR carries exactly one label:
   than the tag's.
 - **Version synchronization:** `scripts/release/sync-versions.sh` writes the
   release version into every discovered marketplace/plugin manifest
-  (`marketplace.json` and `plugin.json` under `.claude-plugin/`, `.codex-plugin/`
-  or `.agents/plugins/`; existing `version`, `metadata.version` and
-  `plugins[].version` fields only). The change goes into the same
+  (every `marketplace.json` and `plugin.json`: `.claude-plugin/marketplace.json`,
+  `.claude-plugin/plugin.json`, `chatgpt/plugin/plugin.json`; existing `version`
+  fields only, formatting preserved). The change goes into the same
   `chore(release)` commit as `CHANGELOG.md`, and no commit is made when nothing
   changed. Humans and agents do not bump these versions in ordinary PRs.
   `sync-versions.sh check` (also run by `tests/validate-repository.sh`) fails

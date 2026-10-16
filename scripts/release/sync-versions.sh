@@ -5,8 +5,10 @@
 #   sync-versions.sh check [<version>] [dir]            verify manifests agree
 #   sync-versions.sh list [dir]                         print discovered manifests
 #
-# Manifests are discovered, not listed: marketplace.json / plugin.json inside a
-# .claude-plugin, .codex-plugin or .agents/plugins directory. Only version
+# Manifests are discovered, not listed: every marketplace.json / plugin.json
+# (.claude-plugin/, chatgpt/plugin/, and plugin.json at a package root inside a
+# built archive). Edits are in place and keep the file's formatting, the same
+# way the plugin packagers stamp RELEASE_VERSION. Only version
 # fields that already exist are touched (.version, .metadata.version,
 # .plugins[].version); none are added. Without <version>, `check` only requires
 # all discovered versions to be equal. Finding no manifests is not an error, so
@@ -25,9 +27,8 @@ dir="${dir:-$(git rev-parse --show-toplevel)}"
 command -v jq >/dev/null || { echo "error: jq is required." >&2; exit 1; }
 
 manifests() {
-  (cd "$dir" && find . \( -name .git -o -name node_modules -o -name dist -o -name worktrees \) -prune -o \
-    -type f \( -name plugin.json -o -name marketplace.json \) \
-    \( -path '*/.claude-plugin/*' -o -path '*/.codex-plugin/*' -o -path '*/.agents/plugins/*' \) -print | sed 's|^\./||' | sort)
+  (cd "$dir" && find . \( -name .git -o -name .build -o -name node_modules -o -name dist -o -name worktrees \) -prune -o \
+    -type f \( -name plugin.json -o -name marketplace.json \) -print | sed 's|^\./||' | sort)
 }
 versions_in() { # file -> one version per line
   jq -r '[.version?, .metadata?.version?, (.plugins[]?.version?)] | map(select(. != null)) | .[]' "$dir/$1"
@@ -45,12 +46,9 @@ case "$mode" in
       [ "$cur" = "$version" ] && { echo "ok   $f already $version"; continue; }
       if [ "$dry" = 1 ]; then echo "[dry-run] would sync $f: $cur -> $version"; continue; fi
       tmp="$(mktemp)"
-      jq --arg v "$version" '
-        (if has("version") then .version = $v else . end)
-        | (if (.metadata? | type) == "object" and (.metadata | has("version")) then .metadata.version = $v else . end)
-        | (if (.plugins? | type) == "array" then .plugins |= map(if has("version") then .version = $v else . end) else . end)
-      ' "$dir/$f" > "$tmp"
+      sed -E "s/(\"version\"[[:space:]]*:[[:space:]]*)\"[^\"]*\"/\1\"${version}\"/" "$dir/$f" > "$tmp"
       cat "$tmp" > "$dir/$f"; rm -f "$tmp"
+      [ "$(versions_in "$f" | sort -u)" = "$version" ] || { echo "error: could not sync $f." >&2; exit 1; }
       echo "sync $f: $cur -> $version"
     done <<<"$files"
     ;;
