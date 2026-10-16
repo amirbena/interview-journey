@@ -1,0 +1,24 @@
+name: PR branch name
+
+# Validates the PR source branch (not the target) against
+# <type>/<issue-number>-<short-description>. Pull requests only, so release
+# commits pushed directly to main are never checked. See
+# policies/git-workflow.md.
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  branch-name:
+    # Required status check name for the main ruleset: "Validate PR branch name"
+    name: Validate PR branch name
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate source branch name
+        env:
+          PR_BRANCH: ${{ github.head_ref }}
+        run: scripts/validate-branch-name.sh

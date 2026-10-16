@@ -34,7 +34,7 @@ scope and non-goals.
 
 - Always inspect the repository before changing files.
 - Start feature work from the latest `main`.
-- Create one dedicated branch per task.
+- Create one dedicated branch per task. Before the first push or PR, rename it to `<type>/<issue-number>-<short-description>` and run `scripts/validate-branch-name.sh`; see [`policies/git-workflow.md`](policies/git-workflow.md).
 - Do not modify unrelated files.
 - Treat `core/` and `frameworks/` as the platform-independent source of truth.
 - Keep `claude/` and `chatgpt/` platform-specific.
