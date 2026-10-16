@@ -22,7 +22,7 @@ Interview Journey prepares you for a specific interview using your real evidence
 - **Full Interview Journey** — the complete ordered path: [`full-interview-journey`](../workflows/full-interview-journey.md).
 - **Focused Task** — only the modules a request needs: [`focused-task-routing`](../workflows/focused-task-routing.md).
 - **Resume Interview Journey** — continue from a saved state: [`resume-interview-journey`](../workflows/resume-interview-journey.md).
-- **Natural Answer Mode** — optional spoken-style answers for practice: [`natural-answer-mode`](natural-answer-mode.md).
+- **Natural Answer Mode** — natural, conversational interview answers you could say out loud, instead of heavily structured, document-style responses. It is opt-in and disabled by default; see [`natural-answer-mode`](natural-answer-mode.md) for how to turn it on and off.
 
 ## Boundaries
 
