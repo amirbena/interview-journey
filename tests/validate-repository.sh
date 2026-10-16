@@ -506,6 +506,24 @@ if [ -x scripts/validate-pr-release.sh ]; then
   check "label check accepts feat! + release: major" "$V 'feat!: x' 'release: major' >/dev/null 2>&1"
 fi
 
+# 29. Release automation: script, workflow guards, and asset names.
+RELEASE_SH="scripts/release/release.sh"
+RELEASE_YML=".github/workflows/release.yml"
+check "release script is executable" "[ -x '${RELEASE_SH}' ] && bash -n '${RELEASE_SH}'"
+check "release workflow exists" "[ -f '${RELEASE_YML}' ]"
+if [ -f "${RELEASE_YML}" ]; then
+  check "release workflow runs only from main and skips the App's own push" \
+    "grep -q \"github.ref == 'refs/heads/main'\" '${RELEASE_YML}' && grep -q 'github.actor != ' '${RELEASE_YML}'"
+  check "release workflow uses the App token and the release environment" \
+    "grep -q 'actions/create-github-app-token' '${RELEASE_YML}' && grep -q 'environment: release' '${RELEASE_YML}' && grep -q 'secrets.RELEASE_APP_PRIVATE_KEY' '${RELEASE_YML}'"
+  check "release workflow serializes runs" "grep -q 'cancel-in-progress: false' '${RELEASE_YML}'"
+fi
+if [ -f "${RELEASE_SH}" ]; then
+  check "release script asset names match the packagers' outputs" \
+    "grep -q 'PACKAGE_NAME=\"interview-journey\"' scripts/package-claude-skill.sh && grep -q 'interview-journey-claude-kit' scripts/package-claude-external-kit.sh && grep -q 'interview-journey-chatgpt' scripts/package-chatgpt-gpt.sh && grep -q 'interview-journey-chatgpt.zip' '${RELEASE_SH}' && grep -q 'interview-journey-claude-kit.zip' '${RELEASE_SH}' && grep -q 'interview-journey.skill.zip' '${RELEASE_SH}'"
+fi
+check "CHANGELOG has the 1.0.0 release baseline" "grep -q '^## 1.0.0 ' CHANGELOG.md || git tag --list 'v[0-9]*' | grep -q ."
+
 echo ""
 echo "== Summary =="
 echo "Passed: ${PASS_COUNT}"

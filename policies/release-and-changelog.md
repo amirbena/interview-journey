@@ -54,3 +54,36 @@ Every PR carries exactly one label:
 - GitHub Release ZIPs are the distribution channel for now. Do not assume they
   are consumed by Claude or Codex marketplaces; marketplace distribution is a
   separate decision.
+
+## Release setup and permissions
+
+Releases use the existing `Skill Release Automation` GitHub App; do not create
+another. Nothing secret is committed.
+
+- **App installation:** installed on this repository with repository
+  permissions `Contents: Read and write` (release commit, tag, Release,
+  assets), `Pull requests: Read-only` (reading merged PRs' `release:` labels),
+  and `Metadata: Read-only` (implicit). No other permissions.
+- **Environment `release`:** secrets `RELEASE_APP_ID` and
+  `RELEASE_APP_PRIVATE_KEY`. The workflow requests a short-lived token from
+  them and uses it for checkout, push, and `gh`. The job's own
+  `GITHUB_TOKEN` stays read-only.
+- **Ruleset on `main`:** the App is a bypass actor, so its `chore(release)`
+  changelog commit can be pushed directly. Humans still merge through PRs.
+- **Loop guard:** the workflow skips runs triggered by the App's own push, so
+  release commits never start a redundant release job.
+
+## Retries and manual recovery
+
+`scripts/release/release.sh` is idempotent. Re-running it never duplicates a
+tag, changelog section, or asset, and it recovers a Release or assets that are
+missing for the latest tag (for example after a failed upload). To retry, re-run
+the failed workflow run; runs are serialized by a `concurrency` group.
+
+- **Dry run:** run the workflow manually (it defaults to dry run) or run
+  `scripts/release/release.sh --dry-run`. It prints the next version, the
+  changelog diff, and what it would tag or upload, without changing anything.
+- **Manual release:** from an up-to-date `main` with `gh` authenticated and
+  permission to push, run `scripts/release/release.sh`. If the workflow or App
+  is unavailable, the packaging scripts in `scripts/` still build the ZIPs into
+  `dist/` and can be attached to a Release with `gh release create`.
