@@ -14,6 +14,7 @@ Interview Journey prepares you for a specific interview using your real evidence
 | Coding, system design, behavioral | Preparation grounded in your real experience | [`prepare-coding-interview`](../workflows/prepare-coding-interview.md), [`prepare-system-design-interview`](../workflows/prepare-system-design-interview.md), [`prepare-behavioral-interview`](../workflows/prepare-behavioral-interview.md) |
 | Mock interviews | Realistic simulation with a scorecard | [`run-mock-interview`](../workflows/run-mock-interview.md) |
 | Answer coaching | Structured feedback on an answer you submit | [`coach-interview-answer`](../workflows/coach-interview-answer.md) |
+| Natural Answer Mode | Natural, conversational answers instead of heavily structured ones; opt-in, off by default | [`natural-answer-mode`](natural-answer-mode.md) |
 | Post-interview debrief | Structured lessons from a completed interview | [`run-post-interview-debrief`](../workflows/run-post-interview-debrief.md) |
 | Offer and negotiation preparation | Preparing an offer call, range, evaluation, or negotiation | [`prepare-offer-negotiation`](../workflows/prepare-offer-negotiation.md) |
 
