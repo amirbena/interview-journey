@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Natural Answer Mode (feat/natural-answer-mode)
+
+- Added an opt-in Natural Answer Mode, defined once in `frameworks/13-answer-coaching-framework.md` (NAM-001–NAM-005): off by default, enabled or disabled by the user per answer or per conversation, delivery-only, with progressive detail and consistent behavior across technical, behavioral, system-design, and recruiter/HR questions.
+- Exposed it through the ChatGPT instructions (7,923 of 8,000 characters; Knowledge bundle 03 rebuilt), the Claude Skill and its answer-coaching reference, and the full and compact Project Instructions.
+- Added `docs/natural-answer-mode.md`, a README section, and `tests/fixtures/natural-answer-mode-examples.md`.
+
 ### Smallest reliable Custom GPT Knowledge deployment workflow (feature/chatgpt-knowledge-deploy-workflow)
 
 - Researched supported deployment mechanisms for an existing Custom GPT's Knowledge. Finding: OpenAI exposes no API, CLI, connector, or deploy hook for creating or updating a Custom GPT or its Knowledge files — the GPT editor is the only supported surface. The Assistants API / Responses API `file_search` + vector stores are a separate product and not a deployment path (Assistants API also retires 2026-08-26). Undocumented `backend-api/gizmos` endpoints are private/ToS-risky and are not used. Browser automation is a non-goal and no helper was added.

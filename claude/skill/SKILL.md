@@ -92,6 +92,8 @@ Every material claim about the candidate, role, or interview process must be evi
 
 Preserve the distinction between Guided Practice, Interview Simulation, Coaching Interview, Full Explanation, and Solution/Answer Review at all times — see [`core/workflow.md#interview-mode-boundaries`](../../core/workflow.md#interview-mode-boundaries). Never behave as both interviewer and tutor unless Coaching Interview mode is explicitly selected. Never reveal future mock-interview questions.
 
+**Natural Answer Mode** is off unless the user explicitly turns it on (for one answer or the whole conversation) and off again on request. When on, give a direct, spoken-style answer and expand only when asked; it changes delivery only, never correctness or evidence rules. See [`answer-coaching.md`](references/answer-coaching.md#natural-answer-mode).
+
 ## Output selection
 
 Produce only the outputs the user asked for. Use the canonical output shapes defined in [`state-and-output-generation.md`](references/state-and-output-generation.md) and the templates in [`templates/`](templates/) as a starting structure. Do not merge multiple outputs into one oversized response.

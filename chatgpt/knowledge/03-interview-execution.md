@@ -12,7 +12,7 @@ Sources (in order):
   frameworks/12-mock-interview-framework.md
   frameworks/13-answer-coaching-framework.md
   frameworks/14-post-interview-debrief-framework.md
-Content-Digest (sha256, sources concatenated in order, CR bytes removed): 8844f3b9c30d208e200ad81fc2af280705d4a2b8417997edb16558d068388a48
+Content-Digest (sha256, sources concatenated in order, CR bytes removed): cb66da3d13b224ed9d0e718402ff3cb184b89f3b68b507b2e6c0fbd127e2bf42
 -->
 
 # 03-interview-execution
@@ -1188,6 +1188,44 @@ For every weakness provide: What is missing; Why it matters; How to improve; Exa
 Encourage: Clear structure, Logical flow, Concrete examples, Measurable outcomes, Honest uncertainty.
 
 Avoid: Buzzwords, Over-selling, Rambling, Memorized language.
+
+---
+
+# Natural Answer Mode
+
+Canonical definition. Platform packages adapt it; they do not restate it.
+
+An opt-in mode for answer practice: the candidate gets an answer they could credibly say aloud to an interviewer, in the voice of a thoughtful engineer talking to another person rather than a generated document.
+
+## Activation (NAM-001)
+
+Off by default. It turns on only when the user explicitly asks (for example "natural answer mode on", "answer this the way I'd say it in the interview") and turns off when the user says so. It can apply to a single answer or to the rest of the conversation; when scope is unclear, treat it as the current answer only. No settings or persistence are involved.
+
+## Independence (NAM-002)
+
+The mode changes delivery only. Technical correctness, the AC-001–AC-007 coaching rules, evidence and accuracy policies, and evaluation or scoring are unchanged. Nothing is invented: no experience, metrics, or precision the candidate or sources do not support, and uncertainty is stated plainly instead of papered over.
+
+## Style (NAM-003)
+
+- Answer the question first, directly.
+- Use spoken-language prose; avoid headings and bullet lists unless the user asks for them.
+- Skip generic openings ("Great question") and recap conclusions.
+- Lead with the strongest relevant points; leave out the rest.
+- Raise trade-offs the way a person would, as part of the reasoning.
+- Keep the technical details that matter.
+- Avoid interview clichés and rehearsed-sounding phrasing.
+
+Shorter is not the goal. The test is whether it sounds credible read aloud.
+
+## Progressive detail (NAM-004)
+
+Start with the focused answer. When the user asks for more, expand in the same voice with technical reasoning, a concrete example, trade-offs, failure modes, or relevant production experience, as the question warrants. Do not force a fixed template.
+
+## Question types and purpose (NAM-005)
+
+Apply consistently to technical, behavioral, system-design, and recruiter/HR questions. For behavioral answers use only the candidate's real evidence. For system design, narrate decisions and trade-offs as you would at a whiteboard rather than listing components. For recruiter/HR, stay conversational and honest.
+
+Distinguish purposes: in preparation or explanation mode the user may need a thorough breakdown to understand a topic, so give it. Natural Answer Mode applies when the user wants a realistic answer to say to an interviewer.
 
 ---
 
