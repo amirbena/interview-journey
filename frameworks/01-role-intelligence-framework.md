@@ -7,7 +7,7 @@
 **Domain:** Interview Preparation and Business Intelligence
 **Language:** English
 
-> **Canonical framework.** This file is the platform-independent source of truth for Role Intelligence. `claude/skill/references/`, `chatgpt/knowledge/`, and any other platform adaptation must reference this document rather than redefine its rules, scoring formulas, or enums. See [`core/orchestration-policy.md`](../core/orchestration-policy.md) for how this framework fits into the master workflow (Document 15).
+> **Canonical framework.** This file is the platform-independent source of truth for Role Intelligence. `skills/interview-journey/references/`, `chatgpt/knowledge/`, and any other platform adaptation must reference this document rather than redefine its rules, scoring formulas, or enums. See [`core/orchestration-policy.md`](../core/orchestration-policy.md) for how this framework fits into the master workflow (Document 15).
 
 ---
 

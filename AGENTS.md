@@ -37,10 +37,10 @@ scope and non-goals.
 - Create one dedicated branch per task. Before the first push or PR, rename it to `<type>/<issue-number>-<short-description>` and run `scripts/validate-branch-name.sh`; see [`policies/git-workflow.md`](policies/git-workflow.md).
 - Do not modify unrelated files.
 - Treat `core/` and `frameworks/` as the platform-independent source of truth.
-- Keep `claude/` and `chatgpt/` platform-specific.
+- Keep `claude/` and `chatgpt/` platform-specific. The canonical Skill lives in `skills/interview-journey/`.
 - Do not duplicate methodology across platform folders when it belongs in `core/` or `frameworks/`.
 - Prefer small, focused changes.
-- Do not add an application backend, database, external API, ChatGPT Action, Claude MCP server, browser automation, or LinkedIn/recruiter-platform automation unless a future task explicitly requests it.
+- Do not add an application backend, database, external API, ChatGPT Action, Claude MCP server, MCP server or hook in any plugin (a ChatGPT Plugin is skills-only, see [`policies/packaging-rules.md`](policies/packaging-rules.md)), browser automation, or LinkedIn/recruiter-platform automation unless a future task explicitly requests it.
 - Do not push, open a PR, merge, or delete branches unless explicitly requested.
 
 ## Framework and methodology rules

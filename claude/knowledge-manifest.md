@@ -26,7 +26,7 @@ These files hold the platform-independent methodology and are safe to share acro
 
 Project Knowledge is a second, optional channel for the same canonical methodology already present in the installed Skill — useful on surfaces where Knowledge retrieval and Skill execution complement each other, or where a user wants the underlying rules visible and citable in chat. It is not a replacement for the Skill, and it is not a place for personal data.
 
-- **Do not duplicate the Skill package wholesale into Project Knowledge.** The Skill (`claude/skill/`) is the execution methodology layer — it already adapts these canonical files for progressive, in-conversation use. Uploading the entire Skill package as Knowledge on top of installing it as a Skill creates redundant, potentially divergent copies of the same rules.
+- **Do not duplicate the Skill package wholesale into Project Knowledge.** The Skill (`skills/interview-journey/`) is the execution methodology layer — it already adapts these canonical files for progressive, in-conversation use. Uploading the entire Skill package as Knowledge on top of installing it as a Skill creates redundant, potentially divergent copies of the same rules.
 - Project Knowledge contains shared methodology only — never personal candidate, role, or interviewer records.
 - Private user context may be added by the user to their own Project's Knowledge (for example, their own resume) — that is the user's choice for their own workspace, not something this manifest recommends by default or something a shared/team Project should include.
 - Do not assume every Knowledge file is loaded into every response. Treat Knowledge the same way the Skill treats its own references: consult what the current request actually needs.

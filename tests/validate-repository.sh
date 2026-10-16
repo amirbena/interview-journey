@@ -31,7 +31,7 @@ echo "== Interview Journey repository validation =="
 # UTF-8/non-ASCII content, independent of byte length or locale.
 if command -v python3 >/dev/null 2>&1; then
   CHATGPT_INSTRUCTIONS_COUNT=$(python3 -c "from pathlib import Path; print(len(Path('chatgpt/instructions.md').read_text(encoding='utf-8')))" 2>/dev/null || echo -1)
-  CLAUDE_DESCRIPTION_COUNT=$(python3 -c "from pathlib import Path; lines=Path('claude/skill/SKILL.md').read_text(encoding='utf-8').splitlines(); start=next(i for i,x in enumerate(lines) if x.startswith('description:')); end=next(i for i in range(start+1,len(lines)) if lines[i]=='---'); print(len(' '.join(x.strip() for x in lines[start+1:end])))" 2>/dev/null || echo -1)
+  CLAUDE_DESCRIPTION_COUNT=$(python3 -c "from pathlib import Path; lines=Path('skills/interview-journey/SKILL.md').read_text(encoding='utf-8').splitlines(); start=next(i for i,x in enumerate(lines) if x.startswith('description:')); end=next(i for i in range(start+1,len(lines)) if lines[i]=='---'); print(len(' '.join(x.strip() for x in lines[start+1:end])))" 2>/dev/null || echo -1)
   check "ChatGPT Instructions are at most 8,000 Unicode code points" "[ '${CHATGPT_INSTRUCTIONS_COUNT}' -ge 0 ] && [ '${CHATGPT_INSTRUCTIONS_COUNT}' -le 8000 ]"
   check "Claude description is at most 2,400 Unicode code points" "[ '${CLAUDE_DESCRIPTION_COUNT}' -ge 0 ] && [ '${CLAUDE_DESCRIPTION_COUNT}' -le 2400 ]"
 else
@@ -63,7 +63,7 @@ for d in schemas workflows outputs; do
 done
 
 # 5. Skill frontmatter is present and valid (has --- delimited YAML with name/description).
-SKILL_MD="claude/skill/SKILL.md"
+SKILL_MD="skills/interview-journey/SKILL.md"
 check "SKILL.md exists" "[ -f '${SKILL_MD}' ]"
 if [ -f "${SKILL_MD}" ]; then
   first_line=$(head -n1 "${SKILL_MD}")
@@ -75,11 +75,11 @@ fi
 # 6. All Skill reference files and templates referenced by SKILL.md exist.
 REFS=(product-and-orchestration role-and-resume-intelligence stage-fit-and-interview-intelligence preparation-strategy question-prediction-and-hypotheses coding-interviews system-design-interviews behavioral-interviews mock-interviews answer-coaching post-interview-debrief offer-and-negotiation-preparation state-and-output-generation accuracy-and-quality)
 for r in "${REFS[@]}"; do
-  check "claude/skill/references/${r}.md exists" "[ -f 'claude/skill/references/${r}.md' ]"
+  check "skills/interview-journey/references/${r}.md exists" "[ -f 'skills/interview-journey/references/${r}.md' ]"
 done
 TEMPLATES=(role-intelligence resume-intelligence interview-process role-fit-gap-analysis preparation-strategy question-predictions interview-hypotheses coding-preparation system-design-preparation behavioral-story-map mock-interview-scorecard answer-coaching post-interview-debrief offer-negotiation-preparation interview-journey-state)
 for t in "${TEMPLATES[@]}"; do
-  check "claude/skill/templates/${t}.md exists" "[ -f 'claude/skill/templates/${t}.md' ]"
+  check "skills/interview-journey/templates/${t}.md exists" "[ -f 'skills/interview-journey/templates/${t}.md' ]"
 done
 
 # 7. No forbidden files / artifacts anywhere in the tracked tree (excluding .git and dist/.build).
@@ -118,7 +118,7 @@ fi
 
 # 11. Formula drift: priority scoring formula must match between Framework 01 §17 and Skill reference.
 FRAMEWORK_01="frameworks/01-role-intelligence-framework.md"
-SKILL_REF="claude/skill/references/role-and-resume-intelligence.md"
+SKILL_REF="skills/interview-journey/references/role-and-resume-intelligence.md"
 if [ -f "${FRAMEWORK_01}" ] && [ -f "${SKILL_REF}" ]; then
   for component in "Business Impact" "Core Responsibility Alignment" "Ownership Relevance" "Evidence Strength" "Repetition" "Interview Relevance" "Non-Substitutability"; do
     check "Framework 01 scoring formula contains component: ${component}" "grep -qF '${component}' '${FRAMEWORK_01}'"
@@ -308,7 +308,7 @@ if [ -f "${TRIGGER_POLICY}" ]; then
 fi
 
 # 14. Project and Skill files must not claim external Skill dependencies or invocation.
-for ij_file in claude/project-instructions.md claude/project-instructions.compact.md claude/skill/SKILL.md; do
+for ij_file in claude/project-instructions.md claude/project-instructions.compact.md skills/interview-journey/SKILL.md; do
   if [ -f "${ij_file}" ]; then
     check "${ij_file} does not claim explicit external Skill invocation" \
       "! grep -qiE 'delegate to another|enabled Skills.*contribute|Skills.*activated automatically|invoke.*another.*[Ss]kill|call.*another.*[Ss]kill' '${ij_file}'"
@@ -375,7 +375,7 @@ if [ -f "${F08}" ]; then
 fi
 
 # 19. Skill reference for research exists.
-SKILL_REF_RESEARCH="claude/skill/references/research-and-evidence.md"
+SKILL_REF_RESEARCH="skills/interview-journey/references/research-and-evidence.md"
 check "Skill reference research-and-evidence.md exists" "[ -f '${SKILL_REF_RESEARCH}' ]"
 if [ -f "${SKILL_REF_RESEARCH}" ]; then
   check "Research reference defines Research Scope Constraint" \
@@ -385,7 +385,7 @@ if [ -f "${SKILL_REF_RESEARCH}" ]; then
 fi
 
 # 20. Skill routes research-backed preparation through internal references only.
-SKILL_MD="claude/skill/SKILL.md"
+SKILL_MD="skills/interview-journey/SKILL.md"
 if [ -f "${SKILL_MD}" ]; then
   check "SKILL.md routes current-research preparation to research-and-evidence reference" \
     "grep -q 'research-and-evidence.md' '${SKILL_MD}'"
@@ -548,6 +548,31 @@ if [ -x scripts/release/sync-versions.sh ] && command -v jq >/dev/null 2>&1; the
 fi
 check "release script syncs manifest versions" "grep -q 'sync-versions.sh' '${RELEASE_SH}' && [ -x scripts/release/sync-versions.sh ]"
 check "CHANGELOG has the 1.0.0 release baseline" "grep -q '^## 1.0.0 ' CHANGELOG.md || git tag --list 'v[0-9]*' | grep -q ."
+
+echo ""
+echo "== Plugin distribution (issue #25) =="
+check "canonical Skill lives at skills/interview-journey and claude/skill is gone" "[ -f skills/interview-journey/SKILL.md ] && [ ! -e claude/skill ]"
+check "no symlinks in the repository tree" "[ -z \"\$(find . -path ./.git -prune -o -path ./.claude -prune -o -path ./dist -prune -o -path ./.build -prune -o -type l -print)\" ]"
+check "plugin and marketplace manifests are valid JSON" "python3 -c \"import json;[json.load(open(p)) for p in ('.claude-plugin/marketplace.json','.claude-plugin/plugin.json','chatgpt/plugin/plugin.json')]\""
+check "marketplace points at the canonical Skill" "grep -q '\"./skills/interview-journey\"' .claude-plugin/marketplace.json"
+check "ChatGPT plugin manifest respects documented limits" "python3 -c \"import json;d=json.load(open('chatgpt/plugin/plugin.json'));i=d['extensions']['com.openai']['interface'];assert len(i['shortDescription'])<=30 and len(i['displayName'])<=30 and len(i['defaultPrompt'])<=3 and all(len(x)<=128 for x in i['defaultPrompt'])\""
+check "ChatGPT plugin declares no MCP servers, apps, or hooks" "! grep -qiE 'mcpServers|\"apps\"|\"hooks\"' chatgpt/plugin/plugin.json .claude-plugin/plugin.json"
+for s in package-claude-plugin package-chatgpt-plugin; do
+  check "${s} has Bash and PowerShell twins" "[ -x scripts/${s}.sh ] && [ -f scripts/${s}.ps1 ] && bash -n scripts/${s}.sh"
+done
+PLUGIN_TMP="$(mktemp -d)"
+check "plugin packagers produce the expected file lists" "scripts/package-claude-plugin.sh >/dev/null && scripts/package-chatgpt-plugin.sh >/dev/null && unzip -Z1 dist/interview-journey-claude-plugin.zip | grep -q 'skills/interview-journey/templates/' && unzip -Z1 dist/interview-journey-chatgpt-plugin.zip | grep -q 'references/03-interview-execution.md' && ! unzip -Z1 dist/interview-journey-chatgpt-plugin.zip | grep -qE 'examples/|\\.app\\.json'"
+plugin_skill_ok() {
+  local zip="dist/interview-journey-chatgpt-plugin.zip" root="interview-journey-chatgpt-plugin/skills/interview-journey"
+  local skill; skill="$(unzip -p "${zip}" "${root}/SKILL.md")" || return 1
+  ! grep -qiE "custom gpt|attached knowledge|knowledge file|paste it" <<< "${skill}" || return 1
+  local r
+  for r in $(sed -n '1,12p' <<< "${skill}" | grep -oE '[0-9]{2}-[a-z-]+\.md|capability-policy\.md' | sort -u); do
+    unzip -Z1 "${zip}" | grep -qx "${root}/references/${r}" || return 1
+  done
+}
+check "ChatGPT plugin SKILL.md has no Custom GPT deployment text and its references exist in the package" "plugin_skill_ok"
+rm -rf "${PLUGIN_TMP}"
 
 echo ""
 echo "== Summary =="

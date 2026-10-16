@@ -1,6 +1,6 @@
 # Packaging the Claude Skill
 
-This document explains how to build the installable Interview Journey Claude Skill ZIP from `claude/skill/`. For what the package contains and why, see [`skill-manifest.md`](skill-manifest.md).
+This document explains how to build the installable Interview Journey Claude Skill ZIP from `skills/interview-journey/`. For what the package contains and why, see [`skill-manifest.md`](skill-manifest.md).
 
 ## Commands
 
@@ -19,7 +19,7 @@ This document explains how to build the installable Interview Journey Claude Ski
 Both scripts:
 
 - Resolve all paths relative to their own location, so they work whether invoked from the repository root, from `scripts/`, or from any other working directory, including one outside the repository.
-- Validate that `claude/skill/SKILL.md`, `claude/skill/references/`, and `claude/skill/templates/` exist before doing any packaging work, and fail with an actionable message if any are missing.
+- Validate that `skills/interview-journey/SKILL.md`, `skills/interview-journey/references/`, and `skills/interview-journey/templates/` exist before doing any packaging work, and fail with an actionable message if any are missing.
 - Copy only the explicit package allowlist — `SKILL.md`, `references/`, `templates/` — into a dedicated staging directory. Neither script performs a recursive copy of the repository followed by exclusions; both start from an empty staging directory and add only allowed content.
 - Wrap the staged content in a single top-level directory named `interview-journey/`.
 - Strip platform artifacts (`.DS_Store`, `Thumbs.db`, `__MACOSX/`) if encountered in the source tree.

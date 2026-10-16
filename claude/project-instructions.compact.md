@@ -1,6 +1,6 @@
 # Claude Project Instructions — Compact
 
-A condensed version of [`project-instructions.md`](project-instructions.md) sized for a constrained Project Instructions field. It omits worked explanations, examples, and cross-references, but keeps every essential rule the full version defines. It intentionally excludes detailed framework rules, scoring formulas, and output shapes — those live only in the [Skill](skill/SKILL.md).
+A condensed version of [`project-instructions.md`](project-instructions.md) sized for a constrained Project Instructions field. It omits worked explanations, examples, and cross-references, but keeps every essential rule the full version defines. It intentionally excludes detailed framework rules, scoring formulas, and output shapes — those live only in the [Skill](../skills/interview-journey/SKILL.md).
 
 ## Parity note
 

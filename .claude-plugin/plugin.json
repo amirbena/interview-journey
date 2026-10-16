@@ -1,0 +1,10 @@
+{
+  "name": "interview-journey",
+  "version": "1.0.0",
+  "description": "Evidence-driven technical interview preparation, simulation, answer coaching, and offer-negotiation preparation across the full hiring journey.",
+  "author": {
+    "name": "Amir Ben-Assayag"
+  },
+  "repository": "https://github.com/amirbena/interview-journey",
+  "keywords": ["interview", "interview-prep", "career", "resume"]
+}

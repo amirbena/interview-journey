@@ -30,7 +30,7 @@ See [`external-install/README.md`](external-install/README.md) for the full flow
 | Layer | Responsibility |
 |---|---|
 | Core repository (`frameworks/`, `core/`, `schemas/`, `workflows/`, `outputs/`) | Canonical methodology |
-| Claude Skill (`claude/skill/`) | Execution and progressive loading |
+| Claude Skill (`skills/interview-journey/`) | Execution and progressive loading |
 | Project Instructions | Conversation routing and UX |
 | Project Knowledge | Shared methodology and optional private context |
 | Claude platform | Available context, persistence, and retention |
