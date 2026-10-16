@@ -42,6 +42,7 @@ interview-journey/
 ├── claude/           Claude Skill, Claude Project, and external-install packaging
 ├── chatgpt/          ChatGPT Custom GPT instructions, Knowledge, and packaging
 ├── scripts/          deterministic packaging/build scripts (Bash + PowerShell)
+├── docs/             user-facing guides
 ├── examples/         a fully synthetic worked example
 ├── tests/            repository validation
 └── dist/             generated packages (git-ignored)
@@ -78,6 +79,10 @@ Document 15 does not replace 01–14; it decides how they work together. See [`c
 - [`workflows/focused-task-routing.md`](workflows/focused-task-routing.md) — routing a specific request to the minimum required frameworks.
 - [`workflows/prepare-offer-negotiation.md`](workflows/prepare-offer-negotiation.md) — focused offer and compensation-negotiation preparation.
 - [`workflows/resume-interview-journey.md`](workflows/resume-interview-journey.md) — continuing from the latest valid Interview Journey State.
+
+## Natural Answer Mode
+
+An opt-in mode for answer practice: instead of a structured, document-style reply, you get a direct answer in spoken language you could say to an interviewer, with more depth on request. It is off by default, you turn it on or off in the conversation, and it changes delivery only, never correctness, evidence, or scoring. It works the same in the Custom GPT, Skill, and Project. See [`docs/natural-answer-mode.md`](docs/natural-answer-mode.md); the canonical rules are in [`frameworks/13-answer-coaching-framework.md`](frameworks/13-answer-coaching-framework.md).
 
 ## State handling
 
@@ -146,6 +151,7 @@ The product may only analyze information explicitly provided by the user. It mus
 
 ## Further reading
 
+- [`docs/natural-answer-mode.md`](docs/natural-answer-mode.md)
 - [`ROADMAP.md`](ROADMAP.md)
 - [`CHANGELOG.md`](CHANGELOG.md)
 - [`AGENTS.md`](AGENTS.md)

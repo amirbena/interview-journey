@@ -12,4 +12,5 @@ pull requests. See [`policies/release-and-changelog.md`](policies/release-and-ch
 - ChatGPT Custom GPT package with three traceable Knowledge bundles and a `deployment-release.json` provenance record
 - Public interview research with evidence classes, freshness rules, and bounded routing
 - Offer and negotiation preparation across all three packages
+- Opt-in Natural Answer Mode for spoken-style interview answers across all three packages
 - Repository validation, deterministic Bash and PowerShell packaging scripts, and a synthetic example journey
