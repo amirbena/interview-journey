@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
 # Compute the next semantic version since the last tag from each merged PR's
 # `release:` label (falling back to Conventional Commits), update CHANGELOG.md,
-# tag, and publish a GitHub Release with the Skill, External Kit and ChatGPT
-# GPT ZIPs attached. The ZIPs are built by the existing packaging scripts from
-# the tagged revision, after tests/validate-repository.sh passes on it.
+# tag, and publish a GitHub Release with the Skill, External Kit, ChatGPT GPT
+# and (when the tagged revision has their packagers) Claude plugin and ChatGPT
+# plugin ZIPs attached. The release version is also written into every
+# marketplace/plugin manifest (scripts/release/sync-versions.sh) in the single
+# chore(release) commit. The ZIPs are built by the existing packaging scripts
+# from the tagged revision, with RELEASE_VERSION exported, after
+# tests/validate-repository.sh passes on it; the version inside each archive
+# must match the tag.
 # Safe to re-run: existing tags, changelog sections and release assets are
 # never duplicated, and a missing Release or missing assets for the latest tag
 # are recovered. Manual recovery: run this script locally (see
 # policies/release-and-changelog.md).
 #
 # Usage: scripts/release/release.sh [--dry-run]
-# Needs: git, zip; gh + GH_TOKEN when publishing.
+# Needs: git, zip, unzip, jq; gh + GH_TOKEN when publishing.
 # Optional: GIT_USER_NAME / GIT_USER_EMAIL for the release commit identity.
 set -euo pipefail
 
@@ -24,12 +29,38 @@ ASSETS=(
   interview-journey-claude-kit.zip
   interview-journey-chatgpt.zip
 )
+# Packages added by the plugin distribution work (#25). Published only when the
+# tagged revision contains their packager, so older tags stay recoverable.
+# Asset and script names must match #25's entry points; confirm on integration.
+OPTIONAL_ASSETS=(
+  interview-journey-claude-plugin.zip
+  interview-journey-chatgpt-plugin.zip
+)
 packager_for() { # asset -> packaging script, run from the tagged revision
   case "$1" in
     interview-journey.skill.zip) echo package-claude-skill.sh ;;
     interview-journey-claude-kit.zip) echo package-claude-external-kit.sh ;;
     interview-journey-chatgpt.zip) echo package-chatgpt-gpt.sh ;;
+    interview-journey-claude-plugin.zip) echo package-claude-plugin.sh ;;
+    interview-journey-chatgpt-plugin.zip) echo package-chatgpt-plugin.sh ;;
   esac
+}
+assets_for() { # $1=git rev; required assets plus optional ones whose packager exists there
+  local a
+  printf '%s\n' "${ASSETS[@]}"
+  for a in "${OPTIONAL_ASSETS[@]}"; do
+    git cat-file -e "$1:scripts/$(packager_for "$a")" 2>/dev/null && printf '%s\n' "$a"
+  done
+  return 0
+}
+# Fail unless every marketplace/plugin manifest inside an archive carries the
+# release version.
+check_archive_version() { # $1=zip $2=version
+  local x; x="$(mktemp -d)"
+  unzip -q "$1" -d "$x"
+  scripts/release/sync-versions.sh check "$2" "$x" >/dev/null \
+    || { rm -rf "$x"; echo "error: $(basename "$1") contains manifests whose version is not $2." >&2; exit 1; }
+  rm -rf "$x"
 }
 WT=""
 trap '[ -z "$WT" ] || git worktree remove --force "$WT" >/dev/null 2>&1 || true' EXIT
@@ -48,15 +79,21 @@ notes_for() { # $1=version
 # ZIPs from the tagged revision so they match the published version. The
 # tagged revision must pass the repository validator first.
 ensure_release() { # $1=version
-  local tag="v$1" notes missing=() have a files=() pk
-  if [ "$DRY_RUN" = 1 ]; then echo "[dry-run] would ensure Release $tag with assets: ${ASSETS[*]}"; return 0; fi
+  local tag="v$1" notes missing=() have a files=() pk want=()
+  if [ "$DRY_RUN" = 1 ]; then
+    # In a dry run the tag may not exist yet; plan from HEAD.
+    local rev="HEAD"; git rev-parse -q --verify "refs/tags/$tag" >/dev/null && rev="refs/tags/$tag"
+    while IFS= read -r a; do want+=("$a"); done < <(assets_for "$rev")
+    echo "[dry-run] would ensure Release $tag with assets: ${want[*]}"; return 0
+  fi
+  while IFS= read -r a; do want+=("$a"); done < <(assets_for "refs/tags/$tag")
   notes="$(mktemp)"; notes_for "$1" > "$notes"
   [ -s "$notes" ] || echo "Release $tag" > "$notes"
   if have="$(gh release view "$tag" --json assets -q '.assets[].name' 2>/dev/null)"; then
-    for a in "${ASSETS[@]}"; do grep -qxF "$a" <<<"$have" || missing+=("$a"); done
+    for a in "${want[@]}"; do grep -qxF "$a" <<<"$have" || missing+=("$a"); done
     [ "${#missing[@]}" -eq 0 ] && { echo "Release $tag is complete."; return 0; }
   else
-    missing=("${ASSETS[@]}")
+    missing=("${want[@]}")
   fi
   WT="$(mktemp -d)"
   git worktree add --detach "$WT" "refs/tags/$tag" >/dev/null
@@ -65,8 +102,11 @@ ensure_release() { # $1=version
   for a in "${missing[@]}"; do
     pk="$(packager_for "$a")"
     [ -x "$WT/scripts/$pk" ] || { echo "error: $tag has no scripts/$pk; cannot build $a." >&2; exit 1; }
-    "$WT/scripts/$pk" >/dev/null
+    (cd "$WT" && RELEASE_VERSION="$1" "scripts/$pk" >/dev/null)
     [ -f "$WT/dist/$a" ] || { echo "error: $pk did not produce $a." >&2; exit 1; }
+    (cd "$WT" && scripts/release/sync-versions.sh check "$1" >/dev/null) \
+      || { echo "error: $tag manifests do not all carry version $1." >&2; exit 1; }
+    check_archive_version "$WT/dist/$a" "$1"
     files+=("$WT/dist/$a")
     # deployment-release.json must trace to this tag, not a stray commit.
     if [ "$a" = interview-journey-chatgpt.zip ]; then
@@ -205,13 +245,19 @@ if ! grep -q "^## $NEW " CHANGELOG.md; then
   if [ "$DRY_RUN" = 1 ]; then diff -u CHANGELOG.md "$out" || true; else cp "$out" CHANGELOG.md; fi
 fi
 
+# Marketplace/plugin manifests carry the release version in the same commit.
 if [ "$DRY_RUN" = 1 ]; then
+  scripts/release/sync-versions.sh sync "$NEW" --dry-run
   tag_and_ensure "$NEW" HEAD; echo "[dry-run] done"; exit 0
 fi
+scripts/release/sync-versions.sh sync "$NEW"
 
 validate_head
-if ! git diff --quiet CHANGELOG.md; then
-  git add CHANGELOG.md
+scripts/release/sync-versions.sh check "$NEW" >/dev/null
+release_files=(CHANGELOG.md)
+while IFS= read -r f; do [ -z "$f" ] || release_files+=("$f"); done < <(scripts/release/sync-versions.sh list)
+if ! git diff --quiet -- "${release_files[@]}"; then  # nothing changed -> no commit
+  git add -- "${release_files[@]}"
   git commit -m "chore(release): v$NEW"
   git push origin HEAD
 fi
