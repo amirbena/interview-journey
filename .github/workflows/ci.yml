@@ -1,0 +1,29 @@
+name: CI
+
+# Lightweight PR validation: Linux, Bash only. No Claude CLI, no PowerShell,
+# no packaging. See policies/release-and-changelog.md.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate repository and release label
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate repository
+        run: tests/validate-repository.sh
+      - name: Validate release label
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: scripts/validate-pr-release.sh

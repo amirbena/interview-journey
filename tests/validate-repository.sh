@@ -484,6 +484,46 @@ if [ -f "${PR_TEMPLATE}" ]; then
     "! grep -qE '^ *- \[[ xX]\]' '${PR_TEMPLATE}'"
 fi
 
+# 28. Release policy, CI workflow, and PR release-label check.
+check "release policy exists" "[ -f policies/release-and-changelog.md ]"
+check "AGENTS.md references the release policy" "grep -q 'policies/release-and-changelog.md' AGENTS.md"
+check "PR template has a Release impact section" "grep -q '^## Release impact' '${PR_TEMPLATE}'"
+check "CI workflow exists" "[ -f .github/workflows/ci.yml ]"
+if [ -f .github/workflows/ci.yml ]; then
+  check "CI runs the repository validator" "grep -q 'tests/validate-repository.sh' .github/workflows/ci.yml"
+  check "CI uses a Linux runner and no Claude CLI or PowerShell" \
+    "grep -q 'ubuntu-latest' .github/workflows/ci.yml && ! grep -v '^ *#' .github/workflows/ci.yml | grep -qiE 'claude|pwsh|powershell|matrix'"
+fi
+check "release-label validator is executable" "[ -x scripts/validate-pr-release.sh ]"
+if [ -x scripts/validate-pr-release.sh ]; then
+  V=scripts/validate-pr-release.sh
+  check "label check accepts feat + release: minor" "$V 'feat: x' 'release: minor' >/dev/null 2>&1"
+  check "label check accepts docs + release: none" "$V 'docs: x' 'release: none' >/dev/null 2>&1"
+  check "label check rejects a missing label" "! $V 'docs: x' 'bug' >/dev/null 2>&1"
+  check "label check rejects two labels" "! $V 'docs: x' 'release: none,release: patch' >/dev/null 2>&1"
+  check "label check rejects feat + release: none" "! $V 'feat: x' 'release: none' >/dev/null 2>&1"
+  check "label check rejects major without a breaking marker" "! $V 'feat: x' 'release: major' >/dev/null 2>&1"
+  check "label check accepts feat! + release: major" "$V 'feat!: x' 'release: major' >/dev/null 2>&1"
+fi
+
+# 29. Release automation: script, workflow guards, and asset names.
+RELEASE_SH="scripts/release/release.sh"
+RELEASE_YML=".github/workflows/release.yml"
+check "release script is executable" "[ -x '${RELEASE_SH}' ] && bash -n '${RELEASE_SH}'"
+check "release workflow exists" "[ -f '${RELEASE_YML}' ]"
+if [ -f "${RELEASE_YML}" ]; then
+  check "release workflow runs only from main and skips the App's own push" \
+    "grep -q \"github.ref == 'refs/heads/main'\" '${RELEASE_YML}' && grep -q 'github.actor != ' '${RELEASE_YML}'"
+  check "release workflow uses the App token and the release environment" \
+    "grep -q 'actions/create-github-app-token' '${RELEASE_YML}' && grep -q 'environment: release' '${RELEASE_YML}' && grep -q 'secrets.RELEASE_APP_PRIVATE_KEY' '${RELEASE_YML}'"
+  check "release workflow serializes runs" "grep -q 'cancel-in-progress: false' '${RELEASE_YML}'"
+fi
+if [ -f "${RELEASE_SH}" ]; then
+  check "release script asset names match the packagers' outputs" \
+    "grep -q 'PACKAGE_NAME=\"interview-journey\"' scripts/package-claude-skill.sh && grep -q 'interview-journey-claude-kit' scripts/package-claude-external-kit.sh && grep -q 'interview-journey-chatgpt' scripts/package-chatgpt-gpt.sh && grep -q 'interview-journey-chatgpt.zip' '${RELEASE_SH}' && grep -q 'interview-journey-claude-kit.zip' '${RELEASE_SH}' && grep -q 'interview-journey.skill.zip' '${RELEASE_SH}'"
+fi
+check "CHANGELOG has the 1.0.0 release baseline" "grep -q '^## 1.0.0 ' CHANGELOG.md || git tag --list 'v[0-9]*' | grep -q ."
+
 echo ""
 echo "== Summary =="
 echo "Passed: ${PASS_COUNT}"

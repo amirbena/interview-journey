@@ -60,11 +60,13 @@ the relevant top-level files (e.g. `README.md`).
 | --- | --- |
 | Branch naming, up-to-date `main`, pre-edit gate, merge strategy, admin merge fallback, post-merge sync, safe local cleanup, Issue and PR writing | [policies/git-workflow.md](policies/git-workflow.md) |
 | Cross-package delivery, Claude Skill packaging, Claude Project experience, Claude external kit, ChatGPT packaging, data and privacy rules | [policies/packaging-rules.md](policies/packaging-rules.md) |
+| CI, release classification (`release:` labels), changelog, GitHub Releases | [policies/release-and-changelog.md](policies/release-and-changelog.md) |
 | Product scope and non-goals | [core/scope-and-non-goals.md](core/scope-and-non-goals.md) |
 
 Read the Git workflow before your first change, and the packaging rules
 before touching `claude/` or `chatgpt/` packaging or any cross-package
-capability.
+capability. Propose one `release:` label in every PR's *Release impact*
+section; the reviewer decides.
 
 ## Before completion
 
@@ -95,6 +97,7 @@ Every task's final response must include:
 
 - [`README.md`](README.md)
 - [`CLAUDE.md`](CLAUDE.md)
+- [`policies/release-and-changelog.md`](policies/release-and-changelog.md)
 - [`core/scope-and-non-goals.md`](core/scope-and-non-goals.md)
 - [`policies/git-workflow.md`](policies/git-workflow.md)
 - [`policies/packaging-rules.md`](policies/packaging-rules.md)
