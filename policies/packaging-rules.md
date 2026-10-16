@@ -29,8 +29,8 @@ the ChatGPT Custom GPT, the Claude Skill, and the Claude Project.
 
 ## Claude Skill packaging rules
 
-- `claude/skill/` is the installable Skill source.
-- The Claude description in `claude/skill/SKILL.md` must not exceed 2,400 characters. Validate generated or edited description content before completion. This ceiling is not a target; when shortening is necessary, remove duplication with canonical framework and Knowledge files before weakening required behavior.
+- `skills/interview-journey/` is the single canonical, installable Skill source. Claude marketplace, `npx skills`, Codex, and the Skill ZIP all consume it directly; no symlinks, copies, or generation layer.
+- The Claude description in `skills/interview-journey/SKILL.md` must not exceed 2,400 characters. Validate generated or edited description content before completion. This ceiling is not a target; when shortening is necessary, remove duplication with canonical framework and Knowledge files before weakening required behavior.
 - `core/`, `frameworks/`, `schemas/`, `workflows/`, and `outputs/` remain canonical — the Skill adapts them, it does not redefine them.
 - Packaging uses an explicit allowlist (`SKILL.md`, `references/`, `templates/`), never a recursive repository copy followed by exclusions.
 - Never recursively package the whole repository.
@@ -38,6 +38,12 @@ the ChatGPT Custom GPT, the Claude Skill, and the Claude Project.
 - Real candidate data and the synthetic example must never enter the Skill ZIP.
 - Packaging scripts must work when invoked from outside the repository root.
 - Every Skill change must validate package contents before completion.
+
+## Plugin and marketplace rules
+
+- `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json` point at `./skills/interview-journey`; validate with `claude plugin validate .`.
+- Plugin packagers (`package-claude-plugin`, `package-chatgpt-plugin`) use explicit allowlists, keep Bash/PowerShell parity, and accept an optional `RELEASE_VERSION`; unset keeps the committed manifest version.
+- Document an install command as working only after verifying it; label the rest unverified in `docs/installation.md`.
 
 ## Claude Project experience rules
 
@@ -70,7 +76,8 @@ the ChatGPT Custom GPT, the Claude Skill, and the Claude Project.
 - `chatgpt/publishing-knowledge.md` is the authoritative publish procedure and record of supported vs unsupported deployment mechanisms; keep it in sync with the scripts.
 - Do not upload the synthetic example or personal records as shared GPT Knowledge.
 - The GPT must not claim unavailable memory, browsing, storage, or automation.
-- Actions, Apps, APIs, monitoring, and automated outreach/scheduling remain out of scope.
+- A ChatGPT Plugin is allowed only as a skills-only package: `plugin.json`, one `SKILL.md`, and `references/` assembled from canonical `chatgpt/` sources (generated Knowledge bundles, `capability-policy.md`). It must contain no MCP servers, Actions, Apps (`.app.json`), hooks, external APIs, or background automation, and no duplicated Knowledge bundles. The Custom GPT package stays supported until the plugin is verified.
+- Actions, Apps, external APIs, monitoring, and automated outreach/scheduling remain out of scope.
 - macOS/Linux and Windows builders and packagers must remain logically equivalent.
 
 ## Data and privacy rules

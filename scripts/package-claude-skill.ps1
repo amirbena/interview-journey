@@ -20,7 +20,7 @@ function Fail {
 }
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
-$SkillSourceDir = Join-Path $RepoRoot "claude\skill"
+$SkillSourceDir = Join-Path $RepoRoot "skills\interview-journey"
 $DistDir = Join-Path $RepoRoot "dist"
 $BuildDir = Join-Path $RepoRoot ".build\claude-skill-package"
 $PackageName = "interview-journey"

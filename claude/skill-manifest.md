@@ -15,15 +15,15 @@ Neither package may contain personal data, and the External Kit never redefines 
 
 - **Skill name:** `interview-journey`
 - **Version:** 1.0.0
-- **Package root (source):** [`claude/skill/`](skill/)
+- **Package root (source):** [`skills/interview-journey/`](../skills/interview-journey/)
 - **Top-level directory inside the ZIP:** `interview-journey/`
 
 ## Included files
 
-Everything under `claude/skill/` is Skill source and enters the package:
+Everything under `skills/interview-journey/` is Skill source and enters the package:
 
 ```
-claude/skill/
+skills/interview-journey/
   SKILL.md
   references/
     product-and-orchestration.md
@@ -75,7 +75,7 @@ The package uses an explicit allowlist (`SKILL.md`, `references/`, `templates/`)
 
 ## Canonical source mappings
 
-Every reference file in `claude/skill/references/` adapts specific canonical repository files rather than redefining them. See the "Canonical sources" note at the top of each reference file for the exact mapping. Summary:
+Every reference file in `skills/interview-journey/references/` adapts specific canonical repository files rather than redefining them. See the "Canonical sources" note at the top of each reference file for the exact mapping. Summary:
 
 | Reference file | Canonical sources |
 |---|---|
@@ -95,7 +95,7 @@ Every reference file in `claude/skill/references/` adapts specific canonical rep
 | `state-and-output-generation.md` | `core/state-management.md`, `core/output-contracts.md`, `schemas/interview-journey-state.schema.md`, `outputs/*` |
 | `accuracy-and-quality.md` | `core/evidence-policy.md`, `core/accuracy-policy.md`, `core/quality-gates.md`, `core/context-priority.md` |
 
-Templates in `claude/skill/templates/` mirror the placeholder structure of the matching file in `outputs/*-template.md`, with all synthetic example content stripped — templates ship as clean, reusable placeholders only.
+Templates in `skills/interview-journey/templates/` mirror the placeholder structure of the matching file in `outputs/*-template.md`, with all synthetic example content stripped — templates ship as clean, reusable placeholders only.
 
 ## Expected ZIP structure
 
