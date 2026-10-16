@@ -205,5 +205,5 @@ Conciseness must not remove information needed to execute the task
 correctly, understand important architectural decisions, review
 risk/correctness, or verify completion. Prefer useful density, not
 maximum brevity. This complements — and does not weaken — the mandatory
-Final response report and Before completion checks in
-[../AGENTS.md](../AGENTS.md).
+[Final response report](../AGENTS.md#final-response-report) and
+[Before completion](../AGENTS.md#before-completion) checks.
