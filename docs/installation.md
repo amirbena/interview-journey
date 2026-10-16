@@ -50,7 +50,8 @@ Follow [`claude/external-install/README.md`](../claude/external-install/README.m
 
 ## ChatGPT
 
-- **Custom GPT (unchanged, remains supported):** `./scripts/package-chatgpt-gpt.sh`, then follow [`chatgpt/builder-setup.md`](../chatgpt/builder-setup.md).
-- **ChatGPT Plugin (skills-only):** `./scripts/package-chatgpt-plugin.sh` produces `dist/interview-journey-chatgpt-plugin.zip`. Package build: **verified**. Installation into Codex CLI and ChatGPT Desktop: **unverified** (neither was available); see [`chatgpt/plugin-config.md`](../chatgpt/plugin-config.md). Keep using the Custom GPT until the plugin is verified.
+- **ChatGPT Plugin (skills-only, primary):** `./scripts/package-chatgpt-plugin.sh` produces `dist/interview-journey-chatgpt-plugin.zip`. Package build: **verified**. Installation into Codex CLI and ChatGPT Desktop: **unverified** (neither was available); see [`chatgpt/plugin-config.md`](../chatgpt/plugin-config.md). Keep using the Custom GPT until the plugin is verified.
 
 See [packaging](packaging.md) for how each artifact is built.
+
+The legacy Custom GPT is deprecated and transitional; see [ChatGPT migration](chatgpt-migration.md).

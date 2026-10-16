@@ -1,6 +1,6 @@
 # ChatGPT Plugin Configuration
 
-The skills-only ChatGPT Plugin is the successor to the Custom GPT. The Custom GPT package stays supported until the plugin is verified.
+The skills-only ChatGPT Plugin is the primary ChatGPT distribution target. The Custom GPT is deprecated and kept only as a temporary migration safeguard until the plugin is verified; see [`../docs/chatgpt-migration.md`](../docs/chatgpt-migration.md).
 
 - Manifest and listing metadata: [`plugin/plugin.json`](plugin/plugin.json).
 - Behavior: [`plugin/SKILL.header.md`](plugin/SKILL.header.md) (frontmatter) plus the canonical [`instructions.md`](instructions.md), assembled by `scripts/package-chatgpt-plugin.sh` / `.ps1`. Nothing is duplicated in the repository.

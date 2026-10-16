@@ -5,4 +5,4 @@ description: Evidence-driven technical interview preparation. Use for role analy
 
 # Interview Journey
 
-The reference files under `references/` are the canonical methodology (Knowledge bundles) and capability policy; follow them and never restate them differently.
+This Skill bundles its reference material under `references/`: `01-product-orchestration-and-quality.md`, `02-role-resume-and-strategy.md`, `03-interview-execution.md` (the canonical `core/`, `frameworks/`, schema, and workflow sources, each introduced by its repository path) and `capability-policy.md`. When the instructions below cite a reference source such as `core/evidence-policy.md`, find it inside those files.

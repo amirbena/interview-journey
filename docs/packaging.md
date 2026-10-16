@@ -7,7 +7,7 @@ All packages are built from canonical sources with explicit allowlists, never a 
 | `package-claude-skill` | `interview-journey.skill.zip` | `skills/interview-journey/` (`SKILL.md`, `references/`, `templates/`) |
 | `package-claude-plugin` | `interview-journey-claude-plugin.zip` | `.claude-plugin/plugin.json` + the same Skill under `skills/interview-journey/` |
 | `package-claude-external-kit` | `interview-journey-claude-kit.zip` | Skill ZIP, compact Instructions, approved Knowledge, install guides |
-| `package-chatgpt-gpt` | `interview-journey-chatgpt.zip` | Custom GPT Instructions, Knowledge bundles, deployment docs |
+| `package-chatgpt-gpt` (deprecated) | `interview-journey-chatgpt.zip` | Transitional Custom GPT only: Instructions, Knowledge bundles, deployment docs; not extended |
 | `package-chatgpt-plugin` | `interview-journey-chatgpt-plugin.zip` | `plugin.json`, `skills/interview-journey/SKILL.md` (assembled from `chatgpt/plugin/SKILL.header.md` + `chatgpt/instructions.md`), generated Knowledge bundles and `capability-policy.md` as `references/` |
 
 The plugin packagers accept an optional `RELEASE_VERSION` (semantic version). Unset, the committed manifest version is kept. Release orchestration belongs to the release workflow, not these scripts.

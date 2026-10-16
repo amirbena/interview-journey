@@ -21,7 +21,7 @@ check() {
 chatgpt_offer_route_ok() {
   local file="$1"
   grep -qF 'Recognize offer and negotiation intent' "${file}" &&
-    grep -qF 'Route it to Knowledge source `core/offer-negotiation-preparation.md`' "${file}"
+    grep -qF 'Route it to reference source `core/offer-negotiation-preparation.md`' "${file}"
 }
 
 skill_offer_route_ok() {
