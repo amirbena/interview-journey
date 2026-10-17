@@ -2,6 +2,8 @@
 
 Evidence-driven technical interview preparation, installable in Claude, Codex, ChatGPT, Cursor, and other skills-compatible agents.
 
+**[📖 Wiki](https://github.com/amirbena/interview-journey/wiki)** — find the right capability for your interview stage, and where each one is defined.
+
 ## 1. Overview
 
 Interview Journey is an evidence-driven interview preparation Skill: it turns your target role, real resume, and current interview stage into focused preparation, from role and fit analysis to mock interviews, answer coaching, debriefs, and offer negotiation. It works only from information you provide. One canonical Skill ([`skills/interview-journey/`](skills/interview-journey/)) is distributed for Claude, Codex, ChatGPT, Cursor, and other skills-compatible agents, and the methodology lives once in [`frameworks/`](frameworks/) and [`core/`](core/). See [`docs/features.md`](docs/features.md) for what it can do.
@@ -97,6 +99,7 @@ Root files: [`AGENTS.md`](AGENTS.md) and [`CLAUDE.md`](CLAUDE.md) (agent instruc
 
 ## 6. Documentation
 
+- [Wiki](https://github.com/amirbena/interview-journey/wiki) — navigate by interview stage and capability; the repository stays the source of truth
 - [`docs/features.md`](docs/features.md) — what Interview Journey can do
 - [`docs/installation.md`](docs/installation.md) — every install path and its verification status
 - [`docs/chatgpt-migration.md`](docs/chatgpt-migration.md) — Custom GPT → ChatGPT Plugin migration
