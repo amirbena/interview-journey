@@ -59,7 +59,43 @@ Optional [Natural Answer Mode](docs/natural-answer-mode.md) gives spoken-style a
 
 Fifteen frameworks (01–14 specialized modules, 15 the master orchestrator) define the methodology; the Skill routes each request to only the modules it needs and keeps evidence states explicit. State is a logical record carried through your files and conversation; there is no backend, database, Action, MCP server, or background automation. See [`docs/architecture.md`](docs/architecture.md) and [`core/orchestration-policy.md`](core/orchestration-policy.md).
 
-## 5. Documentation
+## 5. Repository Map
+
+Surfaces, grouped by role. Start at the group that matches your task.
+
+**Methodology (platform-independent source of truth)**
+
+| Path | Responsibility |
+| --- | --- |
+| [`core/`](core/) | Product definition, policies, state and output rules, scope and non-goals |
+| [`frameworks/`](frameworks/) | Frameworks 01–15, the canonical methodology (15 is the orchestrator) |
+| [`workflows/`](workflows/) | Task-specific flows that apply the frameworks |
+| [`schemas/`](schemas/) | Structured record definitions for each framework's output |
+| [`outputs/`](outputs/) | Output templates (the canonical output contracts) |
+| [`examples/`](examples/) | A fully fictional worked example |
+
+**Packaging surfaces (distribution; must not redefine methodology)**
+
+| Path | Responsibility |
+| --- | --- |
+| [`skills/interview-journey/`](skills/interview-journey/) | The canonical Skill, shared by Claude, Codex, ChatGPT, Cursor, and other agents |
+| [`claude/`](claude/) | Claude Project experience, Claude.ai Skill packaging, external install kit |
+| [`chatgpt/`](chatgpt/) | ChatGPT Plugin sources and the deprecated Custom GPT package |
+| [`.claude-plugin/`](.claude-plugin/) | Claude Code / Codex plugin and marketplace manifests |
+
+**Tooling and contribution**
+
+| Path | Responsibility |
+| --- | --- |
+| [`scripts/`](scripts/) | Packaging, build, and release scripts (Bash and PowerShell) |
+| [`tests/`](tests/) | Repository validation (`tests/validate-repository.sh`) |
+| [`policies/`](policies/) | Rules for changing this repository (Git, packaging, releases) |
+| [`.github/`](.github/) | CI workflows and issue/PR templates |
+| [`docs/`](docs/) | User and contributor guides |
+
+Root files: [`AGENTS.md`](AGENTS.md) and [`CLAUDE.md`](CLAUDE.md) (agent instructions), [`ROADMAP.md`](ROADMAP.md), [`CHANGELOG.md`](CHANGELOG.md). `dist/` holds generated packages and is git-ignored. Paths are referenced by packaging scripts, plugin manifests, and validation, so they are stable; see [`docs/architecture.md`](docs/architecture.md#path-stability-and-migration).
+
+## 6. Documentation
 
 - [`docs/features.md`](docs/features.md) — what Interview Journey can do
 - [`docs/installation.md`](docs/installation.md) — every install path and its verification status

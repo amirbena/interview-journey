@@ -51,19 +51,30 @@ Claude Skill / Claude Plugin / Claude Project / ChatGPT GPT + Plugin
 ```text
 interview-journey/
 ├── core/            platform-independent product definition, policy, and workflow
-├── frameworks/       01–15, the canonical methodology (15 is the master orchestrator)
-├── schemas/          structured records for every framework's output
-├── workflows/        orchestration and task-specific flow adapters
-├── outputs/          canonical output contract templates
-├── skills/           canonical Skill (interview-journey/) used by every plugin surface
-├── claude/           Claude Project, plugin docs, and external-install packaging
-├── chatgpt/          ChatGPT Custom GPT instructions, Knowledge, and packaging
-├── scripts/          deterministic packaging/build scripts (Bash + PowerShell)
-├── docs/             user-facing guides
-├── examples/         a fully synthetic worked example
-├── tests/            repository validation
-└── dist/             generated packages (git-ignored)
+├── frameworks/      01–15, the canonical methodology (15 is the master orchestrator)
+├── schemas/         structured records for every framework's output
+├── workflows/       orchestration and task-specific flow adapters
+├── outputs/         canonical output contract templates
+├── skills/          canonical Skill (interview-journey/) used by every plugin surface
+├── claude/          Claude Project, plugin docs, and external-install packaging
+├── chatgpt/         ChatGPT Plugin sources and deprecated Custom GPT package
+├── .claude-plugin/  Claude Code / Codex plugin and marketplace manifests
+├── scripts/         deterministic packaging/build/release scripts (Bash + PowerShell)
+├── policies/        rules for changing this repository
+├── docs/            user-facing guides
+├── examples/        a fully synthetic worked example
+├── tests/           repository validation
+├── .github/         CI workflows, issue and PR templates
+└── dist/            generated packages (git-ignored)
 ```
+
+The README's [Repository Map](../README.md#5-repository-map) groups these into methodology, packaging surfaces, and tooling.
+
+### Path stability and migration
+
+The architecture audit found no directory whose purpose was ambiguous enough to justify a move: `claude/` and `chatgpt/` are platform packaging, `skills/` is the canonical Skill, and `core/`, `frameworks/`, `workflows/`, `schemas/`, and `outputs/` are distinct methodology layers. Their paths are referenced by packaging scripts, plugin manifests, validation, and external installs, so they are stable and unchanged.
+
+If a path ever moves, the same change must update every internal reference, leave a short stub at the old path pointing to the new one (or document the redirect in `CHANGELOG.md`), and pass `tests/validate-repository.sh`.
 
 ## Framework model
 
